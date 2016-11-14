@@ -1,0 +1,801 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="西佳佳," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="C++ 中 unique-ptr 特性和源码解析简介std::unique_ptr 包含在头文件&amp;lt; memory &amp;gt; 中，它被用来实现对动态分配对象的自动释放。
+这是一个在auto_ptr基础上发展并取代auto_ptr的类，所以它具有auto_ptr的自动释放特性以及独占控制权的特性，可以参考我之前关于auto_ptr的文章。最简单的用法如下：
+1234void test()&amp;#12">
+<meta property="og:type" content="article">
+<meta property="og:title" content="unique_ptr 特性和源码解析">
+<meta property="og:url" content="http://yizhi.ren/2016/11/14/uniqueptr/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="C++ 中 unique-ptr 特性和源码解析简介std::unique_ptr 包含在头文件&amp;lt; memory &amp;gt; 中，它被用来实现对动态分配对象的自动释放。
+这是一个在auto_ptr基础上发展并取代auto_ptr的类，所以它具有auto_ptr的自动释放特性以及独占控制权的特性，可以参考我之前关于auto_ptr的文章。最简单的用法如下：
+1234void test()&amp;#12">
+<meta property="og:updated_time" content="2016-11-18T05:30:53.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="unique_ptr 特性和源码解析">
+<meta name="twitter:description" content="C++ 中 unique-ptr 特性和源码解析简介std::unique_ptr 包含在头文件&amp;lt; memory &amp;gt; 中，它被用来实现对动态分配对象的自动释放。
+这是一个在auto_ptr基础上发展并取代auto_ptr的类，所以它具有auto_ptr的自动释放特性以及独占控制权的特性，可以参考我之前关于auto_ptr的文章。最简单的用法如下：
+1234void test()&amp;#12">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yizhi.ren/2016/11/14/uniqueptr/"/>
+
+
+
+
+
+  <title> unique_ptr 特性和源码解析 | 一支人 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一支人</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">碎碎念</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/uniqueptr/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="yizhiren">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="一支人">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="一支人" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                unique_ptr 特性和源码解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-11-14T13:46:41+00:00">
+                2016-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码/" itemprop="url" rel="index">
+                    <span itemprop="name">代码</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/11/14/uniqueptr/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/14/uniqueptr/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="C-中-unique-ptr-特性和源码解析"><a href="#C-中-unique-ptr-特性和源码解析" class="headerlink" title="C++ 中 unique-ptr 特性和源码解析"></a>C++ 中 unique-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::unique_ptr 包含在头文件&lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。</p>
+<p>这是一个在auto_ptr基础上发展并取代auto_ptr的类，所以它具有auto_ptr的自动释放特性以及独占控制权的特性，可以参考我之前关于auto_ptr的文章。最简单的用法如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">      <span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; ap(p);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么为什么unique_ptr要诞生来取代auto_ptr呢，首先为什么不是修改auto_ptr而要另起炉灶呢，这主要是不希望用一种静默的方式来修改它，从而使得你忽略了auto_ptr已经不是当初的auto_ptr了，以此来避免隐含bug而你却没意识到。</p>
+<p>另一个方面是unique_ptr比auto_ptr好在哪里， unique_ptr的出现是为了解决auto_ptr的两个问题，一个是静默的控制权转移问题，一个是不支持数组问题。</p>
+<a id="more"></a>
+<h3 id="显式的控制权转移"><a href="#显式的控制权转移" class="headerlink" title="显式的控制权转移"></a>显式的控制权转移</h3><p>控制权转移的问题看下面auto_ptr的例子，在例子中，ap1将控制权转移给了ap2,此时ap1中的指针已经是0，是无效地址。</p>
+<p>假如你不清楚auto_ptr的特性，你试着去操作ap1比如 ap1-&gt;inertValue++  ，这将导致致命的错误。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1(p);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(ap1);</div><div class="line"><span class="comment">//或者</span></div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2 = ap1;</div></pre></td></tr></table></figure>
+<p>涉及到两个函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>(<span class="built_in">auto_ptr</span>&amp; __a) <span class="keyword">throw</span>() : _M_ptr(__a.release()) &#123; &#125;</div><div class="line"><span class="built_in">auto_ptr</span>&amp;</div><div class="line"><span class="keyword">operator</span>=(<span class="built_in">auto_ptr</span>&amp; __a) <span class="keyword">throw</span>()</div><div class="line">&#123;</div><div class="line">    reset(__a.release());</div><div class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>那么unique_ptr就想着避免这种情况，于是它直接把这两个函数删掉了。。。</p>
+<p>取而代之的是两个非常类似的函数：（等下，你标题说的显式转移怎么没说？  等下，先转移个话题，后面会转回来）</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//只是把 unique_ptr&amp; __u 变成了unique_ptr&amp;&amp; __u而已嘛，</span></div><div class="line"><span class="comment">//咦？ &amp;&amp;是啥意思？</span></div><div class="line"><span class="built_in">unique_ptr</span>(<span class="built_in">unique_ptr</span>&amp;&amp; __u)</div><div class="line"></div><div class="line"><span class="built_in">unique_ptr</span>&amp;</div><div class="line">   <span class="keyword">operator</span>=(<span class="built_in">unique_ptr</span>&amp;&amp; __u)</div></pre></td></tr></table></figure>
+<p>这里你会发现他的参数类型不再是“引用”而是“引用引用”，有啥区别？  这个&amp;&amp;不同于引用类型&amp;也不是逻辑与，而是一种新的类型，也是c++11引入的，叫做右值引用，也就是说这个参数类型必须是个右值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">   这里插一段，右值时什么？我们在auto_ptr时遇到过，那时右值以临时变量的身份出现。</div><div class="line">只是那时没这么叫他，那时也没有右值引用这么个符号出现</div><div class="line"></div><div class="line">简单点说，右值就是用完就会消失，你没法取到它地址的东西</div><div class="line">比如</div><div class="line">string left = string(&quot;1123&quot;);</div><div class="line"></div><div class="line">这里left是个左值，因为我们能取到其地址，它也存在下来了没有消失，</div><div class="line">而string(&quot;1123&quot;)是个临时存在的，用完即消失的变量，我们根本取不到他的地址，所以它是右值。</div><div class="line">或者更简单点， 右值 ≈ 临时变量 。</div></pre></td></tr></table></figure>
+<p>那么为什么要支持临时变量作为构造参数呢，再回想一下auto_ptr中的关于auto_ptr_ref的例子。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1=<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>)));</div></pre></td></tr></table></figure>
+<p>auto_ptr为了实现上面这种传递方式，特意创造出了一个辅助类auto_ptr_ref，这个类从不出现在一线的代码中。可见这是一种hack，一种workaround。</p>
+<p>那么到了unique_ptr中为了继续支持这种用法同时抛弃这种hack的方式，就使用了一个新的类型，右值引用，把参数类型进行高度的限制。这样下面的代码就依然是可以通过的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1=<span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(<span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>)));</div></pre></td></tr></table></figure>
+<p>好了，介绍了unique_ptr如何禁止控制权转移，那么如果我就是想转移呢，你为什么不让我转移？ 那就来看下它的显式转移方式吧（我说了我会转回来的吧）。</p>
+<p>c++11又通过产生新玩意来支持你的这种需求，它想出了一个std::move函数，可以把你的变量转成右值，只是属性上变成右值，并没有进行值的拷贝。于是控制权转移的代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(<span class="built_in">std</span>::move(ap1));</div><div class="line"><span class="comment">//或者</span></div><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2 = <span class="built_in">std</span>::move(ap1);</div></pre></td></tr></table></figure>
+<p>这样一番折腾的好处是什么呢，是这么一折腾你就记住了，你这个ap1的控制权已经交出去了，可不能记错了啊！ 看到新的函数越来越多，隐约感到c++已经向着体量臃肿的路上一去不复返了。奔跑吧~~</p>
+<h3 id="支持数组"><a href="#支持数组" class="headerlink" title="支持数组"></a>支持数组</h3><p>unique_ptr是如何来支持数组类型的指针呢， 它是通过模板类的数组特化来实现的，也就是他首先实现了一个通用指针的版本，随后又再实现一个针对数组类型的版本，特化版本的实现优先级更高，所以如果构造时传入的参数是数组类型，就会走数组的特化版本。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/// unique_ptr for single objects.</span></div><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> _Tp, <span class="keyword">typename</span> _Dp = default_delete&lt;_Tp&gt; &gt;</div><div class="line"><span class="keyword">class</span> <span class="built_in">unique_ptr</span></div><div class="line">&#123;</div><div class="line">    ...</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">/// unique_ptr for array objects </span></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp, <span class="keyword">typename</span> _Dp&gt;</div><div class="line"><span class="keyword">class</span> <span class="built_in">unique_ptr</span>&lt;_Tp[], _Dp&gt;</div><div class="line">&#123;</div><div class="line">      ...  </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以及特化版的deletor</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp&gt;</div><div class="line"><span class="keyword">struct</span> default_delete</div><div class="line">&#123;</div><div class="line">  ...</div><div class="line">  <span class="keyword">operator</span>()(_Tp* __ptr) <span class="keyword">const</span></div><div class="line">  &#123;</div><div class="line">     <span class="keyword">delete</span> __ptr;</div><div class="line">  &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp&gt;</div><div class="line"><span class="keyword">struct</span> default_delete&lt;_Tp[]&gt;</div><div class="line">&#123;</div><div class="line">  ...</div><div class="line">  <span class="keyword">operator</span>()(_Tp* __ptr) <span class="keyword">const</span></div><div class="line">  &#123;</div><div class="line">     <span class="keyword">delete</span>[] __ptr;</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<h3 id="不得不提的容器"><a href="#不得不提的容器" class="headerlink" title="不得不提的容器"></a>不得不提的容器</h3><p>我们比较一下下面三段代码，语法没什么问题，但是只有第三段可以编过。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// compile fail</span></div><div class="line"><span class="built_in">vector</span>&lt; <span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; &gt; vec;</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; abc(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));	</div><div class="line">vec.push_back(abc);</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// compile fail</span></div><div class="line"><span class="built_in">vector</span>&lt; <span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; &gt; vec;</div><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; abc(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));	</div><div class="line">vec.push_back(abc);</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// compile pass</span></div><div class="line"><span class="built_in">vector</span>&lt; <span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; &gt; vec;</div><div class="line"><span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; abc(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));	</div><div class="line">vec.push_back(<span class="built_in">std</span>::move(abc));</div></pre></td></tr></table></figure>
+<p>首先看第一段auto_ptr为什么编不过，失败的代码为vec.push_back(abc);</p>
+<p>为什么失败，我们可以猜测push_back的代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">   <span class="function"><span class="keyword">void</span></span></div><div class="line">   <span class="title">push_back</span><span class="params">(<span class="keyword">const</span> value_type&amp; __x)</span></div><div class="line">   &#123;</div><div class="line">    <span class="comment">// 通过 __x 构造一个新的value_type ，然后推到队列中</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然而我们知道auto_ptr是没法通过const 类型的变量来构造对象,他只能接受非const的，所以这个代码无法编译。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>&amp;</div><div class="line"><span class="keyword">operator</span>=(<span class="built_in">auto_ptr</span>&amp; __a) <span class="keyword">throw</span>()</div><div class="line">&#123;</div><div class="line">reset(__a.release());</div><div class="line"><span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>再来看第二段为什么失败，原因也简单，auto_ptr是无法接受非const的，但是unique_ptr是const以及非const都无法接受，所以更加无法编过。</p>
+<p>然后第三段为什么编过了呢，第三段传给push_back的是一个经过move函数处理的右值，右值我们知道是可以被push_back(const value_type&amp; __x)这个接口接收的，但是接收后肯定还是编不过和第二段就一样了。</p>
+<p>那么为什么却编译通过了呢。通过翻看stl_vector.h的代码我们找到了答案：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">if</span> __cplusplus &gt;= 201103L</span></div><div class="line">  <span class="function"><span class="keyword">void</span></span></div><div class="line">  <span class="title">push_back</span><span class="params">(value_type&amp;&amp; __x)</span></div><div class="line">  &#123; emplace_back(<span class="built_in">std</span>::move(__x)); &#125;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></div></pre></td></tr></table></figure>
+<p>原来vector在c++11后新增了push_back(value_type&amp;&amp; __x)这个专门接收右值的接口，编译器发现那个const参数的接口走不通就走了这个右值参数的接口。我们可以看到这个新接口中，入参一直都是以右值来传递下去的，保证他能被正确构造。</p>
+<p>但这其实完全是move + vector + (Type&amp;&amp;)这三者共同完成的工作，并不属于unique_ptr改造auto_ptr的工作。很多文章都说这是unique_ptr优于auto_ptr的部分，我觉得其实不是。我在devcpp中增加-std=c++11编译参数后试过，不管unique_ptr还是auto_ptr，只要使用move函数处理，都能成功推入vector。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>unique_ptr 通过不定义相关构造函数来阻止控制权的隐式转移，即阻止变量赋值；通过两个新的c++11特性，包括std::move和右值引用类型，来实现右值（≈临时变量）的控制权转移，即临时变量可以赋值；又通过模版特化的方式来提供auto_ptr所不支持的数组指针，即可以接受数组指针做构造参数。 </p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一碗馄饨！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/payimage/wechat.png" alt="yizhiren WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/payimage/zhifubao.png" alt="yizhiren Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/西佳佳/" rel="tag"># 西佳佳</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/11/14/sharedptr/" rel="next" title="shared_ptr 之shared_from_this">
+                <i class="fa fa-chevron-left"></i> shared_ptr 之shared_from_this
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/11/14/uniqueptr/"
+     data-title="unique_ptr 特性和源码解析"
+     data-content=""
+     data-url="http://yizhi.ren/2016/11/14/uniqueptr/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/14/uniqueptr/"
+           data-title="unique_ptr 特性和源码解析" data-url="http://yizhi.ren/2016/11/14/uniqueptr/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/15405596"
+               alt="yizhiren" />
+          <p class="site-author-name" itemprop="name">yizhiren</p>
+          <p class="site-description motion-element" itemprop="description">promise.get_future();</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/yizhiren" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/2030534353" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/yizhi.ren" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-中-unique-ptr-特性和源码解析"><span class="nav-number">1.</span> <span class="nav-text">C++ 中 unique-ptr 特性和源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显式的控制权转移"><span class="nav-number">1.2.</span> <span class="nav-text">显式的控制权转移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支持数组"><span class="nav-number">1.3.</span> <span class="nav-text">支持数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不得不提的容器"><span class="nav-number">1.4.</span> <span class="nav-text">不得不提的容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-twitter"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yizhiren"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

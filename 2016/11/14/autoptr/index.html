@@ -1,0 +1,798 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="西佳佳," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="C++ 中 auto-ptr 特性和源码解析简介std::auto_ptr 包含在头文件 &amp;lt; memory &amp;gt; 中，它被用来实现对动态分配对象的自动释放。如：
+1234void test()&amp;#123;      int*p=new int(0);      auto_ptr&amp;lt;int&amp;gt; ap(p);&amp;#125;
+这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="auto_ptr 特性和源码解析">
+<meta property="og:url" content="http://yizhi.ren/2016/11/14/autoptr/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="C++ 中 auto-ptr 特性和源码解析简介std::auto_ptr 包含在头文件 &amp;lt; memory &amp;gt; 中，它被用来实现对动态分配对象的自动释放。如：
+1234void test()&amp;#123;      int*p=new int(0);      auto_ptr&amp;lt;int&amp;gt; ap(p);&amp;#125;
+这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其">
+<meta property="og:updated_time" content="2016-11-18T05:30:13.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="auto_ptr 特性和源码解析">
+<meta name="twitter:description" content="C++ 中 auto-ptr 特性和源码解析简介std::auto_ptr 包含在头文件 &amp;lt; memory &amp;gt; 中，它被用来实现对动态分配对象的自动释放。如：
+1234void test()&amp;#123;      int*p=new int(0);      auto_ptr&amp;lt;int&amp;gt; ap(p);&amp;#125;
+这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yizhi.ren/2016/11/14/autoptr/"/>
+
+
+
+
+
+  <title> auto_ptr 特性和源码解析 | 一支人 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">一支人</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">碎碎念</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/autoptr/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="yizhiren">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="一支人">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="一支人" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                auto_ptr 特性和源码解析
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-11-14T13:46:01+00:00">
+                2016-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码/" itemprop="url" rel="index">
+                    <span itemprop="name">代码</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <a href="/2016/11/14/autoptr/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/11/14/autoptr/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="C-中-auto-ptr-特性和源码解析"><a href="#C-中-auto-ptr-特性和源码解析" class="headerlink" title="C++ 中 auto-ptr 特性和源码解析"></a>C++ 中 auto-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">      <span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap(p);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其包含的p会被自动释放。这几乎已经是auto_ptr的全部作用了，但是还有一些小秘密，下面结合它的代码看看他的实现，挖挖它的内涵。</p>
+<a id="more"></a>
+<h3 id="重复释放问题"><a href="#重复释放问题" class="headerlink" title="重复释放问题"></a>重复释放问题</h3><p>由于auto_ptr在不同实例间没有关联，因此多个实例得到同一份指针将引起重复释放问题。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1(p);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(p);</div></pre></td></tr></table></figure>
+<h3 id="与指针的隐式转换"><a href="#与指针的隐式转换" class="headerlink" title="与指针的隐式转换"></a>与指针的隐式转换</h3><p>auto_ptr&lt; Type &gt;与 Type*指针间的隐式转换是不存在的。<br>首先指针转到auto_ptr是通过这个接口：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">typedef _Tp element_type;</div><div class="line"></div><div class="line">explicit</div><div class="line">auto_ptr(element_type* __p = 0) throw() : _M_ptr(__p) &#123; &#125;</div></pre></td></tr></table></figure>
+<p>注意到explicit这个关键字，有了这个关键字于是下面的代码是通不过的，因为他没有显式的调用构造函数，与explicit违背。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1 = p;</div></pre></td></tr></table></figure>
+<p>而必须通过</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1 = <span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(p);</div><div class="line">或者</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1(p);</div></pre></td></tr></table></figure>
+<p>这么做的目的只可能是为了防止误用，防止在这个变量是auto_ptr还是指针上傻傻分不清。</p>
+<p>再一个从auto_ptr&lt; Type &gt;转到Type*的时候使用的是get()接口，而无法隐式转过去。</p>
+<h3 id="指针和取值操作"><a href="#指针和取值操作" class="headerlink" title="指针和取值操作"></a>指针和取值操作</h3><p>下面这个例子，如果我们对ap进行(*ap)和ap-&gt;f()操作，结果与(*p)和p-&gt;f()是否一样呢？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ClassABC *p=<span class="keyword">new</span> ClassABC();</div><div class="line"><span class="built_in">auto_ptr</span>&lt;ClassABC&gt;ap(p);</div></pre></td></tr></table></figure>
+<p>我们可以通过auto_ptr的源码来知道答案， 她重载了这两个操作符，使得其操作效果和直接指针的效果是一样的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">operator</span>*() <span class="function"><span class="keyword">const</span> <span class="title">throw</span><span class="params">()</span> </span></div><div class="line">&#123;</div><div class="line"><span class="keyword">return</span> *_M_ptr; </div><div class="line">&#125;</div><div class="line"></div><div class="line">element_type*</div><div class="line"><span class="keyword">operator</span>-&gt;() <span class="function"><span class="keyword">const</span> <span class="title">throw</span><span class="params">()</span> </span></div><div class="line">&#123;</div><div class="line"><span class="keyword">return</span> _M_ptr; </div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="特殊构造函数的特殊意义"><a href="#特殊构造函数的特殊意义" class="headerlink" title="特殊构造函数的特殊意义"></a>特殊构造函数的特殊意义</h3><p>我们知道拷贝构造和赋值构造函数的定义一般是：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ClassABC(<span class="keyword">const</span> ClassABC&amp; c);</div><div class="line">ClassABC&amp;</div><div class="line"><span class="keyword">operator</span>=(<span class="keyword">const</span> ClassABC&amp; c);</div></pre></td></tr></table></figure>
+<p>他们的参数都是const类型的，但是auto_ptr却不是const类型的，原因是什么呢？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>(<span class="built_in">auto_ptr</span>&amp; __a) <span class="keyword">throw</span>() : _M_ptr(__a.release()) &#123; &#125;</div><div class="line"><span class="built_in">auto_ptr</span>&amp;</div><div class="line"><span class="keyword">operator</span>=(<span class="built_in">auto_ptr</span>&amp; __a) <span class="keyword">throw</span>()</div><div class="line">&#123;</div><div class="line">reset(__a.release());</div><div class="line"><span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p> 涉及到一个控制权的问题，auto_ptr假设只有一个实例是持有这个指针的，否则必然导致重复释放，所以当把一个auto_ptr实例赋值给另一个auto_ptr实例时：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1(p);</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(ap1);</div></pre></td></tr></table></figure>
+<p>前者（ap1）的实例必须放弃这个指针(p)而把它交给后者(ap2)。而这个放弃的操作必然会修改该实例(ap1)内部数据，于是它不能是const类型，只能是非const类型的。而非const的类型不能操作的有，一个是const类型的，还有一个是临时变量也不行。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1=<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap2(<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>)));</div></pre></td></tr></table></figure>
+<p>const类型没办法，但是临时变量还是有办法的，看下面：</p>
+<h3 id="auto-ptr-ref类"><a href="#auto-ptr-ref类" class="headerlink" title="auto_ptr_ref类"></a>auto_ptr_ref类</h3><p>于是牛人想出了一个方案来支持临时变量的赋值。Bill Gibbons和Greg Colvin创造性地提出了auto_ptr_ref类，解决了无法传递临时变量的问题。</p>
+<p>思路是这样的，注意推导过程：</p>
+<p>为了接收 auto_ptr&lt; TYPE &gt;类型的临时变量，我可以选择const auto_ptr&lt; TYPE &gt;&amp;或者auto_ptr&lt; TYPE &gt;&amp; 或者auto_ptr&lt; TYPE &gt; 3种参数类型 ；const auto_ptr&lt; TYPE &gt;&amp;因为不支持修改而不能，auto_ptr&lt; TYPE &gt;&amp;支持修改却不支持临时变量而不能；auto_ptr&lt; TYPE &gt;呢，编译器说这么定义不行，你可以试试，大概想想的话这会导致无法终结的类型转换。</p>
+<p>于是我们只能新创建一个类叫做auto_ptr_ref&lt; TYPE &gt;。 然后给auto_ptr增加新的构造函数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>(auto_ptr_ref&lt;TYPE&gt; __ref)</div></pre></td></tr></table></figure>
+<p>然后你应该猜到了，我们再给auto_ptr增加新的类型转换函数，支持转换到auto_ptr_ref&lt; TYPE &gt;。<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp1&gt;</div><div class="line">    <span class="keyword">operator</span> auto_ptr_ref&lt;_Tp1&gt;()</div></pre></td></tr></table></figure></p>
+<p>好了大功告成，临时变量auto_ptr&lt; TYPE &gt;先转成auto_ptr_ref&lt; TYPE &gt;，auto_ptr_ref&lt; TYPE &gt;再传到构造函数中，有了这个auto_ptr_ref类，下面的代码已经可以编过了，如果刚才前面小节中，你去试了发现明明能编过我却说不行，请不要奇怪。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1=<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line"><span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;ap1(<span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>)));</div></pre></td></tr></table></figure>
+<p>但是对于const类型的实参还是没法运作的，因为operator auto_ptr_ref&lt; _Tp1 &gt;()是非const的，const对象调不到。</p>
+<h3 id="不同指针实例间的赋值"><a href="#不同指针实例间的赋值" class="headerlink" title="不同指针实例间的赋值"></a>不同指针实例间的赋值</h3><p>加入我们我两个实例，这两个实例的对应指针是不同的，那么我们能对他们进行赋值吗？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">    <span class="comment">//关键代码就是对_M_ptr这个变量进行了赋值。</span></div><div class="line">    <span class="comment">//template&lt;typename _Tp&gt;</span></div><div class="line">    <span class="comment">//_Tp* _M_ptr;</span></div><div class="line">    <span class="comment">//所以_M_ptr就是指针类型的变量。</span></div><div class="line"></div><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp1&gt;</div><div class="line">      <span class="built_in">auto_ptr</span>(<span class="built_in">auto_ptr</span>&lt;_Tp1&gt;&amp; __a) <span class="keyword">throw</span>() : _M_ptr(__a.release()) &#123; &#125;</div><div class="line"></div><div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp1&gt;</div><div class="line">      <span class="built_in">auto_ptr</span>&amp;</div><div class="line">      <span class="keyword">operator</span>=(<span class="built_in">auto_ptr</span>&lt;_Tp1&gt;&amp; __a) <span class="keyword">throw</span>()</div><div class="line">      &#123;</div><div class="line">      reset(__a.release()); <span class="comment">//</span></div><div class="line">      <span class="keyword">return</span> *<span class="keyword">this</span>;</div><div class="line">&#125; </div><div class="line"></div><div class="line">    <span class="comment">//其中reset的实现如下</span></div><div class="line">    <span class="function"><span class="keyword">void</span></span></div><div class="line">    <span class="title">reset</span><span class="params">(element_type* __p = <span class="number">0</span>)</span> <span class="title">throw</span><span class="params">()</span></div><div class="line">    &#123;</div><div class="line">    <span class="keyword">if</span> (__p != _M_ptr)</div><div class="line">    &#123;</div><div class="line">      <span class="keyword">delete</span> _M_ptr;</div><div class="line">      _M_ptr = __p;</div><div class="line">    &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>可以看出A=B这样的表达式中，只要B对应的指针类型能够赋值给A对应的指针类型，那么这个赋值就是可行的。比如父子类之间。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">SON *pson = <span class="literal">NULL</span>;</div><div class="line">   <span class="built_in">auto_ptr</span>&lt;SON&gt; ap1(pson);</div><div class="line">   <span class="built_in">auto_ptr</span>&lt;FATHER&gt; ap2(ap1);</div></pre></td></tr></table></figure>
+<p>而反过来把FATHER赋给SON就会报错了。</p>
+<h3 id="命运"><a href="#命运" class="headerlink" title="命运"></a>命运</h3><p>说了这么多，好像很高级的样子，但是std::auto_ptr在最新的c++11标准草案中被std::unique_ptr取代。主要原因是auto_ptr在进行赋值时默默进行着控制权转移，而这个动作容易导致对失去控制权的实例的错误使用。一个特别的例子是把auto_ptr放到容器中时。下偏讲unique_ptr时讲。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>打赏一碗馄饨！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/payimage/wechat.png" alt="yizhiren WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/payimage/zhifubao.png" alt="yizhiren Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/西佳佳/" rel="tag"># 西佳佳</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/11/14/bitorder/" rel="prev" title="Byte order of bitfield">
+                Byte order of bitfield <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="2016/11/14/autoptr/"
+     data-title="auto_ptr 特性和源码解析"
+     data-content=""
+     data-url="http://yizhi.ren/2016/11/14/autoptr/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/11/14/autoptr/"
+           data-title="auto_ptr 特性和源码解析" data-url="http://yizhi.ren/2016/11/14/autoptr/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/15405596"
+               alt="yizhiren" />
+          <p class="site-author-name" itemprop="name">yizhiren</p>
+          <p class="site-description motion-element" itemprop="description">promise.get_future();</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">6</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/yizhiren" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.weibo.com/2030534353" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/yizhi.ren" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-中-auto-ptr-特性和源码解析"><span class="nav-number">1.</span> <span class="nav-text">C++ 中 auto-ptr 特性和源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重复释放问题"><span class="nav-number">1.2.</span> <span class="nav-text">重复释放问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与指针的隐式转换"><span class="nav-number">1.3.</span> <span class="nav-text">与指针的隐式转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#指针和取值操作"><span class="nav-number">1.4.</span> <span class="nav-text">指针和取值操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特殊构造函数的特殊意义"><span class="nav-number">1.5.</span> <span class="nav-text">特殊构造函数的特殊意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#auto-ptr-ref类"><span class="nav-number">1.6.</span> <span class="nav-text">auto_ptr_ref类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不同指针实例间的赋值"><span class="nav-number">1.7.</span> <span class="nav-text">不同指针实例间的赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#命运"><span class="nav-number">1.8.</span> <span class="nav-text">命运</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-twitter"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"yizhiren"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
