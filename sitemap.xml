@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/autoptr/</loc>
+    
+    <lastmod>2016-11-18T07:40:47.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/categories/index.html</loc>
+    
+    <lastmod>2016-11-18T05:34:07.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/tags/index.html</loc>
+    
+    <lastmod>2016-11-18T05:33:55.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/uniqueptr/</loc>
+    
+    <lastmod>2016-11-18T05:30:53.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/sharedptr/</loc>
+    
+    <lastmod>2016-11-18T05:30:48.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/odr/</loc>
+    
+    <lastmod>2016-11-18T05:30:43.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/condition/</loc>
+    
+    <lastmod>2016-11-18T05:30:25.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/bitorder/</loc>
+    
+    <lastmod>2016-11-18T05:30:19.000Z</lastmod>
+    
+  </url>
+  
+</urlset>
