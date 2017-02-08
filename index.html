@@ -259,7 +259,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2017/02/07/multithread/">
+  <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2017/02/08/multithread/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="yizhiren">
@@ -284,7 +284,7 @@
             
               
                 
-                <a class="post-title-link" href="/2017/02/07/multithread/" itemprop="url">
+                <a class="post-title-link" href="/2017/02/08/multithread/" itemprop="url">
                   线程扩展需要考虑的问题
                 </a>
               
@@ -299,7 +299,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-08T02:08:45+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-08T14:27:55+08:00">
                 2017-02-08
               </time>
             
@@ -333,8 +333,8 @@
             
               <span class="post-comments-count">
                 <span class="post-meta-divider">|</span>
-                <a href="/2017/02/07/multithread/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/07/multithread/" itemprop="commentCount"></span>
+                <a href="/2017/02/08/multithread/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/02/08/multithread/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -364,7 +364,7 @@
           <h2 id="线程扩展要考虑的问题"><a href="#线程扩展要考虑的问题" class="headerlink" title="线程扩展要考虑的问题"></a>线程扩展要考虑的问题</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br>而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br>比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br>通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br>比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br>那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/2017/02/07/multithread/#more" rel="contents">
+            <a class="btn" href="/2017/02/08/multithread/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
