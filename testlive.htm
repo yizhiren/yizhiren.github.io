@@ -1,0 +1,59 @@
+
+<html>
+<head>
+</head>
+<body>
+<script>
+//Connect to the app via the facebook sdk 2.6
+window.fbAsyncInit = function() {
+FB.init({
+appId     : '604887073034556',
+xfbml     : true,
+version   : 'v2.6'
+});
+};
+ 
+(function(d, s, id){
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) {return;}
+js = d.createElement(s); js.id = id;
+js.src = "https://connect.facebook.net/de_DE/sdk.js";
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+ 
+<button id="liveButton">Live API test</button>
+
+<script>
+document.getElementById('liveButton').onclick = function() {
+FB.ui({
+display: 'popup',
+method: 'live_broadcast',
+phase: 'create',
+}, function(response) {
+if (!response.id) {
+alert('dialog canceled');
+return;
+}
+//alert('stream url:' + response.secure_stream_url);
+console.log('stream url:' + response.secure_stream_url);
+
+var startbroadcast=function(resp){
+
+ FB.ui({
+  display: 'popup',
+  method: 'live_broadcast',
+  phase: 'publish',
+  broadcast_data: resp,
+ }, function(response) {
+  alert("video status: \n" + response.status);
+ });
+
+}
+setTimeout(startbroadcast,20*1000,response);
+
+});
+};
+</script>
+</body>
+</html>
