@@ -315,7 +315,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/uniqueptr/">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/bitorder/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yizhiren">
@@ -334,7 +334,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/14/uniqueptr/" itemprop="url">unique_ptr 特性和源码解析</a></h1>
+                <a class="post-title-link" href="/2016/11/14/bitorder/" itemprop="url">Byte order of bitfield</a></h1>
         
 
         <div class="post-meta">
@@ -386,7 +386,7 @@
 
           
           
-             <span id="/2016/11/14/uniqueptr/" class="leancloud_visitors" data-flag-title="unique_ptr 特性和源码解析">
+             <span id="/2016/11/14/bitorder/" class="leancloud_visitors" data-flag-title="Byte order of bitfield">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -418,14 +418,11 @@
 
       
         
-          <h2 id="C-中-unique-ptr-特性和源码解析"><a href="#C-中-unique-ptr-特性和源码解析" class="headerlink" title="C++ 中 unique-ptr 特性和源码解析"></a>C++ 中 unique-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::unique_ptr 包含在头文件&lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。</p>
-<p>这是一个在auto_ptr基础上发展并取代auto_ptr的类，所以它具有auto_ptr的自动释放特性以及独占控制权的特性，可以参考我之前关于auto_ptr的文章。最简单的用法如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">      <span class="built_in">unique_ptr</span>&lt;<span class="keyword">int</span>&gt; ap(p);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>那么为什么unique_ptr要诞生来取代auto_ptr呢，首先为什么不是修改auto_ptr而要另起炉灶呢，这主要是不希望用一种静默的方式来修改它，从而使得你忽略了auto_ptr已经不是当初的auto_ptr了，以此来避免隐含bug而你却没意识到。</p>
-<p>另一个方面是unique_ptr比auto_ptr好在哪里， unique_ptr的出现是为了解决auto_ptr的两个问题，一个是静默的控制权转移问题，一个是不支持数组问题。</p>
+          <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">//IP头部，总长度20字节   </div><div class="line">typedef struct _ip_hdr  </div><div class="line">&#123;  </div><div class="line">    #if LITTLE_ENDIAN   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    unsigned char version:4, //版本    </div><div class="line">    #else   </div><div class="line">    unsigned char version:4, //版本   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    #endif   </div><div class="line">    unsigned char tos;       //服务类型   </div><div class="line">    unsigned short tot_len;  //总长度   </div><div class="line">    unsigned short id;       //标志   </div><div class="line">    unsigned short frag_off; //分片偏移   </div><div class="line">    unsigned char ttl;       //生存时间   </div><div class="line">    unsigned char protocol;  //协议   </div><div class="line">    unsigned short chk_sum;  //检验和   </div><div class="line">    struct in_addr srcaddr;  //源IP地址   </div><div class="line">    struct in_addr dstaddr;  //目的IP地址   </div><div class="line">&#125;ip_hdr;</div></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/uniqueptr/#more" rel="contents">
+            <a class="btn" href="/2016/11/14/bitorder/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
