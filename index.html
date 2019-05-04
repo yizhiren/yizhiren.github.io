@@ -427,7 +427,7 @@
 <p>下面我主要记录一下LVS调度的方式和原理。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2019/05/03/lvs/#espandi" rel="contents">
+            <a class="btn" href="/2019/05/03/lvs/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -587,7 +587,7 @@
 <p>Lock-Free的一个重要的结论是，当你暂停一个线程的运行，它并不会阻止其他线程继续执行，其他线程就像一个整体，继续他们的Lock-Free操作。这也是Lock-Free编程的价值，特别是当你编写中断处理程序、实时系统时，他们必须在规定的时间内完成任务，无论程序的其他部分怎么执行。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/09/19/reorder/#espandi" rel="contents">
+            <a class="btn" href="/2017/09/19/reorder/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -747,7 +747,7 @@
 <p>我们先来看成立的情况：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/04/09/epollleveltrigger/#espandi" rel="contents">
+            <a class="btn" href="/2017/04/09/epollleveltrigger/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -904,7 +904,7 @@
           <h2 id="线程扩展要考虑的问题"><a href="#线程扩展要考虑的问题" class="headerlink" title="线程扩展要考虑的问题"></a>线程扩展要考虑的问题</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br>而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br>比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br>通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br>比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br>那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/02/08/multithread/#espandi" rel="contents">
+            <a class="btn" href="/2017/02/08/multithread/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1061,7 +1061,7 @@
           <h2 id="分布式架构形式"><a href="#分布式架构形式" class="headerlink" title="分布式架构形式"></a>分布式架构形式</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？<br>有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。<br>两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/02/02/distribute/#espandi" rel="contents">
+            <a class="btn" href="/2017/02/02/distribute/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1221,165 +1221,7 @@
 <p>来看一个简单的例子：</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/condition/#espandi" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/bitorder/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/11/14/bitorder/" itemprop="url">Byte order of bitfield</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">
-                2016-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/代码/" itemprop="url" rel="index">
-                    <span itemprop="name">代码</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2016/11/14/bitorder/" class="leancloud_visitors" data-flag-title="Byte order of bitfield">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">//IP头部，总长度20字节   </div><div class="line">typedef struct _ip_hdr  </div><div class="line">&#123;  </div><div class="line">    #if LITTLE_ENDIAN   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    unsigned char version:4, //版本    </div><div class="line">    #else   </div><div class="line">    unsigned char version:4, //版本   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    #endif   </div><div class="line">    unsigned char tos;       //服务类型   </div><div class="line">    unsigned short tot_len;  //总长度   </div><div class="line">    unsigned short id;       //标志   </div><div class="line">    unsigned short frag_off; //分片偏移   </div><div class="line">    unsigned char ttl;       //生存时间   </div><div class="line">    unsigned char protocol;  //协议   </div><div class="line">    unsigned short chk_sum;  //检验和   </div><div class="line">    struct in_addr srcaddr;  //源IP地址   </div><div class="line">    struct in_addr dstaddr;  //目的IP地址   </div><div class="line">&#125;ip_hdr;</div></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/bitorder/#espandi" rel="contents">
+            <a class="btn" href="/2016/11/14/condition/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1538,7 +1380,7 @@
 <p>这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其包含的p会被自动释放。这几乎已经是auto_ptr的全部作用了，但是还有一些小秘密，下面结合它的代码看看他的实现，挖挖它的内涵。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/autoptr/#espandi" rel="contents">
+            <a class="btn" href="/2016/11/14/autoptr/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1589,7 +1431,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/odr/">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/sharedptr/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yizhiren">
@@ -1608,7 +1450,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/14/odr/" itemprop="url">ODR-The One Definition Rule</a></h1>
+                <a class="post-title-link" href="/2016/11/14/sharedptr/" itemprop="url">shared_ptr 之shared_from_this</a></h1>
         
 
         <div class="post-meta">
@@ -1660,7 +1502,7 @@
 
           
           
-             <span id="/2016/11/14/odr/" class="leancloud_visitors" data-flag-title="ODR-The One Definition Rule">
+             <span id="/2016/11/14/sharedptr/" class="leancloud_visitors" data-flag-title="shared_ptr 之shared_from_this">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1692,11 +1534,13 @@
 
       
         
-          <h2 id="ODR-One-Definition-Rule-下的奇淫异技"><a href="#ODR-One-Definition-Rule-下的奇淫异技" class="headerlink" title="ODR-(One Definition Rule) 下的奇淫异技"></a>ODR-(One Definition Rule) 下的奇淫异技</h2><h3 id="一行输出引起的-故事"><a href="#一行输出引起的-故事" class="headerlink" title="一行输出引起的..故事"></a>一行输出引起的..故事</h3><p>首先看这个终端的输出结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@localhost xxxx]# g++ -o binary binary.cpp libb.a liba.a</div><div class="line">[root@localhost xxxx]# ./binary </div><div class="line">1</div><div class="line">1</div><div class="line">[root@localhost xxxx]# g++ -o binary binary.cpp liba.a libb.a</div><div class="line">[root@localhost xxxx]# ./binary </div><div class="line">2</div><div class="line">2</div><div class="line">[root@localhost xxxx]# cat binary.cpp</div><div class="line">#include &lt;iostream&gt;</div><div class="line"></div><div class="line">extern int fna();</div><div class="line">extern int fnb();</div><div class="line"></div><div class="line">int main()&#123;</div><div class="line">    std::cout &lt;&lt; fna() &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; fnb() &lt;&lt; std::endl;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>可以看到我们通过改变两个库的链接顺序，改变了两个函数的返回值。how?<br>如果你对这个结果并没什么兴趣，你也许对下面的内容也不感兴趣。但是如果你挺有兴趣的话我们就来一起看看。</p>
+          <h1 id="shared-ptr-之shared-from-this"><a href="#shared-ptr-之shared-from-this" class="headerlink" title="shared_ptr 之shared_from_this"></a>shared_ptr 之shared_from_this</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br>怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
+<p>首先来看一个典型的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2 = sp;	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看出两点，一个是shared_ptr是可以赋值给别的变量的，不需要像unique_ptr那样通过move来赋值，因为shared_ptr不是独占指针而是共享，所以赋值是很平常的操作。 二是你不需要去手动释放该指针，new出来的变量会在最后一个相关联的shared_ptr消失时被释放，也就是在simple函数退出时，sp和sp2相继被销毁，于是new出来的变量也紧接着被释放，没有后顾之忧。</p>
+<p>再来看一个错误的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">fail</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> * p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(p);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2(p);	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/odr/#espandi" rel="contents">
+            <a class="btn" href="/2016/11/14/sharedptr/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1857,7 +1701,165 @@
 <p>另一个方面是unique_ptr比auto_ptr好在哪里， unique_ptr的出现是为了解决auto_ptr的两个问题，一个是静默的控制权转移问题，一个是不支持数组问题。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/uniqueptr/#espandi" rel="contents">
+            <a class="btn" href="/2016/11/14/uniqueptr/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/odr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/11/14/odr/" itemprop="url">ODR-The One Definition Rule</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">
+                2016-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码/" itemprop="url" rel="index">
+                    <span itemprop="name">代码</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2016/11/14/odr/" class="leancloud_visitors" data-flag-title="ODR-The One Definition Rule">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="ODR-One-Definition-Rule-下的奇淫异技"><a href="#ODR-One-Definition-Rule-下的奇淫异技" class="headerlink" title="ODR-(One Definition Rule) 下的奇淫异技"></a>ODR-(One Definition Rule) 下的奇淫异技</h2><h3 id="一行输出引起的-故事"><a href="#一行输出引起的-故事" class="headerlink" title="一行输出引起的..故事"></a>一行输出引起的..故事</h3><p>首先看这个终端的输出结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@localhost xxxx]# g++ -o binary binary.cpp libb.a liba.a</div><div class="line">[root@localhost xxxx]# ./binary </div><div class="line">1</div><div class="line">1</div><div class="line">[root@localhost xxxx]# g++ -o binary binary.cpp liba.a libb.a</div><div class="line">[root@localhost xxxx]# ./binary </div><div class="line">2</div><div class="line">2</div><div class="line">[root@localhost xxxx]# cat binary.cpp</div><div class="line">#include &lt;iostream&gt;</div><div class="line"></div><div class="line">extern int fna();</div><div class="line">extern int fnb();</div><div class="line"></div><div class="line">int main()&#123;</div><div class="line">    std::cout &lt;&lt; fna() &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; fnb() &lt;&lt; std::endl;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到我们通过改变两个库的链接顺序，改变了两个函数的返回值。how?<br>如果你对这个结果并没什么兴趣，你也许对下面的内容也不感兴趣。但是如果你挺有兴趣的话我们就来一起看看。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/11/14/odr/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>

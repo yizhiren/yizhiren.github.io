@@ -315,7 +315,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/sharedptr/">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/bitorder/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yizhiren">
@@ -334,7 +334,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/14/sharedptr/" itemprop="url">shared_ptr 之shared_from_this</a></h1>
+                <a class="post-title-link" href="/2016/11/14/bitorder/" itemprop="url">Byte order of bitfield</a></h1>
         
 
         <div class="post-meta">
@@ -386,7 +386,7 @@
 
           
           
-             <span id="/2016/11/14/sharedptr/" class="leancloud_visitors" data-flag-title="shared_ptr 之shared_from_this">
+             <span id="/2016/11/14/bitorder/" class="leancloud_visitors" data-flag-title="Byte order of bitfield">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -418,13 +418,11 @@
 
       
         
-          <h1 id="shared-ptr-之shared-from-this"><a href="#shared-ptr-之shared-from-this" class="headerlink" title="shared_ptr 之shared_from_this"></a>shared_ptr 之shared_from_this</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br>怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
-<p>首先来看一个典型的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2 = sp;	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>可以看出两点，一个是shared_ptr是可以赋值给别的变量的，不需要像unique_ptr那样通过move来赋值，因为shared_ptr不是独占指针而是共享，所以赋值是很平常的操作。 二是你不需要去手动释放该指针，new出来的变量会在最后一个相关联的shared_ptr消失时被释放，也就是在simple函数退出时，sp和sp2相继被销毁，于是new出来的变量也紧接着被释放，没有后顾之忧。</p>
-<p>再来看一个错误的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">fail</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> * p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(p);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2(p);	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+          <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">//IP头部，总长度20字节   </div><div class="line">typedef struct _ip_hdr  </div><div class="line">&#123;  </div><div class="line">    #if LITTLE_ENDIAN   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    unsigned char version:4, //版本    </div><div class="line">    #else   </div><div class="line">    unsigned char version:4, //版本   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    #endif   </div><div class="line">    unsigned char tos;       //服务类型   </div><div class="line">    unsigned short tot_len;  //总长度   </div><div class="line">    unsigned short id;       //标志   </div><div class="line">    unsigned short frag_off; //分片偏移   </div><div class="line">    unsigned char ttl;       //生存时间   </div><div class="line">    unsigned char protocol;  //协议   </div><div class="line">    unsigned short chk_sum;  //检验和   </div><div class="line">    struct in_addr srcaddr;  //源IP地址   </div><div class="line">    struct in_addr dstaddr;  //目的IP地址   </div><div class="line">&#125;ip_hdr;</div></pre></td></tr></table></figure>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/sharedptr/#espandi" rel="contents">
+            <a class="btn" href="/2016/11/14/bitorder/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
