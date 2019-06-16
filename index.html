@@ -1762,7 +1762,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/autoptr/">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/odr/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yizhiren">
@@ -1781,7 +1781,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/14/autoptr/" itemprop="url">auto_ptr 特性和源码解析</a></h1>
+                <a class="post-title-link" href="/2016/11/14/odr/" itemprop="url">ODR-The One Definition Rule</a></h1>
         
 
         <div class="post-meta">
@@ -1833,7 +1833,7 @@
 
           
           
-             <span id="/2016/11/14/autoptr/" class="leancloud_visitors" data-flag-title="auto_ptr 特性和源码解析">
+             <span id="/2016/11/14/odr/" class="leancloud_visitors" data-flag-title="ODR-The One Definition Rule">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1865,12 +1865,11 @@
 
       
         
-          <h2 id="C-中-auto-ptr-特性和源码解析"><a href="#C-中-auto-ptr-特性和源码解析" class="headerlink" title="C++ 中 auto-ptr 特性和源码解析"></a>C++ 中 auto-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</div><div class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">      <span class="built_in">auto_ptr</span>&lt;<span class="keyword">int</span>&gt; ap(p);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其包含的p会被自动释放。这几乎已经是auto_ptr的全部作用了，但是还有一些小秘密，下面结合它的代码看看他的实现，挖挖它的内涵。</p>
+          <h2 id="ODR-One-Definition-Rule-下的奇淫异技"><a href="#ODR-One-Definition-Rule-下的奇淫异技" class="headerlink" title="ODR-(One Definition Rule) 下的奇淫异技"></a>ODR-(One Definition Rule) 下的奇淫异技</h2><h3 id="一行输出引起的-故事"><a href="#一行输出引起的-故事" class="headerlink" title="一行输出引起的..故事"></a>一行输出引起的..故事</h3><p>首先看这个终端的输出结果：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">[root@localhost xxxx]# g++ -o binary binary.cpp libb.a liba.a</div><div class="line">[root@localhost xxxx]# ./binary </div><div class="line">1</div><div class="line">1</div><div class="line">[root@localhost xxxx]# g++ -o binary binary.cpp liba.a libb.a</div><div class="line">[root@localhost xxxx]# ./binary </div><div class="line">2</div><div class="line">2</div><div class="line">[root@localhost xxxx]# cat binary.cpp</div><div class="line">#include &lt;iostream&gt;</div><div class="line"></div><div class="line">extern int fna();</div><div class="line">extern int fnb();</div><div class="line"></div><div class="line">int main()&#123;</div><div class="line">    std::cout &lt;&lt; fna() &lt;&lt; std::endl;</div><div class="line">    std::cout &lt;&lt; fnb() &lt;&lt; std::endl;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到我们通过改变两个库的链接顺序，改变了两个函数的返回值。how?<br>如果你对这个结果并没什么兴趣，你也许对下面的内容也不感兴趣。但是如果你挺有兴趣的话我们就来一起看看。</p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/autoptr/#more" rel="contents">
+            <a class="btn" href="/2016/11/14/odr/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
