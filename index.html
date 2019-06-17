@@ -820,7 +820,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/05/23/receiver/" itemprop="url">怪异golang之receiver</a></h1>
+                <a class="post-title-link" href="/2019/05/23/receiver/" itemprop="url">strange golang receiver</a></h1>
         
 
         <div class="post-meta">
@@ -872,7 +872,7 @@
 
           
           
-             <span id="/2019/05/23/receiver/" class="leancloud_visitors" data-flag-title="怪异golang之receiver">
+             <span id="/2019/05/23/receiver/" class="leancloud_visitors" data-flag-title="strange golang receiver">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -904,12 +904,12 @@
 
       
         
-          <h1 id="怪异golang之receiver"><a href="#怪异golang之receiver" class="headerlink" title="怪异golang之receiver"></a>怪异golang之receiver</h1><h2 id="对象receiver"><a href="#对象receiver" class="headerlink" title="对象receiver"></a>对象receiver</h2><p>receiver是什么呢，一句话来解释的话约等于this指针。<br>用过c++的同学我们可以来这么来理解。</p>
+          <h1 id="strange-golang-receiver"><a href="#strange-golang-receiver" class="headerlink" title="strange golang receiver"></a>strange golang receiver</h1><h2 id="对象receiver"><a href="#对象receiver" class="headerlink" title="对象receiver"></a>对象receiver</h2><p>receiver是什么呢，一句话来解释的话约等于this指针。<br>用过c++的同学我们可以来这么来理解。</p>
 <h3 id="理解c-中的this指针"><a href="#理解c-中的this指针" class="headerlink" title="理解c++中的this指针"></a>理解c++中的this指针</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">class</span> Meta &#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="built_in">string</span> <span class="title">getName</span><span class="params">()</span></span>&#123;</div><div class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;name;</div><div class="line">	&#125;</div><div class="line">	<span class="built_in">string</span> name;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>这个类的成员函数getName中调用了this指针，可是this指针没有定义过呢，哪来的呢？</p>
 <p>答案是编译器加的，由于可执行文件中并不存在对象这种概念，但是存在函数的概念，所以编译器就必须把对象的调用转成函数的调用。</p>
-<p>编辑器是这么做的，他把string getName();这个成员函数转换成string getName(Meta* this);</p>
-<p>看到了吧，编辑器通过增加一个this参数来吧对象传递到成员函数中去，this指针就这么来了。</p>
+<p>编译器是这么做的，他把string getName();这个成员函数转换成string getName(Meta* this);</p>
+<p>看到了吧，编译器通过增加一个this参数来吧对象传递到成员函数中去，this指针就这么来了。</p>
 <h3 id="golang的’this’指针"><a href="#golang的’this’指针" class="headerlink" title="golang的’this’指针"></a>golang的’this’指针</h3><p>我们看到c++中this是隐式提供的，golang则选择了显式的提供this指针，提供的形式就是receiver。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">func (receiver) funcName(inputParameters...) (outputParameters...)&#123;</div><div class="line">	//</div><div class="line">&#125;</div></pre></td></tr></table></figure>
           <!--noindex-->
