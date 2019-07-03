@@ -359,7 +359,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T17:34:46+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T09:34:46+00:00">
                 2019-06-25
               </time>
             
@@ -563,7 +563,7 @@
 <p><code>span：请求链中的每一个环节为一个Span。</code></p>
 <p>每一个span有一个spanID来标识自身这个环节，parentID表示前一个span的ID（你可以认为span信息是一个结构体，包含多个属性），然后依次形成请求链，所以spanID也需要向下游传递。除此之外span中的信息还可以包括请求开始时间，结束时间，RPC调用的调用方信息和被被调用方信息。当我们希望一个spanid可以对应一个RPC请求时，我们需要做到spanid全局唯一，如果没有这个需要，spanid不必全局唯一。下图是串接span的示意图。</p>
 <p><img src="/linkimage/microservices/spanids.png" alt="spanids"></p>
-<p>图片来自<a href="https://www.infoq.cn/article/how-to-realize-distributed-tracking" target="_blank" rel="external">InfoQ</a></p>
+<p>图片来自<a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf" target="_blank" rel="external">Dapper论文</a></p>
 <p>基于这3个概念，跟踪系统的实现可以分成4个步骤。</p>
 <h4 id="日志记录"><a href="#日志记录" class="headerlink" title="日志记录"></a>日志记录</h4><p>每一个服务在日志中记录下traceid，span信息，和各自需要的annotation信息。</p>
 <p>假如公司层面有一些公共的网络库或者日志库，可以把记录traceid和spanid的工作隐藏起来，做到无侵入，服务方只需要记录自己关注的annotation信息即可。</p>
@@ -589,18 +589,18 @@
 <p>图片来自<a href="https://m.2cto.com/kf/201612/575219.html" target="_blank" rel="external">RabbitMQ下的生产消费者模式与订阅发布模式</a></p>
 <p>生产者和消费者都是通过TCP连接到RabbitMQ的BrokerServer，生产者把消息发布到Exchange，并指明RoutingKey，生产者不关心有哪些Queue和放到哪些Queue，由Broker负责根据RoutingKey把消息路由到相关的Queue，根据规则（完全匹配或者通配符匹配或者广播），一个消息是可以路由到多个Queue的。同一个Queue也可以被多个消费者消费，来分担某一类消息的流量。Queue是事先创建好的，并指定了RoutingKey的，这个RoutingKey跟生产者指明的RoutingKey的意义一样，只是Queue的RoutingKey可以包含通配符用来匹配一类消息。RabbitMQ还为生产者端提供了Confirm机制，为消费者端提供了ACK机制来确保消息成功进入Queue和成功被消费。</p>
 <p>可以看到，RabbitMQ所做的工作就是可靠地把生产者产生的消息路由到消费者手中，没有对消息本身做任何的操作。这是符合微服务架构简单化通信的特征的。</p>
-<h4 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h4><p>从不同公司的实践来看，微服务使用的协议多种多样，有基于HTTP的，有直接基于TCP的；有使用thrift的，也有protobuf或者JSON格式的。尽管在《<a href="https://martinfowler.com/articles/microservices.html#footnote-protobufs" target="_blank" rel="external">microservices</a>》一文中提到：</p>
+<h4 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h4><p>从不同公司的实践来看，微服务使用的协议多种多样，有基于HTTP的，有直接基于TCP的；有使用thrift的，也有protobuf或者JSON格式的。尽管在《<a href="https://martinfowler.com/articles/microservices.html" target="_blank" rel="external">microservices</a>》一文中提到：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">The two protocols used most commonly are HTTP request-response with resource API&apos;s and lightweight messaging.</div></pre></td></tr></table></figure>
 <p>”最常用的两种协议是基于资源API的HTTP请求-响应，和轻量的通信。“</p>
 <p>资源API我们可以理解为这是一个REST based services。关于REST based和RESTFUL的差别可见如下讨论：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">来自：https://stackoverflow.com/questions/1568834/whats-the-difference-between-rest-restful#</div><div class="line"></div><div class="line">REST (REpresentational State Transfer) is basically an architectural style of development having some principles...</div><div class="line">It should be stateless</div><div class="line">It should access all the resources from the server using only URI</div><div class="line">It does not have inbuilt encryption</div><div class="line">It does not have session</div><div class="line">It uses one and only one protocol that is HTTP</div><div class="line">For performing CRUD operations, it should use HTTP verbs such as get, post, put and delete</div><div class="line">It should return the result only in the form of JSON or XML, atom, OData etc. (lightweight data )</div><div class="line">REST based services follow some of the above principles and not all</div><div class="line">RESTFUL services means it follows all the above principles.</div></pre></td></tr></table></figure>
-<p>但同时在文章的注释处也说明了，在极端规模下，有些组织会转而使用二进制的协议，但这并不会影响微服务通信简单化的特性。所以我们来讨论下不同通信协议的选择问题。</p>
+<p>但同时在文章的注释处也说明了，在极端规模下，有些组织会转而使用二进制的协议，但这并不会影响微服务通信简单化的特性。<br>既然协议没有严格限定，那我们来讨论下不同通信协议的选择问题。</p>
 <h5 id="调用方式"><a href="#调用方式" class="headerlink" title="调用方式"></a>调用方式</h5><p>调用方式主要有REST和RPC，我们来对比看看。</p>
 <p>REST是一种架构风格，他把所有内容都视为资源，主要有这些特征：</p>
 <p>使用URI定位资源；使用HTTP协议；使用HTTP的GET/POST/PUT/DELETE来执行增删改查资源；不含内建的加密；无状态；不含会话信息；使用轻量数据格式。</p>
 <p>可以看到REST使用基于文本的应用层协议，效率低；REST充分利用通用的协议，HTTP，JSON，XML等，因此REST的通用性往往很好，不同语言都能轻松接入；REST利用HTTP的4个动作来构建协议，使得REST的接口天生就有不错的语义表达。</p>
 <p>RPC即远程方法调用，应用可以像调用本地方法一样调用远程方法。RPC调用往往跨越传输层和应用层，RPC框架的客户端会基于TCP或者UDP来传递带请求参数的数据到服务端，服务端经过同样的流程返回数据到客户端，使用方可以不关注网络细节。</p>
-<p>可以看到RPC使用二进制协议，效率高；同时RPC需要自己制定报文结构，这导致他的通用性受到影响。比如最简单的结构定义如下，试想，每种语言为了接入它，都得实现一遍Parser，不像HTTP已经是一种通用的协议，他的Parser已经被广泛实现。</p>
+<p>使用RPC的服务更在意性能，他们通常选择二进制协议，效率高；同时RPC需要自己制定报文结构，这导致他的通用性受到影响。比如最简单的结构定义如下，试想，每种语言为了接入它，都得实现一遍Parser，不像HTTP已经是一种通用的协议，他的Parser已经被广泛实现。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 一种最简单的私有报文结构</div><div class="line"># 前8个字节为magic number，表示协议的开端，接着8个字节为payload的长度，随后跟着长度为length的payload</div><div class="line">┌────────────────────────────────────┐</div><div class="line">│ magic │ length │  payload          │</div><div class="line">└────────────────────────────────────┘</div></pre></td></tr></table></figure>
 <p>相应的，http的报文结构：</p>
 <p><img src="/linkimage/microservices/httpstruct.png" alt="httpstruct"></p>
@@ -622,17 +622,17 @@
 </tr>
 <tr>
 <td style="text-align:center">性能</td>
-<td>不支持</td>
-<td style="text-align:left">不需要</td>
+<td>低</td>
+<td style="text-align:left">高</td>
 </tr>
 <tr>
-<td style="text-align:center">灵活度</td>
-<td>不支持</td>
-<td style="text-align:left">不需要</td>
+<td style="text-align:center">通用性</td>
+<td>高</td>
+<td style="text-align:left">低</td>
 </tr>
 </tbody>
 </table>
-<h5 id="序列化协议"><a href="#序列化协议" class="headerlink" title="序列化协议"></a>序列化协议</h5><p>序列化协议用来做什么呢，我们对照前面的私有报文结构来看，序列化协议是关于你如何把你的数据序列化到私有协议的payload（对应http中的body），以及如何把payload反序列化成你要的数据的过程。不管是REST还是RPC，序列化协议都是没有严格定义的，你可以自己选择。关于选择序列化协议的依据，我有一些自己的建议。</p>
+<h5 id="序列化协议"><a href="#序列化协议" class="headerlink" title="序列化协议"></a>序列化协议</h5><p>序列化协议用来做什么呢，我们对照前面的私有报文结构来看，序列化协议是关于你如何把你的数据序列化到私有协议的payload（对应http中的body），以及如何把payload反序列化成你要的数据的过程。不管是REST还是RPC，序列化协议都是没有严格定义的，你可以自己选择。关于选择序列化协议的依据，我建议参考下面几个维度。</p>
 <p><code>流行度</code></p>
 <p>流行度高不光意味着他在跨语言跨平台方面更突出，还意味着更低的学习成本，更稳定的功能库，和更小的风险。</p>
 <p><code>性能</code></p>
@@ -641,7 +641,7 @@
 <p>时间开销：复杂的序列化协议导致过长的编解码时间，过长的时间会导致系统响应缓慢。</p>
 <p><code>可调试性</code></p>
 <p>序列化后的数据正确性在调试中比较困难，难以确定是序列化方还是反序列化方导致的问题。</p>
-<p>所以好的可调试性序列化协议需具备一些特点，</p>
+<p>所以具有较好可调试性的序列化协议需具备一些特点，</p>
 <p>一种是序列化库需要提供序列化成可读数据的接口，便于查看数据可定位问题（protobuf为例）。</p>
 <p>一种是序列化后的数据本身具有可读性，这方面xml和json就具备人眼可读的特点。</p>
 <p><code>可扩展性</code></p>
@@ -665,7 +665,7 @@
 <p><a href="https://www.javazhiyin.com/33919.html" target="_blank" rel="external">主流微服务配置中心对比</a></p>
 <p><a href="https://static001.infoq.cn/resource/ebook/df/70/dfa72acdd44c2cbd0b777d54e2846570.pdf" target="_blank" rel="external">架构师</a></p>
 <p><a href="https://www.infoq.cn/article/how-to-realize-distributed-tracking" target="_blank" rel="external">微服务架构下，如何实现分布式跟踪？</a></p>
-<p><a href="https://github.com/AlphaWang/alpha-dapper-translation-zh" target="_blank" rel="external">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></p>
+<p><a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf" target="_blank" rel="external">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></p>
 <p><a href="https://www.slideshare.net/terryice/eagleeye-with-taobaojavaone" target="_blank" rel="external">鹰眼下的淘宝</a></p>
 <p><a href="https://m.2cto.com/kf/201612/575219.html" target="_blank" rel="external">RabbitMQ下的生产消费者模式与订阅发布模式</a></p>
 <p><a href="https://kb.cnblogs.com/page/515982/" target="_blank" rel="external">序列化和反序列化</a></p>
