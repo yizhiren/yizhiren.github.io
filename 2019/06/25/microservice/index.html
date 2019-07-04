@@ -99,6 +99,7 @@
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/eagleeyestore.png">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/rabbitmq.png">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/httpstruct.png">
+<meta property="og:image" content="http://yizhi.ren/linkimage/microservices/deployflow.png">
 <meta property="og:updated_time" content="2019-06-25T09:34:46.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="微服务架构">
@@ -359,7 +360,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T09:34:46+00:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-25T17:34:46+08:00">
                 2019-06-25
               </time>
             
@@ -592,13 +593,16 @@
 <h4 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h4><p>从不同公司的实践来看，微服务使用的协议多种多样，有基于HTTP的，有直接基于TCP的；有使用thrift的，也有protobuf或者JSON格式的。尽管在《<a href="https://martinfowler.com/articles/microservices.html" target="_blank" rel="external">microservices</a>》一文中提到：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">The two protocols used most commonly are HTTP request-response with resource API&apos;s and lightweight messaging.</div></pre></td></tr></table></figure>
 <p>”最常用的两种协议是基于资源API的HTTP请求-响应，和轻量的通信。“</p>
-<p>资源API我们可以理解为这是一个REST based services。关于REST based和RESTFUL的差别可见如下讨论：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">来自：https://stackoverflow.com/questions/1568834/whats-the-difference-between-rest-restful#</div><div class="line"></div><div class="line">REST (REpresentational State Transfer) is basically an architectural style of development having some principles...</div><div class="line">It should be stateless</div><div class="line">It should access all the resources from the server using only URI</div><div class="line">It does not have inbuilt encryption</div><div class="line">It does not have session</div><div class="line">It uses one and only one protocol that is HTTP</div><div class="line">For performing CRUD operations, it should use HTTP verbs such as get, post, put and delete</div><div class="line">It should return the result only in the form of JSON or XML, atom, OData etc. (lightweight data )</div><div class="line">REST based services follow some of the above principles and not all</div><div class="line">RESTFUL services means it follows all the above principles.</div></pre></td></tr></table></figure>
+<p>资源API我们可以理解为面向资源的架构，是符合REST风格的一种架构。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">来自《RESTFUL WEB SERVICES中文版》：http://www.sendsms.cn/box/dl/_25B1_25E0_25B3_25CC_25BC_25BC_25CA_25F5/_25D4_25AD_25C0_25ED_25CB_25BC_25CF_25EB/_25C9_25E8_25BC_25C6_25BC_25DC_25B9_25B9/RESTful_Web_Service.pdf</div><div class="line">第80页</div><div class="line"></div><div class="line">REST并不是一种架构，而是一组设计原则，你可以讲“在遵守这些原则方面，一个架构做得比另一个架构好”，但是你不能讲&quot;REST架构&quot;，因为不存在一个叫&quot;REST架构&quot;的东西。</div><div class="line">...</div><div class="line">作为一组设计原则，REST是非常通用的。具体地说，它并不限定于WEB，REST不依赖于HTTP机制或者URI结构。但因为我讨论的是WEB服务，所以特地用WEB相关技术来讲解面向资源的架构(ROA)。我想在特定的编程语言中探讨如何用HTTP和URI来实现REST。加入将来出现非基于WEB的REST式架构，它的最佳实践将根ROA的差不多，只是具体细节会有点差别。</div></pre></td></tr></table></figure>
 <p>但同时在文章的注释处也说明了，在极端规模下，有些组织会转而使用二进制的协议，但这并不会影响微服务通信简单化的特性。<br>既然协议没有严格限定，那我们来讨论下不同通信协议的选择问题。</p>
-<h5 id="调用方式"><a href="#调用方式" class="headerlink" title="调用方式"></a>调用方式</h5><p>调用方式主要有REST和RPC，我们来对比看看。</p>
-<p>REST是一种架构风格，他把所有内容都视为资源，主要有这些特征：</p>
-<p>使用URI定位资源；使用HTTP协议；使用HTTP的GET/POST/PUT/DELETE来执行增删改查资源；不含内建的加密；无状态；不含会话信息；使用轻量数据格式。</p>
-<p>可以看到REST使用基于文本的应用层协议，效率低；REST充分利用通用的协议，HTTP，JSON，XML等，因此REST的通用性往往很好，不同语言都能轻松接入；REST利用HTTP的4个动作来构建协议，使得REST的接口天生就有不错的语义表达。</p>
+<h5 id="调用方式"><a href="#调用方式" class="headerlink" title="调用方式"></a>调用方式</h5><p>调用方式主要有REST和RPC，我们来对比看看。正如上面来自《RESTFUL WEB SERVICES中文版》的内容所说，REST原则并不限定于WEB，也不依赖于HTTP。但是为了讨论方便，我们以最常见的基于HTTP的WEB服务来作为使用REST设计原则的代表。</p>
+<p>REST是一种架构设计原则，主要有这些特征：</p>
+<p><code>可寻址性</code>，它使用URI定位资源，一个URI只能指示一个资源；</p>
+<p><code>无状态性</code>，请求里包含服务器所需的全部信息，服务器不依赖于任何之前请求提供的信息；</p>
+<p><code>连通性</code>，客户端应用状态自己保存，并在服务器提供的链接的指引下发生变迁；</p>
+<p><code>接口一致性</code>，使用统一的方法来操作资源，对于HTTP而言，统一的操作方法是GET/POST/PUT/DELETE/OPTIONS/HEAD</p>
+<p>可以看到REST使用基于文本的应用层协议，效率低；REST利用通用的协议HTTP来发布服务，因此各种语言都能轻松接入；REST采用统一接口 ，使得每个服务都以同样的方式使用HTTP接口。</p>
 <p>RPC即远程方法调用，应用可以像调用本地方法一样调用远程方法。RPC调用往往跨越传输层和应用层，RPC框架的客户端会基于TCP或者UDP来传递带请求参数的数据到服务端，服务端经过同样的流程返回数据到客户端，使用方可以不关注网络细节。</p>
 <p>使用RPC的服务更在意性能，他们通常选择二进制协议，效率高；同时RPC需要自己制定报文结构，这导致他的通用性受到影响。比如最简单的结构定义如下，试想，每种语言为了接入它，都得实现一遍Parser，不像HTTP已经是一种通用的协议，他的Parser已经被广泛实现。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"># 一种最简单的私有报文结构</div><div class="line"># 前8个字节为magic number，表示协议的开端，接着8个字节为payload的长度，随后跟着长度为length的payload</div><div class="line">┌────────────────────────────────────┐</div><div class="line">│ magic │ length │  payload          │</div><div class="line">└────────────────────────────────────┘</div></pre></td></tr></table></figure>
@@ -652,23 +656,42 @@
 <p>选项二是你有自身的ssl方案。比如thrift自身实现ssl传输层方案</p>
 <p>我们可以想到并没有一个协议是样样都占优的，比如二进制协议的性能往往好于字符形式的，但是二进制协议的可调式性却往往差于字符形式的。</p>
 <p>我们只需要根据自己的业务场景和特点，选择最适合你的序列化协议。</p>
-<h3 id="服务部署"><a href="#服务部署" class="headerlink" title="服务部署"></a>服务部署</h3><p>TBD</p>
+<h3 id="服务部署"><a href="#服务部署" class="headerlink" title="服务部署"></a>服务部署</h3><p>在前面讲微服务特征的时候讲到了微服务的交付自动化，我们可以知道自动化交付是微服务架构必不可少的条件。那除了自动化交付外，还有哪些部署相关的措施是微服务必须的呢？</p>
+<p>容器已经被社区接受为交付微服务的一种理想手段，一个轻量级的基于容器的服务部署平台主要包括容器调度系统，发布系统，镜像治理中心，资源治理平台等模块。</p>
+<p><code>容器调度</code></p>
+<p>屏蔽容器细节，将整个集群抽象成容器资源池，支持按需申请和释放容器资源，物理机发生故障时能够实现自动故障迁移 (fail over)。比如kubernetes, mesos, swarm.</p>
+<p><code>镜像治理</code></p>
+<p>基于 Docker Registry，封装一些轻量级的治理功能。VMware 开源的 <a href="https://github.com/goharbor/harbor" target="_blank" rel="external">harbor</a>是目前社区比较成熟的企业级产品，在 Docker Registry 基础上扩展了权限控制，审计，镜像同步，管理界面等治理能力。</p>
+<p><code>资源治理</code></p>
+<p>在容器云环境中，企业需要对应用，人员 ，容器配额和数量等相关信息进行治理。治理的核心是分配好应用、人员和资源之间的权限关系。对于容器管理平台来说，主要关注的资源有计算资源、存储资源和网络资源.</p>
+<p><code>发布平台</code></p>
+<p>面向用户的发布管理控制台，支持发布流程编排。它和其它子系统对接交互，实现基本的应用发布能力。发布平台要对接自动化交付系统和容器调度系统。</p>
+<p>这几个模块之间的关系如下图所示</p>
+<p><img src="/linkimage/microservices/deployflow.png" alt="delpoyflow"></p>
+<p>用户的操作流程如下：</p>
+<p>应用通过自动化交付系统集成后生成镜像，开发人员将镜像推到镜像治理中心；</p>
+<p>用户在资源治理平台申请发布应用，填写发布配额发布策略等相关信息，然后等待审批通过；</p>
+<p>发布申请审批通过，开发人员通过发布平台发布应用；</p>
+<p>发布平台通过查询资源治理平台获取发布规格信息；</p>
+<p>发布平台向容器云发出启动容器实例指令；</p>
+<p>容器云从镜像治理中心拉取镜像并启动容器；</p>
 <h2 id="微服务的优点"><a href="#微服务的优点" class="headerlink" title="微服务的优点"></a>微服务的优点</h2><p>TBD</p>
 <h2 id="微服务的缺点"><a href="#微服务的缺点" class="headerlink" title="微服务的缺点"></a>微服务的缺点</h2><p>TBD</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://martinfowler.com/articles/microservices.html" target="_blank" rel="external">Microservices</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://static001.infoq.cn/resource/ebook/df/70/dfa72acdd44c2cbd0b777d54e2846570.pdf" target="_blank" rel="external">架构师</a></p>
 <p><a href="http://blog.cuicc.com/blog/2015/07/22/microservices/" target="_blank" rel="external">微服务</a></p>
-<p><a href="https://junq.io/%E4%B8%80%E5%88%86%E9%92%9F%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%A5%BD%E5%A4%84%E5%92%8C%E9%99%B7%E9%98%B1.html" target="_blank" rel="external">一分钟了解微服务的好处和陷阱</a></p>
-<p><a href="https://www.ibm.com/developerworks/cn/websphere/library/techarticles/1601_clark-trs/1601_clark.html" target="_blank" rel="external">微服务、SOA 和 API：是敌是友？</a></p>
-<p><a href="https://www.ibm.com/developerworks/cn/webservices/1003_xiaojg_soabc/" target="_blank" rel="external">面向服务的体系架构（SOA）和业务组件（BC）的思考</a></p>
+<p><a href="https://martinfowler.com/articles/microservices.html" target="_blank" rel="external">Microservices</a></p>
+<p><a href="https://www.slideshare.net/terryice/eagleeye-with-taobaojavaone" target="_blank" rel="external">鹰眼下的淘宝</a></p>
+<p><a href="https://kb.cnblogs.com/page/515982/" target="_blank" rel="external">序列化和反序列化</a></p>
+<p><a href="https://www.javazhiyin.com/33919.html" target="_blank" rel="external">主流微服务配置中心对比</a></p>
 <p><a href="https://www.infoq.cn/article/micro-service-technology-stack" target="_blank" rel="external">微服务架构技术栈选型手册</a></p>
 <p><a href="https://my.oschina.net/yu120/blog/1788928?nocache=1523859217622" target="_blank" rel="external">微服务架构—优雅停机方案</a></p>
-<p><a href="https://www.javazhiyin.com/33919.html" target="_blank" rel="external">主流微服务配置中心对比</a></p>
-<p><a href="https://static001.infoq.cn/resource/ebook/df/70/dfa72acdd44c2cbd0b777d54e2846570.pdf" target="_blank" rel="external">架构师</a></p>
+<p><a href="http://www.sendsms.cn/box/dl/_25B1_25E0_25B3_25CC_25BC_25BC_25CA_25F5/_25D4_25AD_25C0_25ED_25CB_25BC_25CF_25EB/_25C9_25E8_25BC_25C6_25BC_25DC_25B9_25B9/RESTful_Web_Service.pdf" target="_blank" rel="external">RESTful_Web_Service中文版</a></p>
+<p><a href="https://junq.io/%E4%B8%80%E5%88%86%E9%92%9F%E4%BA%86%E8%A7%A3%E5%BE%AE%E6%9C%8D%E5%8A%A1%E7%9A%84%E5%A5%BD%E5%A4%84%E5%92%8C%E9%99%B7%E9%98%B1.html" target="_blank" rel="external">一分钟了解微服务的好处和陷阱</a></p>
+<p><a href="https://www.ibm.com/developerworks/cn/websphere/library/techarticles/1601_clark-trs/1601_clark.html" target="_blank" rel="external">微服务、SOA 和 API：是敌是友？</a></p>
 <p><a href="https://www.infoq.cn/article/how-to-realize-distributed-tracking" target="_blank" rel="external">微服务架构下，如何实现分布式跟踪？</a></p>
-<p><a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf" target="_blank" rel="external">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></p>
-<p><a href="https://www.slideshare.net/terryice/eagleeye-with-taobaojavaone" target="_blank" rel="external">鹰眼下的淘宝</a></p>
 <p><a href="https://m.2cto.com/kf/201612/575219.html" target="_blank" rel="external">RabbitMQ下的生产消费者模式与订阅发布模式</a></p>
-<p><a href="https://kb.cnblogs.com/page/515982/" target="_blank" rel="external">序列化和反序列化</a></p>
+<p><a href="https://www.ibm.com/developerworks/cn/webservices/1003_xiaojg_soabc/" target="_blank" rel="external">面向服务的体系架构（SOA）和业务组件（BC）的思考</a></p>
+<p><a href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf" target="_blank" rel="external">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></p>
 
       
     </div>
