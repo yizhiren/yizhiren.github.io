@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="西佳佳," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -79,17 +79,15 @@
 
 
 
-<meta name="description" content="condition_variable简介在头文件&amp;lt; condition_variable &amp;gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。 条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。 所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。 来看一个简单的例子：">
-<meta name="keywords" content="西佳佳">
-<meta property="og:type" content="article">
-<meta property="og:title" content="condition_variable为什么需要mutex">
-<meta property="og:url" content="http://yizhi.ren/2016/11/14/condition/index.html">
+<meta name="description" content="promise.get_future();">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一支人">
+<meta property="og:url" content="http://yizhi.ren/archives/2019/09/index.html">
 <meta property="og:site_name" content="一支人">
-<meta property="og:description" content="condition_variable简介在头文件&amp;lt; condition_variable &amp;gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。 条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。 所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。 来看一个简单的例子：">
-<meta property="og:updated_time" content="2016-11-14T09:34:46.000Z">
+<meta property="og:description" content="promise.get_future();">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="condition_variable为什么需要mutex">
-<meta name="twitter:description" content="condition_variable简介在头文件&amp;lt; condition_variable &amp;gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。 条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。 所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。 来看一个简单的例子：">
+<meta name="twitter:title" content="一支人">
+<meta name="twitter:description" content="promise.get_future();">
 
 
 
@@ -119,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://yizhi.ren/2016/11/14/condition/"/>
+  <link rel="canonical" href="http://yizhi.ren/archives/2019/09/"/>
 
 
 
 
 
-  <title>condition_variable为什么需要mutex | 一支人</title>
+  <title>归档 | 一支人</title>
   
 
 
@@ -154,7 +152,7 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left page-archive">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -302,243 +300,74 @@
           <div id="content" class="content">
             
 
-  <div id="posts" class="posts-expand">
-    
+  
+  
+  
+  <div class="post-block archive">
+    <div id="posts" class="posts-collapse">
+      <span class="archive-move-on"></span>
 
-  
+      <span class="archive-page-counter">
+        
+        
+        
+          
+        
+        嗯..! 目前共计 17 篇日志。 继续努力。
+      </span>
 
-  
-  
-  
+      
+
+        
+        
+        
+
+        
+          
+          <div class="collection-title">
+            <h1 class="archive-year" id="archive-year-2019">2019</h1>
+          </div>
+        
+        
+
+        
 
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/condition/">
+    <header class="post-header">
 
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-    </span>
-
-    
-      <header class="post-header">
-
+      <h2 class="post-title">
         
+            <a class="post-title-link" href="/2019/09/03/locks/" itemprop="url">
+              
+                <span itemprop="name">不同形式的锁</span>
+              
+            </a>
         
-          <h1 class="post-title" itemprop="name headline">condition_variable为什么需要mutex</h1>
-        
+      </h2>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T09:34:46+00:00">
-                2016-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/代码/" itemprop="url" rel="index">
-                    <span itemprop="name">代码</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2016/11/14/condition/" class="leancloud_visitors" data-flag-title="condition_variable为什么需要mutex">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        <h2 id="condition-variable"><a href="#condition-variable" class="headerlink" title="condition_variable"></a>condition_variable</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在头文件&lt; condition_variable &gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。</p>
-<p>条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。</p>
-<p>所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。</p>
-<p>来看一个简单的例子：</p>
-<a id="more"></a>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">#include &lt;iostream&gt;             </div><div class="line">#include &lt;thread&gt;               </div><div class="line">#include &lt;mutex&gt;                </div><div class="line">#include &lt;condition_variable&gt;   </div><div class="line"></div><div class="line"></div><div class="line">std::mutex mtx; </div><div class="line">std::condition_variable cv; </div><div class="line">bool ready = false; </div><div class="line"></div><div class="line">void wait_ready()</div><div class="line">&#123;</div><div class="line">    std::unique_lock &lt;std::mutex&gt; lck(mtx);</div><div class="line">	</div><div class="line">    std::cout &lt;&lt; &quot;before wait.&quot; &lt;&lt; std::endl;</div><div class="line">    cv.wait(lck,[]()&#123;return ready;&#125;); </div><div class="line">	std::cout &lt;&lt; &quot;after wait.&quot; &lt;&lt; std::endl;</div><div class="line">    </div><div class="line">&#125;</div><div class="line"></div><div class="line">void make_ready()</div><div class="line">&#123;</div><div class="line">    std::unique_lock &lt;std::mutex&gt; lck(mtx);</div><div class="line">    ready = true;</div><div class="line">	</div><div class="line">    std::cout &lt;&lt; &quot;before notify.&quot; &lt;&lt; std::endl;</div><div class="line">    cv.notify_all(); </div><div class="line">    std::cout &lt;&lt; &quot;after notify.&quot; &lt;&lt; std::endl;</div><div class="line">&#125;</div><div class="line"></div><div class="line"></div><div class="line">int main(int argc, char** argv) &#123;</div><div class="line">	std::thread wait_t(wait_ready);</div><div class="line">	std::thread ready_t(make_ready);</div><div class="line">	</div><div class="line">	wait_t.join();</div><div class="line">	ready_t.join();</div><div class="line">	return 0;</div><div class="line">&#125;</div><div class="line"></div><div class="line">/*** output:</div><div class="line">before wait.</div><div class="line">before notify.</div><div class="line">after notify.</div><div class="line">after wait.</div><div class="line">***/</div></pre></td></tr></table></figure>
-<p>可以看到这里wait_ready()等待make_ready()的唤醒后才往下执行。这是condition_variable的典型用法，一边wait一边notify。</p>
-<h3 id="wait函数的参数"><a href="#wait函数的参数" class="headerlink" title="wait函数的参数"></a>wait函数的参数</h3><p>我们一步一步说，wait函数可以有两个参数，第一个参数是一个mutex类型，也就是一个锁；第二个参数是一个返回类型是bool的函数，意思是直到这个函数返回true才往下执行。可以放心的是它不是通过死循环来判断这个条件的，不然还需要另一边notify干嘛。wait会在刚进入时判断这个函数返回值，如果false就睡眠，每次被唤醒后再次判断。</p>
-<p>带来疑问的是第一个参数是否有必要，为什么我们要传入一个锁呢。很多同学说是为了保护类内部的资源，因为可以想象这里面应该会有一个队列存放着所有wait的线程，wait和notify的时候都会来访问这个队列，所以至少这个队列是需要一个锁来保护的。理由都对，结论却不对。内部资源确实是需要保护，但是难道它不能再内部创建一个锁来使用吗，它的实现也确实是用了内部的锁。所以这个lock一定不是用来保护内部的资源。那又是为何呢？</p>
-<h3 id="不用锁会遇到什么问题"><a href="#不用锁会遇到什么问题" class="headerlink" title="不用锁会遇到什么问题"></a>不用锁会遇到什么问题</h3><p>我们只要知道不用锁会遇到的问题也就知道为什么用了。</p>
-<p>我们首先把cv.wait( lck,[](  ){return ready;} );做个等价变换：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">// 如果不使用锁，也就是这样</div><div class="line">while(! ready )&#123;</div><div class="line">cv.wait()</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>同时另一个线程notify的步骤不受影响</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ready = true;</div><div class="line">cv.notify_all();</div></pre></td></tr></table></figure>
-<p>那么如果按先上面再下面的顺序执行，先执行上面的线程，首先 ready为false，进入wait。再执行下面，ready变为true，wait被唤醒，并检查ready，不满足while条件，于是跳出while，线程走下去了。</p>
-<p>再看按照先下面再上面的顺序执行，先下面，ready变成true，然后notify_all，因为没有线程在wait，于是属于空操作；接着上面的线程执行，while条件不满足，于是跳出，线程走下去了。</p>
-<p>没毛病！</p>
-<p>但是你没注意交叉执行的情况：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Process A                             Process B</div><div class="line"></div><div class="line"></div><div class="line">while (！ready)</div><div class="line"></div><div class="line">                                      ready = true;</div><div class="line">                                      cv.notify_all();</div><div class="line"></div><div class="line">    cv.wait()</div></pre></td></tr></table></figure>
-<p>看到了吧，这种情况下A线程永远无法走下去，然而从编程者的期待中一定觉得是应该走下去的。</p>
-<p>解决方法也很简单，加锁嘛。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">Process A                             Process B</div><div class="line"></div><div class="line">mtx.lock()</div><div class="line">while (！ready)</div><div class="line">                                      mtx.lock()</div><div class="line">                                      ready = true;</div><div class="line">                                      cv.notify_all();</div><div class="line">                                      mtx.unlock();</div><div class="line"></div><div class="line">    cv.wait()</div><div class="line">mtx.unlock()</div></pre></td></tr></table></figure>
-<p>由于你加了锁，上面的顺序是无法发生的，所以这样是安全的。<br>现在我们知道了不能没有锁，下面我们再看看锁怎么用。</p>
-<h3 id="用了锁还有什么问题"><a href="#用了锁还有什么问题" class="headerlink" title="用了锁还有什么问题"></a>用了锁还有什么问题</h3><p>前面加锁的方法真的安全吗？ 并不是，虽然不会交叉执行了，但是却也无法顺序执行了，如果B先拿到锁，接着释放并没什么问题；但是如果A先拿到锁，接着等待，并持续持有锁，此时B无法拿到锁，也就无法唤醒A线程。问题好像更大了。</p>
-<p>这时wait 函数说这个问题我来处理，我可以在进入睡眠状态后把锁释放掉，然后在被唤醒后再把锁抢回来，这样对外部来说是感觉不到锁被释放过的。</p>
-<p>是个好主意，也确实是这么做的，传入锁不是为了加锁而是为了解锁，于是就有了我们把lck传给wait的这个用法。终于弄清楚为什么这么设计了。</p>
-<p>再补充一点，对于如线程B这样的先修改判断条件再notify的过程，加锁不一定要把cv.notify_all加进去，你只要把修改判断条件的放到锁里面就好，notify_all也放锁里当然也没问题。 如果只notify，不改条件，那自然无所谓，不会影响wait的结果。对于要修改条件的，由于涉及到了并发访问了，基本上上锁就对了。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>condition_variable 通过wait和notify来达到线程间的同步；</p>
-<p>wait函数可传入条件函数，在首次进入和被唤醒时执行条件函数，返回true才真正被唤醒往下走。</p>
-<p>wait必须传入mutex，这个不是保护类内部资源，而是保护外部的条件函数到睡眠状态的间隙，避免被其他线程打断，丢失唤醒的机会。</p>
-<p>传入wait的mutex在类内部不是一直加着锁也不是一直解开锁，而是先被解锁再被加锁，以让其他线程能有机会得到锁。</p>
-
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-      <div>
-        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
-  <div>坚持原创</div>
-  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
-    <span>打赏</span>
-  </button>
-  <div id="QR" style="display: none;">
-
-    
-      <div id="wechat" style="display: inline-block">
-        <img id="wechat_qr" src="/payimage/wechat.png" alt="yizhiren 微信支付"/>
-        <p>微信支付</p>
+      <div class="post-meta">
+        <time class="post-time" itemprop="dateCreated"
+              datetime="2019-09-03T17:34:46+08:00"
+              content="2019-09-03" >
+          09-03
+        </time>
       </div>
-    
 
-    
-      <div id="alipay" style="display: inline-block">
-        <img id="alipay_qr" src="/payimage/zhifubao.png" alt="yizhiren 支付宝"/>
-        <p>支付宝</p>
-      </div>
-    
-
-    
-
-  </div>
-</div>
-
-      </div>
-    
-
-    
-
-    <footer class="post-footer">
-      
-        <div class="post-tags">
-          
-            <a href="/tags/西佳佳/" rel="tag"># 西佳佳</a>
-          
-        </div>
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2017/02/02/distribute/" rel="next" title="分布式架构的形式">
-                <i class="fa fa-chevron-left"></i> 分布式架构的形式
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/11/14/odr/" rel="prev" title="ODR-The One Definition Rule">
-                ODR-The One Definition Rule <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
+    </header>
   </article>
 
 
 
-    <div class="post-spread">
       
+
     </div>
   </div>
+  
+  
+  
+
+  
+
 
 
           </div>
@@ -546,13 +375,6 @@
 
 
           
-
-  
-    <div id="gitalk-container"></div>
-
-  
-
-
 
         </div>
         
@@ -573,17 +395,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -647,22 +460,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#condition-variable"><span class="nav-number">1.</span> <span class="nav-text">condition_variable</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wait函数的参数"><span class="nav-number">1.2.</span> <span class="nav-text">wait函数的参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不用锁会遇到什么问题"><span class="nav-number">1.3.</span> <span class="nav-text">不用锁会遇到什么问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#用了锁还有什么问题"><span class="nav-number">1.4.</span> <span class="nav-text">用了锁还有什么问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -803,10 +600,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 
@@ -847,21 +640,6 @@
 
 
 
-
-  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
-  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
-   <script type="text/javascript">
-        var gitalk = new Gitalk({
-          clientID: 'f06437e321af81a44e6e',
-          clientSecret: 'fc63095ff123d820c599d51aaf2030b542bf8854',
-          repo: 'yizhiren.github.io',
-          owner: 'yizhiren',
-          admin: ['yizhiren'],
-          id: location.pathname,
-          distractionFreeMode: 'true'
-        })
-        gitalk.render('gitalk-container')           
-       </script>
 
 
   

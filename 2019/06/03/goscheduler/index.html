@@ -482,9 +482,47 @@
 <h4 id="全局锁的问题"><a href="#全局锁的问题" class="headerlink" title="全局锁的问题"></a>全局锁的问题</h4><p>G被分成全局G队列和P的本地G队列，全局G队列依旧是全局锁，但是使用场景明显很少，P本地队列使用无锁队列，使用原子操作来面对可能的并发场景。</p>
 <h4 id="G传递带来开销的问题"><a href="#G传递带来开销的问题" class="headerlink" title="G传递带来开销的问题"></a>G传递带来开销的问题</h4><p>G创建时就在P的本地队列，可以避免在G之间传递（窃取除外）; 当G开始执行了，系统调用返回后M会尝试获取可用P，获取到了的话可以避免在M之间传递。</p>
 <h4 id="内存消耗问题"><a href="#内存消耗问题" class="headerlink" title="内存消耗问题"></a>内存消耗问题</h4><p>内存MCache只存在P结构中，P最多只有GOMAXPROCS个，远小于M的个数，所以内存没有过多的消耗。</p>
-<h4 id="数据局部性问题"><a href="#数据局部性问题" class="headerlink" title="数据局部性问题"></a>数据局部性问题</h4><p>新建的G放在本地队列，所以G对P的数据局部性好；系统调用后尝试获取可用P并执行，所以G对M数据局部性好；由于总的内存数目最多只有GOMAXPROCS而不是M的个数了，因此G调度到拥有同一块内存的执行单元的概率也就变大了，数据局部性也就变好了。</p>
-<p>数据局部性还可以更好的，比如系统调用后可以把G放回阻塞前的P；比如M选择空闲P时可以优先选择上一次绑定过的P。</p>
+<h4 id="数据局部性问题"><a href="#数据局部性问题" class="headerlink" title="数据局部性问题"></a>数据局部性问题</h4><p>新建的G放在本地队列，所以G对P的数据局部性好；系统调用后尝试获取可用P并执行，而且优先获取调用阻塞前的P，所以G对M数据局部性好，G对P的数据局部性也好；由于总的内存数目最多只有GOMAXPROCS而不是M的个数了，因此G调度到拥有同一块内存的执行单元的概率也就变大了，数据局部性也就变好了。</p>
+<p>数据局部性还可以更好的，比如M选择空闲P时可以优先选择上一次绑定过的P。</p>
 <h4 id="频繁阻塞和唤醒"><a href="#频繁阻塞和唤醒" class="headerlink" title="频繁阻塞和唤醒"></a>频繁阻塞和唤醒</h4><p>通过引入自旋，保证任何时候都有处于等待状态的自旋M，避免在等待可用的P和G时频繁的阻塞和唤醒。</p>
+<h2 id="Go程序的启动过程"><a href="#Go程序的启动过程" class="headerlink" title="Go程序的启动过程"></a>Go程序的启动过程</h2><p>整个程序始于一段汇编:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">// _rt0_amd64 is common startup code for most amd64 systems when using</div><div class="line">// internal linking. This is the entry point for the program from the</div><div class="line">// kernel for an ordinary -buildmode=exe program. The stack holds the</div><div class="line">// number of arguments and the C-style argv.</div><div class="line">TEXT _rt0_amd64(SB),NOSPLIT,$-8</div><div class="line">	MOVQ	0(SP), DI	// argc</div><div class="line">	LEAQ	8(SP), SI	// argv</div><div class="line">	JMP	runtime·rt0_go(SB)</div></pre></td></tr></table></figure>
+<p>而在随后的runtime·rt0_go（也是汇编程序）中，go一共做了这么几件事：</p>
+<p><code>绑定m0和g0</code></p>
+<p>m0和g0是什么呢，m0就是程序的主线程，程序启动必然会拥有一个主线程，这个就是m0.</p>
+<p>每一个m结构中会包含两个主要的g：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> m <span class="keyword">struct</span> &#123;</div><div class="line">	g0      *g     <span class="comment">// goroutine with scheduling stack</span></div><div class="line">	...</div><div class="line">	curg          *g       <span class="comment">// current running goroutine</span></div><div class="line">	...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>可以看到m中的g0负责调度，curg是具体的任务g。因此这里的g0也就是m0的g0。而m0的curg现在还是空的。</p>
+<p><code>创建p，绑定m0和p0</code></p>
+<p>这里并不是去初始化g0，而是创建出了所需的p，p的数目优先取环境变量GOMAXPROCS,否则默认是cpu核数。随后把第一个p（便于理解可以叫它p0）与m0进行绑定，这样m0就有他自己的p了，就有条件执行后续的任务g了。</p>
+<p><code>新建任务g到p0本地队列</code></p>
+<p>这里m0的g0会执行调度任务（runtime.newproc)，创建一个g，g指向runtime.main()(还不是我们main包中的main）,并放到p的本地队列。这样m0就已经同时具有了任务g和p，什么条件都具备了。</p>
+<p><code>执行统一的调度任务</code></p>
+<p>调度器实现中有个同一个调度器入口，叫mstart(),这个实现中会去获取一个空闲的p（如果没有），然后执行schedule(), schedule中就会去不停的寻找可用的g来执行。这里其实初始工作已经全部完成并且把调度器启动起来了。后面可以不用管了，可以自动跑起来了。</p>
+<p><code>持续调度</code></p>
+<p>由于前一个步骤已经在p0中插入了一个指向runtime.main的g，所以显然之后第一个跑起来的任务g就是runtime.main。</p>
+<p>runtime.main的工作包括：启动sysmon线程（这个线程游离在调度器之外，不受调度器管理，下面再讲）；启动gc协程；执行init，这个就是统一执行我们代码中书写的各种init函数；执行main函数，这个就是我们main包中的main，可以看到，到这里我们的函数入口才终于被执行到了。</p>
+<p>再后面就是前面讲过的GMP模型的工作过程了，main会创建g，g被放入p，并且触发m的创建，如此循环往复。</p>
+<h2 id="Sysmon线程"><a href="#Sysmon线程" class="headerlink" title="Sysmon线程"></a>Sysmon线程</h2><p>我们前面遗留了一些没有解释的工作流程，一个是调度器如何抢占长时间不返回的g，一个是sysmon是做什么的.这里可以一起解释了。因为调度器就是通过sysmon来进行抢占的。</p>
+<p>sysmon也叫监控线程，它无需P也可以运行，他是一个死循环，每20us~10ms循环一次，循环完一次就sleep一会，为什么会是一个变动的周期呢，主要是避免空转，如果每次循环都没什么需要做的事，那么sleep的时间就会加大。</p>
+<p>sysmon主要做下面几个事:</p>
+<ol>
+<li><p>释放闲置超过5分钟的span物理内存；</p>
+</li>
+<li><p>如果超过2分钟没有垃圾回收，强制执行；</p>
+</li>
+<li><p>将长时间未处理的netpoll结果添加到全局G队列；</p>
+</li>
+<li><p>向长时间运行的G任务发出抢占调度；</p>
+</li>
+<li><p>收回因syscall长时间阻塞的P；</p>
+</li>
+</ol>
+<p>那么抢占就是发生在第4点。</p>
+<p>当sysmon发现一个p一直处于running状态超过了10ms，那么就给这个g设置一个标志位，随后等到这个g调用新函数的时候，会检查到这个标志位，并且重新进行调度，不让这个g继续执行。</p>
+<p>不过并不是设置了标志位就一定会被调度，这里有两个条件，一个是g必须调用函数，否则如果是一个简单的死循环是无法抢占成功的；另一个条件是即使调用了新函数，如果新函数所需的栈空间很少，那么也不会触发检查这个标志位，只有调用了会触发栈空间检查（所需栈大于128字节，详见<a href="https://www.zhihu.com/question/308020301/answer/587239642" target="_blank" rel="external">知乎回答</a>）的函数，才会抢占成功。</p>
+<p>第5点是什么意思呢，我们知道g中调用系统调用后会解绑p，然后m和g进入阻塞，而p此时的状态就是syscall，表明这个p的g正在syscall中，这时的p是不能被调度给别的m的。如果在短时间内阻塞的m就唤醒了，那么m会优先来重新获取这个p，能获取到就继续绑回去，这样有利于数据的局部性。</p>
+<p>但是当m较长时间没有唤醒的话，p继续等的成本就有点大了，这个时候sysmon就会吧他设为idle，重新调度给需要的M。这个时间界限是10ms，超过10ms就会被sysmon回收用于调度。</p>
 <h2 id="go的协程模型"><a href="#go的协程模型" class="headerlink" title="go的协程模型"></a>go的协程模型</h2><p>这部分跟调度器关系不大，主要是补充一个知识点。</p>
 <p>golang的goroutines是基于CSP(Communicating Sequential Processes)理论模型来设计的。</p>
 <p>CSP主要是指两个独立的Process，通过共享Channel来交互。并发模型除了CSP另外还有Actors模型。</p>
@@ -664,7 +702,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">17</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -686,7 +724,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
@@ -719,7 +757,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Go调度器"><span class="nav-number">1.</span> <span class="nav-text">Go调度器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要有Runtime"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要有Runtime</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开销上"><span class="nav-number">1.1.1.</span> <span class="nav-text">开销上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾回收上"><span class="nav-number">1.1.2.</span> <span class="nav-text">垃圾回收上</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Runtime"><span class="nav-number">1.2.</span> <span class="nav-text">什么是Runtime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初代调度器"><span class="nav-number">1.3.</span> <span class="nav-text">初代调度器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初代的问题"><span class="nav-number">1.4.</span> <span class="nav-text">初代的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新调度器"><span class="nav-number">1.5.</span> <span class="nav-text">新调度器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调度器细节"><span class="nav-number">1.5.1.</span> <span class="nav-text">调度器细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题总结"><span class="nav-number">1.5.2.</span> <span class="nav-text">问题总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局锁的问题"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">全局锁的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G传递带来开销的问题"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">G传递带来开销的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存消耗问题"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">内存消耗问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据局部性问题"><span class="nav-number">1.5.2.4.</span> <span class="nav-text">数据局部性问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频繁阻塞和唤醒"><span class="nav-number">1.5.2.5.</span> <span class="nav-text">频繁阻塞和唤醒</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go的协程模型"><span class="nav-number">1.6.</span> <span class="nav-text">go的协程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CSP和Actors简介"><span class="nav-number">1.6.1.</span> <span class="nav-text">CSP和Actors简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSP和Actors的区别"><span class="nav-number">1.6.2.</span> <span class="nav-text">CSP和Actors的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#同步异步"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">同步异步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#匿名性"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">匿名性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#耦合性"><span class="nav-number">1.6.3.</span> <span class="nav-text">耦合性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容错"><span class="nav-number">1.6.4.</span> <span class="nav-text">容错</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.7.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Go调度器"><span class="nav-number">1.</span> <span class="nav-text">Go调度器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么要有Runtime"><span class="nav-number">1.1.</span> <span class="nav-text">为什么要有Runtime</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#开销上"><span class="nav-number">1.1.1.</span> <span class="nav-text">开销上</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾回收上"><span class="nav-number">1.1.2.</span> <span class="nav-text">垃圾回收上</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是Runtime"><span class="nav-number">1.2.</span> <span class="nav-text">什么是Runtime</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初代调度器"><span class="nav-number">1.3.</span> <span class="nav-text">初代调度器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#初代的问题"><span class="nav-number">1.4.</span> <span class="nav-text">初代的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#新调度器"><span class="nav-number">1.5.</span> <span class="nav-text">新调度器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调度器细节"><span class="nav-number">1.5.1.</span> <span class="nav-text">调度器细节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题总结"><span class="nav-number">1.5.2.</span> <span class="nav-text">问题总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#全局锁的问题"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">全局锁的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G传递带来开销的问题"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">G传递带来开销的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#内存消耗问题"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">内存消耗问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据局部性问题"><span class="nav-number">1.5.2.4.</span> <span class="nav-text">数据局部性问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#频繁阻塞和唤醒"><span class="nav-number">1.5.2.5.</span> <span class="nav-text">频繁阻塞和唤醒</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Go程序的启动过程"><span class="nav-number">1.6.</span> <span class="nav-text">Go程序的启动过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sysmon线程"><span class="nav-number">1.7.</span> <span class="nav-text">Sysmon线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#go的协程模型"><span class="nav-number">1.8.</span> <span class="nav-text">go的协程模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CSP和Actors简介"><span class="nav-number">1.8.1.</span> <span class="nav-text">CSP和Actors简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSP和Actors的区别"><span class="nav-number">1.8.2.</span> <span class="nav-text">CSP和Actors的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#同步异步"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">同步异步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#匿名性"><span class="nav-number">1.8.2.2.</span> <span class="nav-text">匿名性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#耦合性"><span class="nav-number">1.8.3.</span> <span class="nav-text">耦合性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容错"><span class="nav-number">1.8.4.</span> <span class="nav-text">容错</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.9.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
             
 
           </div>
