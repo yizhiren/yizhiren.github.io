@@ -315,6 +315,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2017/02/08/multithread/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/02/08/multithread/" itemprop="url">线程扩展需要考虑的问题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-02-08T17:34:46+08:00">
+                2017-02-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/架构/" itemprop="url" rel="index">
+                    <span itemprop="name">架构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/02/08/multithread/" class="leancloud_visitors" data-flag-title="线程扩展需要考虑的问题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="线程扩展要考虑的问题"><a href="#线程扩展要考虑的问题" class="headerlink" title="线程扩展要考虑的问题"></a>线程扩展要考虑的问题</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br>而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br>比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br>通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br>比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br>那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/02/08/multithread/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2017/02/02/distribute/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -630,6 +787,166 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/condition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/11/14/condition/" itemprop="url">condition_variable为什么需要mutex</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">
+                2016-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码/" itemprop="url" rel="index">
+                    <span itemprop="name">代码</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2016/11/14/condition/" class="leancloud_visitors" data-flag-title="condition_variable为什么需要mutex">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="condition-variable"><a href="#condition-variable" class="headerlink" title="condition_variable"></a>condition_variable</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在头文件&lt; condition_variable &gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。</p>
+<p>条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。</p>
+<p>所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。</p>
+<p>来看一个简单的例子：</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/11/14/condition/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/autoptr/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -739,324 +1056,6 @@
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2016/11/14/autoptr/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/bitorder/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/11/14/bitorder/" itemprop="url">Byte order of bitfield</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">
-                2016-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/代码/" itemprop="url" rel="index">
-                    <span itemprop="name">代码</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2016/11/14/bitorder/" class="leancloud_visitors" data-flag-title="Byte order of bitfield">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">//IP头部，总长度20字节   </div><div class="line">typedef struct _ip_hdr  </div><div class="line">&#123;  </div><div class="line">    #if LITTLE_ENDIAN   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    unsigned char version:4, //版本    </div><div class="line">    #else   </div><div class="line">    unsigned char version:4, //版本   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    #endif   </div><div class="line">    unsigned char tos;       //服务类型   </div><div class="line">    unsigned short tot_len;  //总长度   </div><div class="line">    unsigned short id;       //标志   </div><div class="line">    unsigned short frag_off; //分片偏移   </div><div class="line">    unsigned char ttl;       //生存时间   </div><div class="line">    unsigned char protocol;  //协议   </div><div class="line">    unsigned short chk_sum;  //检验和   </div><div class="line">    struct in_addr srcaddr;  //源IP地址   </div><div class="line">    struct in_addr dstaddr;  //目的IP地址   </div><div class="line">&#125;ip_hdr;</div></pre></td></tr></table></figure>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/bitorder/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/sharedptr/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/11/14/sharedptr/" itemprop="url">shared_ptr 之shared_from_this</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">
-                2016-11-14
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/代码/" itemprop="url" rel="index">
-                    <span itemprop="name">代码</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2016/11/14/sharedptr/" class="leancloud_visitors" data-flag-title="shared_ptr 之shared_from_this">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h1 id="shared-ptr-之shared-from-this"><a href="#shared-ptr-之shared-from-this" class="headerlink" title="shared_ptr 之shared_from_this"></a>shared_ptr 之shared_from_this</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br>怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
-<p>首先来看一个典型的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2 = sp;	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>可以看出两点，一个是shared_ptr是可以赋值给别的变量的，不需要像unique_ptr那样通过move来赋值，因为shared_ptr不是独占指针而是共享，所以赋值是很平常的操作。 二是你不需要去手动释放该指针，new出来的变量会在最后一个相关联的shared_ptr消失时被释放，也就是在simple函数退出时，sp和sp2相继被销毁，于是new出来的变量也紧接着被释放，没有后顾之忧。</p>
-<p>再来看一个错误的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">fail</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> * p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(p);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2(p);	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/sharedptr/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1268,7 +1267,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/condition/">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/sharedptr/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="yizhiren">
@@ -1287,7 +1286,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2016/11/14/condition/" itemprop="url">condition_variable为什么需要mutex</a></h1>
+                <a class="post-title-link" href="/2016/11/14/sharedptr/" itemprop="url">shared_ptr 之shared_from_this</a></h1>
         
 
         <div class="post-meta">
@@ -1339,7 +1338,7 @@
 
           
           
-             <span id="/2016/11/14/condition/" class="leancloud_visitors" data-flag-title="condition_variable为什么需要mutex">
+             <span id="/2016/11/14/sharedptr/" class="leancloud_visitors" data-flag-title="shared_ptr 之shared_from_this">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -1371,13 +1370,171 @@
 
       
         
-          <h2 id="condition-variable"><a href="#condition-variable" class="headerlink" title="condition_variable"></a>condition_variable</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在头文件&lt; condition_variable &gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。</p>
-<p>条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。</p>
-<p>所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。</p>
-<p>来看一个简单的例子：</p>
+          <h1 id="shared-ptr-之shared-from-this"><a href="#shared-ptr-之shared-from-this" class="headerlink" title="shared_ptr 之shared_from_this"></a>shared_ptr 之shared_from_this</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br>怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
+<p>首先来看一个典型的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>));</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2 = sp;	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看出两点，一个是shared_ptr是可以赋值给别的变量的，不需要像unique_ptr那样通过move来赋值，因为shared_ptr不是独占指针而是共享，所以赋值是很平常的操作。 二是你不需要去手动释放该指针，new出来的变量会在最后一个相关联的shared_ptr消失时被释放，也就是在simple函数退出时，sp和sp2相继被销毁，于是new出来的变量也紧接着被释放，没有后顾之忧。</p>
+<p>再来看一个错误的用法：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">fail</span><span class="params">()</span></span>&#123;</div><div class="line">	<span class="keyword">int</span> * p=<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp(p);</div><div class="line">	<span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;<span class="keyword">int</span>&gt; sp2(p);	</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2016/11/14/condition/#more" rel="contents">
+            <a class="btn" href="/2016/11/14/sharedptr/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/bitorder/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/11/14/bitorder/" itemprop="url">Byte order of bitfield</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">
+                2016-11-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/代码/" itemprop="url" rel="index">
+                    <span itemprop="name">代码</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2016/11/14/bitorder/" class="leancloud_visitors" data-flag-title="Byte order of bitfield">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">//IP头部，总长度20字节   </div><div class="line">typedef struct _ip_hdr  </div><div class="line">&#123;  </div><div class="line">    #if LITTLE_ENDIAN   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    unsigned char version:4, //版本    </div><div class="line">    #else   </div><div class="line">    unsigned char version:4, //版本   </div><div class="line">    unsigned char ihl:4;     //首部长度   </div><div class="line">    #endif   </div><div class="line">    unsigned char tos;       //服务类型   </div><div class="line">    unsigned short tot_len;  //总长度   </div><div class="line">    unsigned short id;       //标志   </div><div class="line">    unsigned short frag_off; //分片偏移   </div><div class="line">    unsigned char ttl;       //生存时间   </div><div class="line">    unsigned char protocol;  //协议   </div><div class="line">    unsigned short chk_sum;  //检验和   </div><div class="line">    struct in_addr srcaddr;  //源IP地址   </div><div class="line">    struct in_addr dstaddr;  //目的IP地址   </div><div class="line">&#125;ip_hdr;</div></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/11/14/bitorder/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1469,7 +1626,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-count">18</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

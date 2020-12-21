@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yizhi.ren/20120/12/19/raft/</loc>
+    
+    <lastmod>+020120-12-19T16:04:00.000Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yizhi.ren/2019/09/03/locks/</loc>
     
     <lastmod>2019-09-03T09:34:46.000Z</lastmod>
@@ -100,7 +107,7 @@
   </url>
   
   <url>
-    <loc>http://yizhi.ren/2016/11/14/autoptr/</loc>
+    <loc>http://yizhi.ren/2016/11/14/uniqueptr/</loc>
     
     <lastmod>2016-11-14T09:34:46.000Z</lastmod>
     
@@ -114,7 +121,14 @@
   </url>
   
   <url>
-    <loc>http://yizhi.ren/2016/11/14/uniqueptr/</loc>
+    <loc>http://yizhi.ren/2016/11/14/condition/</loc>
+    
+    <lastmod>2016-11-14T09:34:46.000Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yizhi.ren/2016/11/14/autoptr/</loc>
     
     <lastmod>2016-11-14T09:34:46.000Z</lastmod>
     
@@ -122,13 +136,6 @@
   
   <url>
     <loc>http://yizhi.ren/2016/11/14/bitorder/</loc>
-    
-    <lastmod>2016-11-14T09:34:46.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://yizhi.ren/2016/11/14/condition/</loc>
     
     <lastmod>2016-11-14T09:34:46.000Z</lastmod>
     
