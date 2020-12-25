@@ -604,9 +604,9 @@
 <ol>
 <li>步骤1和2中，有两个时间点，一个是leader写入本地C_old_new日志t1，一个是leader提交C_old_new日志t2。</li>
 </ol>
-<p>t1之前leader commit日志的条件是C_old,这很明显；在t2之后leader commit日志的条件是C_new，这我们也已经知道了。那t1-t2之间呢，t1-t2之间使用的规则也是C_old,因为这中间commit的日志肯定是C_old_new之前的，所以当然应该用C_old的条件；那t2时刻呢，也就是C_old_new本身的commit条件是什么呢？C_old_new被commit的条件就已经得是共同治理的条件了，要新老集群都满足commit条件。为什么呢？原因很简单，如果只满足old的条件，不满足new的条件，这意味着C_old_new在新集群中是不稳定的，是可能被覆盖掉的，如果这个C_old_new日志都还不稳定，那后面基于C_old_new做的决策也就是不可靠的，那我们也就不能确保这个集群进入了共同治理的状态了。</p>
+<p>t1之前leader commit日志的条件是C_old,这很明显；在t2之后leader commit日志的条件是C_old_new，这我们也已经知道了。那t1-t2之间呢，t1-t2之间使用的规则也是C_old,因为这中间commit的日志肯定是C_old_new之前的，所以当然应该用C_old的条件；那t2时刻呢，也就是C_old_new本身的commit条件是什么呢？C_old_new被commit的条件就已经得是共同治理的条件了，要新老集群都满足commit条件。为什么呢？原因很简单，如果只满足old的条件，不满足new的条件，这意味着C_old_new在新集群中是不稳定的，是可能被覆盖掉的，如果这个C_old_new日志都还不稳定，那后面基于C_old_new做的决策也就是不可靠的，那我们也就不能确保这个集群进入了共同治理的状态了。</p>
 <p>总结就是:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">t &lt;  t2 =&gt; use C_old commit</div><div class="line">t &gt;= t2 =&gt; use C_new commit</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">     t &lt;  t2 =&gt; use C_old commit</div><div class="line">t4 &gt; t &gt;= t2 =&gt; use C_old_new commit</div></pre></td></tr></table></figure>
 <ol>
 <li><p>步骤2中，如果在C_old_new被commit之前leader挂掉了，那会发生什么呢？有两种情况：</p>
 <p>一种是集群发生选举，一个包含C_old_new的节点赢得了新老集群共同的认可，成为leader，于是整个配置变更过程继续，因为新leader知道现在处于配置变更过程中。C_old_new被commit的工作将由新的leader接手继续推进。</p>
