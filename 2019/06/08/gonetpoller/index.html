@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Golang netpoller本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。 网络阻塞在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要fut">
+<meta property="og:type" content="article">
+<meta property="og:title" content="golang netpoller">
+<meta property="og:url" content="http://yizhi.ren/2019/06/08/gonetpoller/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="Golang netpoller本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。 网络阻塞在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要fut">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel1.png">
+<meta property="og:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel2.png">
+<meta property="og:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel3.png">
+<meta property="article:published_time" content="2019-06-08T09:34:46.000Z">
+<meta property="article:modified_time" content="2019-06-08T09:34:46.000Z">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="狗狼">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel1.png">
+
+
+<link rel="canonical" href="http://yizhi.ren/2019/06/08/gonetpoller/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2019/06/08/gonetpoller/","path":"2019/06/08/gonetpoller/","title":"golang netpoller"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>golang netpoller | 一支人</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">一支人</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Golang-netpoller"><span class="nav-number">1.</span> <span class="nav-text">Golang netpoller</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E9%98%BB%E5%A1%9E"><span class="nav-number">1.1.</span> <span class="nav-text">网络阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#netpoller"><span class="nav-number">1.2.</span> <span class="nav-text">netpoller</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E8%BD%AC%E5%BC%82%E6%AD%A5%E8%B0%83%E5%BA%A6"><span class="nav-number">1.2.1.</span> <span class="nav-text">同步转异步调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E8%B0%83%E5%BA%A6%E5%9B%9E%E6%9D%A5"><span class="nav-number">1.2.2.</span> <span class="nav-text">异步调度回来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E6%B3%A8%E5%86%8C%E7%9A%84netpoller"><span class="nav-number">1.2.3.</span> <span class="nav-text">何时注册的netpoller</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">线程模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95loop%E7%9A%84%E4%B8%8D%E8%B6%B3"><span class="nav-number">1.4.</span> <span class="nav-text">单loop的不足</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.5.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">promise.get_future();</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2019/06/08/gonetpoller/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          golang netpoller
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-08 17:34:46" itemprop="dateCreated datePublished" datetime="2019-06-08T17:34:46+08:00">2019-06-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">代码</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Golang-netpoller"><a href="#Golang-netpoller" class="headerlink" title="Golang netpoller"></a>Golang netpoller</h1><p>本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。</p>
+<h2 id="网络阻塞"><a href="#网络阻塞" class="headerlink" title="网络阻塞"></a>网络阻塞</h2><p>在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要future，要的仅仅是step by step。这对于代码的可读性是很有帮助的。</p>
+<p>在<a href="https://yizhi.ren/2019/06/03/goscheduler/">go scheduler</a>一文中我们讲述了go如何处理阻塞的系统调用，当goroutine调用阻塞的系统调用时，这个goroutine和物理线程都会一直处于阻塞状态，不能处理别的任务；而当goroutine调用channel阻塞时，goroutine会阻塞而物理线程不会阻塞，会继续执行别的任务。所以如果我们基于操作系统提供的阻塞的IO接口来构建golang的应用，我们就必须为每个处于阻塞读写状态的客户端建立一个线程。当面对高并发的包含大量处于阻塞IO状态的客户端时，将浪费大量的资源。而如果能够像channel那样处理，就可以避免资源浪费。</p>
+<p>Go的解决方案是如channel一般在用户层面(程序员层面)保留阻塞的接口，但是在Runtime内部采用非阻塞的异步接口来与操作系统交互。</p>
+<p>这里面关键的角色就是netpoller。</p>
+<span id="more"></span>
+
+<h2 id="netpoller"><a href="#netpoller" class="headerlink" title="netpoller"></a>netpoller</h2><p>netpoller的工作就是成为同步（阻塞）IO调用和异步（非阻塞）IO调用之间的桥梁。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">这里我为了简化概念，特意混淆了同步异步跟阻塞非阻塞的关系，使得二者等价得来看待，默认同步即使用了阻塞IO，异步即使用了非阻塞IO。</span><br><span class="line">其实同步异步和阻塞非阻塞是有一些差异的，同步确实绝对的关联阻塞，但异步在某种场景下可以通过阻塞IO来实现的。</span><br><span class="line">比如linux的文件IO都是阻塞的，那些异步IO库就会把读写文件的请求扔到一个线程池中去阻塞的读写，完成之后再进行回调。</span><br><span class="line"></span><br><span class="line">下面的总结来自：https://github.com/calidion/calidion.github.io/issues/40</span><br><span class="line"></span><br><span class="line">1. 同步异步分IO与代码两种。</span><br><span class="line">2. 在IO上同步IO等于阻塞IO，异步IO等于非阻塞IO</span><br><span class="line">3. 在代码上同步代码等同于调用同步IO，等同于调用阻塞IO；但并不表示异步代码一定有异步IO调用，从而也无法确定是不是一定是非阻塞IO。</span><br></pre></td></tr></table></figure>
+
+<h3 id="同步转异步调度"><a href="#同步转异步调度" class="headerlink" title="同步转异步调度"></a>同步转异步调度</h3><p>当goroutine发起一个同步调用比如下面的Read函数，经过一系列的调用，最后会进入gopark函数，gopark将当前正在执行的goroutine状态保存起来，然后切换到新的堆栈上执行新的goroutine。由于当前goroutine状态是被保存起来的，因此后面可以被恢复。这样调用Read的goroutine以为一直同步阻塞到现在，其实内部是异步完成的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">func</span> (fd *netFD) <span class="built_in">Read</span>(p []byte) (n <span class="keyword">int</span>, err error) &#123;</span><br><span class="line">	n, err = fd.pfd.<span class="built_in">Read</span>(p)</span><br><span class="line">	runtime.<span class="built_in">KeepAlive</span>(fd)</span><br><span class="line">	<span class="keyword">return</span> n, <span class="built_in">wrapSyscallError</span>(<span class="string">&quot;read&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Read implements io.Reader.</span></span><br><span class="line"><span class="built_in">func</span> (fd *FD) <span class="built_in">Read</span>(p []byte) (<span class="keyword">int</span>, error) &#123;</span><br><span class="line">	<span class="keyword">if</span> err := fd.<span class="built_in">readLock</span>(); err != nil &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	defer fd.<span class="built_in">readUnlock</span>()</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(p) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// If the caller wanted a zero byte read, return immediately</span></span><br><span class="line">		<span class="comment">// without trying (but after acquiring the readLock).</span></span><br><span class="line">		<span class="comment">// Otherwise syscall.Read returns 0, nil which looks like</span></span><br><span class="line">		<span class="comment">// io.EOF.</span></span><br><span class="line">		<span class="comment">// TODO(bradfitz): make it wait for readability? (Issue 15735)</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, nil</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err := fd.pd.<span class="built_in">prepareRead</span>(fd.isFile); err != nil &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> fd.IsStream &amp;&amp; <span class="built_in">len</span>(p) &gt; maxRW &#123;</span><br><span class="line">		p = p[:maxRW]</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		n, err := syscall.<span class="built_in">Read</span>(fd.Sysfd, p)</span><br><span class="line">		<span class="keyword">if</span> err != nil &#123;</span><br><span class="line">			n = <span class="number">0</span></span><br><span class="line">			<span class="keyword">if</span> err == syscall.EAGAIN &amp;&amp; fd.pd.<span class="built_in">pollable</span>() &#123;</span><br><span class="line">				<span class="keyword">if</span> err = fd.pd.<span class="built_in">waitRead</span>(fd.isFile); err == nil &#123;</span><br><span class="line">					<span class="keyword">continue</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			<span class="comment">// On MacOS we can see EINTR here if the user</span></span><br><span class="line">			<span class="comment">// pressed ^Z.  See issue #22838.</span></span><br><span class="line">			<span class="keyword">if</span> runtime.GOOS == <span class="string">&quot;darwin&quot;</span> &amp;&amp; err == syscall.EINTR &#123;</span><br><span class="line">				<span class="keyword">continue</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		err = fd.<span class="built_in">eofError</span>(n, err)</span><br><span class="line">		<span class="keyword">return</span> n, err</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">func</span> (pd *pollDesc) <span class="built_in">waitRead</span>(isFile <span class="keyword">bool</span>) error &#123;</span><br><span class="line">	<span class="keyword">return</span> pd.<span class="built_in">wait</span>(<span class="string">&#x27;r&#x27;</span>, isFile)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">func</span> (pd *pollDesc) <span class="built_in">wait</span>(mode <span class="keyword">int</span>, isFile <span class="keyword">bool</span>) error &#123;</span><br><span class="line">	<span class="keyword">if</span> pd.runtimeCtx == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errors.<span class="built_in">New</span>(<span class="string">&quot;waiting for unsupported file type&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	res := <span class="built_in">runtime_pollWait</span>(pd.runtimeCtx, mode)</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">convertErr</span>(res, isFile)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//go:linkname poll_runtime_pollWait internal/poll.runtime_pollWait</span></span><br><span class="line"><span class="function">func <span class="title">poll_runtime_pollWait</span><span class="params">(pd *pollDesc, mode <span class="keyword">int</span>)</span> <span class="keyword">int</span> </span>&#123;</span><br><span class="line">	err := <span class="built_in">netpollcheckerr</span>(pd, <span class="built_in">int32</span>(mode))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// As for now only Solaris uses level-triggered IO.</span></span><br><span class="line">	<span class="keyword">if</span> GOOS == <span class="string">&quot;solaris&quot;</span> &#123;</span><br><span class="line">		<span class="built_in">netpollarm</span>(pd, mode)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> !<span class="built_in">netpollblock</span>(pd, <span class="built_in">int32</span>(mode), <span class="literal">false</span>) &#123;</span><br><span class="line">		err = <span class="built_in">netpollcheckerr</span>(pd, <span class="built_in">int32</span>(mode))</span><br><span class="line">		<span class="keyword">if</span> err != <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">return</span> err</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">// Can happen if timeout has fired and unblocked us,</span></span><br><span class="line">		<span class="comment">// but before we had a chance to run, timeout has been reset.</span></span><br><span class="line">		<span class="comment">// Pretend it has not happened and retry.</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">func <span class="title">netpollblock</span><span class="params">(pd *pollDesc, mode int32, waitio <span class="keyword">bool</span>)</span> <span class="keyword">bool</span> </span>&#123;</span><br><span class="line">	gpp := &amp;pd.rg</span><br><span class="line">	<span class="keyword">if</span> mode == <span class="string">&#x27;w&#x27;</span> &#123;</span><br><span class="line">		gpp = &amp;pd.wg</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// set the gpp semaphore to WAIT</span></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		old := *gpp</span><br><span class="line">		<span class="keyword">if</span> old == pdReady &#123;</span><br><span class="line">			*gpp = <span class="number">0</span></span><br><span class="line">			<span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> old != <span class="number">0</span> &#123;</span><br><span class="line">			<span class="built_in"><span class="keyword">throw</span></span>(<span class="string">&quot;runtime: double wait&quot;</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> atomic.<span class="built_in">Casuintptr</span>(gpp, <span class="number">0</span>, pdWait) &#123;</span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// need to recheck error states after setting gpp to WAIT</span></span><br><span class="line">	<span class="comment">// this is necessary because runtime_pollUnblock/runtime_pollSetDeadline/deadlineimpl</span></span><br><span class="line">	<span class="comment">// do the opposite: store to closing/rd/wd, membarrier, load of rg/wg</span></span><br><span class="line">	<span class="keyword">if</span> waitio || <span class="built_in">netpollcheckerr</span>(pd, mode) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="built_in">gopark</span>(netpollblockcommit, unsafe.<span class="built_in">Pointer</span>(gpp), <span class="string">&quot;IO wait&quot;</span>, traceEvGoBlockNet, <span class="number">5</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// be careful to not lose concurrent READY notification</span></span><br><span class="line">	old := atomic.<span class="built_in">Xchguintptr</span>(gpp, <span class="number">0</span>)</span><br><span class="line">	<span class="keyword">if</span> old &gt; pdWait &#123;</span><br><span class="line">		<span class="built_in"><span class="keyword">throw</span></span>(<span class="string">&quot;runtime: corrupted polldesc&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> old == pdReady</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Puts the current goroutine into a waiting state and calls unlockf.</span></span><br><span class="line"><span class="comment">// If unlockf returns false, the goroutine is resumed.</span></span><br><span class="line"><span class="comment">// unlockf must not access this G&#x27;s stack, as it may be moved between</span></span><br><span class="line"><span class="comment">// the call to gopark and the call to unlockf.</span></span><br><span class="line"><span class="function">func <span class="title">gopark</span><span class="params">(unlockf func(*g, unsafe.Pointer) <span class="keyword">bool</span>, lock unsafe.Pointer, reason string, traceEv byte, traceskip <span class="keyword">int</span>)</span> </span>&#123;</span><br><span class="line">	mp := <span class="built_in">acquirem</span>()</span><br><span class="line">	gp := mp.curg</span><br><span class="line">	status := <span class="built_in">readgstatus</span>(gp)</span><br><span class="line">	<span class="keyword">if</span> status != _Grunning &amp;&amp; status != _Gscanrunning &#123;</span><br><span class="line">		<span class="built_in"><span class="keyword">throw</span></span>(<span class="string">&quot;gopark: bad g status&quot;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	mp.waitlock = lock</span><br><span class="line">	mp.waitunlockf = *(*unsafe.Pointer)(unsafe.<span class="built_in">Pointer</span>(&amp;unlockf))</span><br><span class="line">	gp.waitreason = reason</span><br><span class="line">	mp.waittraceev = traceEv</span><br><span class="line">	mp.waittraceskip = traceskip</span><br><span class="line">	<span class="built_in">releasem</span>(mp)</span><br><span class="line">	<span class="comment">// can&#x27;t do anything that might move the G between Ms here.</span></span><br><span class="line">	<span class="built_in">mcall</span>(park_m)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// park continuation on g0.</span></span><br><span class="line"><span class="function">func <span class="title">park_m</span><span class="params">(gp *g)</span> </span>&#123;</span><br><span class="line">	_g_ := <span class="built_in">getg</span>()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> trace.enabled &#123;</span><br><span class="line">		<span class="built_in">traceGoPark</span>(_g_.m.waittraceev, _g_.m.waittraceskip)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">casgstatus</span>(gp, _Grunning, _Gwaiting)</span><br><span class="line">	<span class="built_in">dropg</span>()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> _g_.m.waitunlockf != nil &#123;</span><br><span class="line">		fn := *(*<span class="built_in">func</span>(*g, unsafe.Pointer) <span class="keyword">bool</span>)(unsafe.<span class="built_in">Pointer</span>(&amp;_g_.m.waitunlockf))</span><br><span class="line">		ok := <span class="built_in">fn</span>(gp, _g_.m.waitlock)</span><br><span class="line">		_g_.m.waitunlockf = nil</span><br><span class="line">		_g_.m.waitlock = nil</span><br><span class="line">		<span class="keyword">if</span> !ok &#123;</span><br><span class="line">			<span class="keyword">if</span> trace.enabled &#123;</span><br><span class="line">				<span class="built_in">traceGoUnpark</span>(gp, <span class="number">2</span>)</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="built_in">casgstatus</span>(gp, _Gwaiting, _Grunnable)</span><br><span class="line">			<span class="built_in">execute</span>(gp, <span class="literal">true</span>) <span class="comment">// Schedule it back, never returns.</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">schedule</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="异步调度回来"><a href="#异步调度回来" class="headerlink" title="异步调度回来"></a>异步调度回来</h3><p>那什么时候G被调度回来呢？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">schedule</span>() -&gt; <span class="built_in">findrunnable</span>() -&gt; <span class="built_in">netpoll</span>()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// polls for ready network connections</span></span><br><span class="line"><span class="comment">// returns list of goroutines that become runnable</span></span><br><span class="line"><span class="function">func <span class="title">netpoll</span><span class="params">(block <span class="keyword">bool</span>)</span> *g </span>&#123;</span><br><span class="line">	<span class="keyword">if</span> epfd == <span class="number">-1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> nil</span><br><span class="line">	&#125;</span><br><span class="line">	waitms := <span class="built_in">int32</span>(<span class="number">-1</span>)</span><br><span class="line">	<span class="keyword">if</span> !block &#123;</span><br><span class="line">		waitms = <span class="number">0</span></span><br><span class="line">	&#125;</span><br><span class="line">	var events [<span class="number">128</span>]epollevent</span><br><span class="line">retry:</span><br><span class="line">	n := <span class="built_in">epollwait</span>(epfd, &amp;events[<span class="number">0</span>], <span class="built_in">int32</span>(<span class="built_in">len</span>(events)), waitms)</span><br><span class="line">	<span class="keyword">if</span> n &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> n != -_EINTR &#123;</span><br><span class="line">			<span class="built_in">println</span>(<span class="string">&quot;runtime: epollwait on fd&quot;</span>, epfd, <span class="string">&quot;failed with&quot;</span>, -n)</span><br><span class="line">			<span class="built_in"><span class="keyword">throw</span></span>(<span class="string">&quot;runtime: netpoll failed&quot;</span>)</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">goto</span> retry</span><br><span class="line">	&#125;</span><br><span class="line">	var gp guintptr</span><br><span class="line">	<span class="keyword">for</span> i := <span class="built_in">int32</span>(<span class="number">0</span>); i &lt; n; i++ &#123;</span><br><span class="line">		ev := &amp;events[i]</span><br><span class="line">		<span class="keyword">if</span> ev.events == <span class="number">0</span> &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line">		var mode int32</span><br><span class="line">		<span class="keyword">if</span> ev.events&amp;(_EPOLLIN|_EPOLLRDHUP|_EPOLLHUP|_EPOLLERR) != <span class="number">0</span> &#123;</span><br><span class="line">			mode += <span class="string">&#x27;r&#x27;</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> ev.events&amp;(_EPOLLOUT|_EPOLLHUP|_EPOLLERR) != <span class="number">0</span> &#123;</span><br><span class="line">			mode += <span class="string">&#x27;w&#x27;</span></span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> mode != <span class="number">0</span> &#123;</span><br><span class="line">			pd := *(**pollDesc)(unsafe.<span class="built_in">Pointer</span>(&amp;ev.data))</span><br><span class="line"></span><br><span class="line">			<span class="built_in">netpollready</span>(&amp;gp, pd, mode)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> block &amp;&amp; gp == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">goto</span> retry</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> gp.<span class="built_in">ptr</span>()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在某一次调度G的过程中，处于就绪状态的FD对应的G就会被调度回来。</p>
+<h3 id="何时注册的netpoller"><a href="#何时注册的netpoller" class="headerlink" title="何时注册的netpoller"></a>何时注册的netpoller</h3><p>在初始化的时候，最终调到netpollopen，里面调了epollctrl注册了fd上去。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (fd *netFD) init() error &#123;</span><br><span class="line">	return fd.pfd.Init(fd.net, true)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func (fd *FD) Init(net string, pollable bool) error &#123;</span><br><span class="line">	// We don&#x27;t actually care about the various network types.</span><br><span class="line">	if net == &quot;file&quot; &#123;</span><br><span class="line">		fd.isFile = true</span><br><span class="line">	&#125;</span><br><span class="line">	if !pollable &#123;</span><br><span class="line">		fd.isBlocking = true</span><br><span class="line">		return nil</span><br><span class="line">	&#125;</span><br><span class="line">	return fd.pd.init(fd)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func (pd *pollDesc) init(fd *FD) error &#123;</span><br><span class="line">	serverInit.Do(runtime_pollServerInit)</span><br><span class="line">	ctx, errno := runtime_pollOpen(uintptr(fd.Sysfd))</span><br><span class="line">	if errno != 0 &#123;</span><br><span class="line">		if ctx != 0 &#123;</span><br><span class="line">			runtime_pollUnblock(ctx)</span><br><span class="line">			runtime_pollClose(ctx)</span><br><span class="line">		&#125;</span><br><span class="line">		return syscall.Errno(errno)</span><br><span class="line">	&#125;</span><br><span class="line">	pd.runtimeCtx = ctx</span><br><span class="line">	return nil</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//go:linkname poll_runtime_pollOpen internal/poll.runtime_pollOpen</span><br><span class="line">func poll_runtime_pollOpen(fd uintptr) (*pollDesc, int) &#123;</span><br><span class="line">	pd := pollcache.alloc()</span><br><span class="line">	lock(&amp;pd.lock)</span><br><span class="line">	if pd.wg != 0 &amp;&amp; pd.wg != pdReady &#123;</span><br><span class="line">		throw(&quot;runtime: blocked write on free polldesc&quot;)</span><br><span class="line">	&#125;</span><br><span class="line">	if pd.rg != 0 &amp;&amp; pd.rg != pdReady &#123;</span><br><span class="line">		throw(&quot;runtime: blocked read on free polldesc&quot;)</span><br><span class="line">	&#125;</span><br><span class="line">	pd.fd = fd</span><br><span class="line">	pd.closing = false</span><br><span class="line">	pd.seq++</span><br><span class="line">	pd.rg = 0</span><br><span class="line">	pd.rd = 0</span><br><span class="line">	pd.wg = 0</span><br><span class="line">	pd.wd = 0</span><br><span class="line">	unlock(&amp;pd.lock)</span><br><span class="line"></span><br><span class="line">	var errno int32</span><br><span class="line">	errno = netpollopen(fd, pd)</span><br><span class="line">	return pd, int(errno)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">func netpollopen(fd uintptr, pd *pollDesc) int32 &#123;</span><br><span class="line">	var ev epollevent</span><br><span class="line">	ev.events = _EPOLLIN | _EPOLLOUT | _EPOLLRDHUP | _EPOLLET</span><br><span class="line">	*(**pollDesc)(unsafe.Pointer(&amp;ev.data)) = pd</span><br><span class="line">	return -epollctl(epfd, _EPOLL_CTL_ADD, int32(fd), &amp;ev)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面可以看到fd在初始化的时候就注册了，这个时候Read()还没调用，waitRead()也没有调用，那么这时候在read和waitread调用之前有数据到来G被激活的话会怎么样呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">netpoll() -&gt; netpollready() -&gt; netpollunblock()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">func netpollunblock(pd *pollDesc, mode int32, ioready bool) *g &#123;</span><br><span class="line">	gpp := &amp;pd.rg</span><br><span class="line">	if mode == &#x27;w&#x27; &#123;</span><br><span class="line">		gpp = &amp;pd.wg</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	for &#123;</span><br><span class="line">		old := *gpp</span><br><span class="line">		if old == pdReady &#123;</span><br><span class="line">			return nil</span><br><span class="line">		&#125;</span><br><span class="line">		if old == 0 &amp;&amp; !ioready &#123;</span><br><span class="line">			// Only set READY for ioready. runtime_pollWait</span><br><span class="line">			// will check for timeout/cancel before waiting.</span><br><span class="line">			return nil</span><br><span class="line">		&#125;</span><br><span class="line">		var new uintptr</span><br><span class="line">		if ioready &#123;</span><br><span class="line">			new = pdReady</span><br><span class="line">		&#125;</span><br><span class="line">		if atomic.Casuintptr(gpp, old, new) &#123;</span><br><span class="line">			if old == pdReady || old == pdWait &#123;</span><br><span class="line">				old = 0</span><br><span class="line">			&#125;</span><br><span class="line">			return (*g)(unsafe.Pointer(old))</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>netpollready负责把多个活跃的G串起来，netpollunblock则把G状态更新为pdReady并返回该G。</p>
+<p>可以看到由于waitRead调用前rg，wg字段是空的，所以这里old值是0，所以netpollunblock返回空指针，netpollready就不会把空指针串进去。</p>
+<p>所以waitread之前G被激活也不会有问题。</p>
+<h2 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h2><p>写过select和epoll的都能看出来go的netpoller就是基于epoll（linux上）的多路复用机制写出来的，基于epoll的线程设计要么是reactor，要么是proactor，而从go的代码可以看出，go的netpoll就是一种reactor的模型。使用reactor的线程模型通常包括下面的三大类：</p>
+<p>单loop：</p>
+<p><img src="/linkimage/gonetpoller/threadmodel1.png" alt="single loop"></p>
+<p>一组loop：</p>
+<p><img src="/linkimage/gonetpoller/threadmodel2.png" alt="多loop"></p>
+<p>双loop组：</p>
+<p><img src="/linkimage/gonetpoller/threadmodel3.png" alt="双loop组"></p>
+<p>图片来自<a target="_blank" rel="noopener" href="https://www.infoq.cn/article/netty-threading-model">Netty 系列之 Netty 线程模型</a></p>
+<p>三种模型依次适用于更大系统规模和更高复杂度的系统，golang由于是全局的netpoller，只有一个，因此属于第一种模型，当然go使用协程来调度任务，使得它在线程的调度上是优于上图任何一种的，但是在网络IO的性能上go并没有什么优势。</p>
+<h2 id="单loop的不足"><a href="#单loop的不足" class="headerlink" title="单loop的不足"></a>单loop的不足</h2><p>线程模型我们说适合的是最好的，它取决你的规模，你的业务模型等。但是就像libev作者说的<code>one loop per thread is usually a good model</code>(<a target="_blank" rel="noopener" href="http://para.se/perldoc/EV/libev.html">@Chapter:THREADS AND COROUTINES</a>),我也认同一个线程一个loop的设计。</p>
+<p>原因包括：多个loop可以更好的进行负载的分配、类型的分类，把连接均分到不同的loop可以做到负载均衡，而把不同类型的连接分到不同的loop就可以很好的进行连接分类；多个loop可以提升连接的响应速度，应对一些突发IO，可以降低延迟，在高并发的场景下会更有优势。</p>
+<p>采用<code>one loop per thread</code>设计的网络框架，C++中有Muduo，Java中有Netty，等。都是非常优秀的网络框架，采用单loop的go在这方面就会面临这方面的劣势，我认为go在这方面是需要有所改进的。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="http://likakuli.com/post/2018/06/06/golang-network/">Golang netpoll</a></p>
+<p><a target="_blank" rel="noopener" href="https://morsmachine.dk/netpoller">The Go netpoller</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.infoq.cn/article/netty-threading-model">Netty 系列之 Netty 线程模型</a></p>
+<p><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1234360">Go语言源码笔记</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/payimage/wechat.png" alt="yizhiren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/payimage/zhifubao.png" alt="yizhiren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%8B%97%E7%8B%BC/" rel="tag"># 狗狼</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2019/06/03/goscheduler/" rel="prev" title="golang scheduler">
+                  <i class="fa fa-chevron-left"></i> golang scheduler
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2019/06/15/gocoverage/" rel="next" title="golang coverage">
+                  golang coverage <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"86caec6f04a396d8f1f6dee371a43bbf"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
