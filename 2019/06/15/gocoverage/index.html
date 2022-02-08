@@ -172,7 +172,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">22</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -476,7 +476,7 @@
 <h3 id="结构化增量信息"><a href="#结构化增量信息" class="headerlink" title="结构化增量信息"></a>结构化增量信息</h3><p>增量信息获取可以使用git diff来实现，假如我们最新一次的提交hash值是newCommitHash, 则获取增量信息的指令是<code>git diff master newCommitHash</code>.这个命令输出如下内容(摘自golang源码的一段diff)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">diff --git a/AUTHORS b/AUTHORS</span><br><span class="line">index e861bfc..8b8105b 100644</span><br><span class="line">--- a/AUTHORS</span><br><span class="line">+++ b/AUTHORS</span><br><span class="line">@@ -2,6 +2,10 @@</span><br><span class="line"> # This file is distinct from the CONTRIBUTORS files.</span><br><span class="line"> # See the latter for an explanation.</span><br><span class="line"></span><br><span class="line">+# Since Go 1.11, this file is not actively maintained.</span><br><span class="line">+# To be included, send a change adding the individual or</span><br><span class="line">+# company who owns a contribution&#x27;s copyright.</span><br><span class="line">+</span><br><span class="line"> # Names should be added to this file as one of</span><br><span class="line"> #     Organization&#x27;s name</span><br><span class="line"> #     Individual&#x27;s name &lt;submission email address&gt;</span><br><span class="line">@@ -10,26 +14,35 @@</span><br><span class="line">...省略</span><br></pre></td></tr></table></figure>
 
-<p>git diff会输出多段内容，每段内容以diff开头。diff下一行是commit信息，再后两行是参与对比的来自修改前和修改后的两个文件名。再后面是多个以@@起始的位于同个文件内的修改片段，<code>@@ -2,6 +2,10 @@</code>这段内容的意思是紧随其后列举的代码行是修改前的第2行开始的连续6行，以及修改后的第2行开始的连续6行。再下面紧随其后列举的就是具体的代码行了，空格开始的表示没变化的代码行，减号开头的表示修改前的代码行，加号开头的表示修改后的代码行。</p>
+<p>git diff会输出多段内容，每段内容以diff开头。diff下一行是commit信息，再后两行是参与对比的来自修改前和修改后的两个文件名。再后面是多个以@@起始的位于同个文件内的修改片段，<code>@@ -2,6 +2,10 @@</code>这段内容的意思是紧随其后列举的代码行是修改前的第2行开始的连续6行，以及修改后的第2行开始的连续10行。再下面紧随其后列举的就是具体的代码行了，空格开始的表示没变化的代码行，减号开头的表示修改前的代码行，加号开头的表示修改后的代码行。</p>
 <p>因此我们通过解析git diff的内容就可以知晓具体修改的内容所在的位置，我们可以定义一个数据结构</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 伪码</span><br><span class="line">struct Diff&#123;</span><br><span class="line">  modifyFiles map&lt;string, ModifyFile&gt;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct ModifyFile&#123;</span><br><span class="line">  modifyLines []int</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 

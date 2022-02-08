@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/images/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CKS知识总结">
+<meta property="og:url" content="http://yizhi.ren/2022/02/05/cksknowledge/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
+<meta property="article:published_time" content="2022-02-05T09:34:46.000Z">
+<meta property="article:modified_time" content="2022-02-05T09:34:46.000Z">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
+
+
+<link rel="canonical" href="http://yizhi.ren/2022/02/05/cksknowledge/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2022/02/05/cksknowledge/","path":"2022/02/05/cksknowledge/","title":"CKS知识总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>CKS知识总结 | 一支人</title>
+  
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">一支人</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CKS%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93"><span class="nav-number">1.</span> <span class="nav-text">CKS知识总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E9%9B%86%E7%BE%A4"><span class="nav-number">1.2.</span> <span class="nav-text">搭建集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-ingress"><span class="nav-number">1.3.</span> <span class="nav-text">安装 ingress</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85metrics-server"><span class="nav-number">1.4.</span> <span class="nav-text">安装metrics server</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8Ckube-bench"><span class="nav-number">1.5.</span> <span class="nav-text">运行kube-bench</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E6%9D%83%E9%99%90"><span class="nav-number">1.5.1.</span> <span class="nav-text">设置权限</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#kubelet%E6%9D%83%E9%99%90"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">kubelet权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cni%E6%9D%83%E9%99%90"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">cni权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#etcd%E6%9D%83%E9%99%90"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">etcd权限</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kubelet%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">kubelet配置参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#authentication"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">authentication</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#protectKernelDefaults"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">protectKernelDefaults</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#eventRecordQPS-eventBurst"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">eventRecordQPS&#x2F;eventBurst</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#apiserver%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.3.</span> <span class="nav-text">apiserver配置参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#anonymous-auth"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">anonymous-auth</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kubelet-certificate-authority"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">kubelet-certificate-authority</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#admission-control-EventRateLimit"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">admission-control EventRateLimit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#admission-control-AlwaysPullImages"><span class="nav-number">1.5.3.4.</span> <span class="nav-text">admission-control AlwaysPullImages</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#admission-control-SecurityContextDeny"><span class="nav-number">1.5.3.5.</span> <span class="nav-text">admission-control SecurityContextDeny</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#admission-control-PodSecurityContext"><span class="nav-number">1.5.3.6.</span> <span class="nav-text">admission-control PodSecurityContext</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insecure-port"><span class="nav-number">1.5.3.7.</span> <span class="nav-text">insecure port</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#profiling"><span class="nav-number">1.5.3.8.</span> <span class="nav-text">profiling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#audit-policy-file"><span class="nav-number">1.5.3.9.</span> <span class="nav-text">audit-policy-file</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#encryption-provider-config"><span class="nav-number">1.5.3.10.</span> <span class="nav-text">encryption-provider-config</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tls-cipher-suites"><span class="nav-number">1.5.3.11.</span> <span class="nav-text">tls-cipher-suites</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#request-timeout"><span class="nav-number">1.5.3.12.</span> <span class="nav-text">request-timeout</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#controller-manager%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.4.</span> <span class="nav-text">controller manager配置参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#terminated-pod-gc-threshold"><span class="nav-number">1.5.4.1.</span> <span class="nav-text">terminated-pod-gc-threshold</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#profiling-1"><span class="nav-number">1.5.4.2.</span> <span class="nav-text">profiling</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#scheduller%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.5.</span> <span class="nav-text">scheduller配置参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#profiling-2"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">profiling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#automountServiceAccountToken"><span class="nav-number">1.6.</span> <span class="nav-text">automountServiceAccountToken</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#secret%E7%AE%A1%E7%90%86"><span class="nav-number">1.7.</span> <span class="nav-text">secret管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seccomp-default"><span class="nav-number">1.8.</span> <span class="nav-text">seccomp default</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seccomp-localhost"><span class="nav-number">1.9.</span> <span class="nav-text">seccomp localhost</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#privileges-risk"><span class="nav-number">1.10.</span> <span class="nav-text">privileges risk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#podsecuritypolicy"><span class="nav-number">1.11.</span> <span class="nav-text">podsecuritypolicy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSR-approve"><span class="nav-number">1.12.</span> <span class="nav-text">CSR approve</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ingress-usage"><span class="nav-number">1.13.</span> <span class="nav-text">ingress usage</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ingress-tls"><span class="nav-number">1.14.</span> <span class="nav-text">ingress tls</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dashboard"><span class="nav-number">1.15.</span> <span class="nav-text">dashboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#checksum"><span class="nav-number">1.16.</span> <span class="nav-text">checksum</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RBAC"><span class="nav-number">1.17.</span> <span class="nav-text">RBAC</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OPA-%EF%BC%88Open-Policy-Agent"><span class="nav-number">1.18.</span> <span class="nav-text">OPA （Open Policy Agent)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GateKeeper"><span class="nav-number">1.19.</span> <span class="nav-text">GateKeeper</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AppArmor"><span class="nav-number">1.20.</span> <span class="nav-text">AppArmor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IAM-%E7%BB%9F%E4%B8%80%E8%BA%AB%E4%BB%BD%E8%AE%A4%E8%AF%81%EF%BC%88Identity-and-Access-Management%EF%BC%89"><span class="nav-number">1.21.</span> <span class="nav-text">IAM 统一身份认证（Identity and Access Management）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#runtime-class"><span class="nav-number">1.22.</span> <span class="nav-text">runtime class</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%A9%E5%B0%8F%E9%95%9C%E5%83%8F"><span class="nav-number">1.23.</span> <span class="nav-text">缩小镜像</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pod%E4%BC%98%E9%9B%85%E7%BB%88%E6%AD%A2%E6%B5%81%E7%A8%8B"><span class="nav-number">1.24.</span> <span class="nav-text">pod优雅终止流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#log-place"><span class="nav-number">1.25.</span> <span class="nav-text">log place</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ImagePolicyWebhook"><span class="nav-number">1.26.</span> <span class="nav-text">ImagePolicyWebhook</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubesec"><span class="nav-number">1.27.</span> <span class="nav-text">kubesec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#trivy"><span class="nav-number">1.28.</span> <span class="nav-text">trivy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#anchore-syft"><span class="nav-number">1.29.</span> <span class="nav-text">anchore&#x2F;syft</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#anchore-grype"><span class="nav-number">1.30.</span> <span class="nav-text">anchore&#x2F;grype</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sysdig-falco"><span class="nav-number">1.31.</span> <span class="nav-text">sysdig&#x2F;falco</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sysdig"><span class="nav-number">1.32.</span> <span class="nav-text">sysdig</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#connaisseur"><span class="nav-number">1.33.</span> <span class="nav-text">connaisseur</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gadget"><span class="nav-number">1.34.</span> <span class="nav-text">gadget</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#immutable-pod-stateless-pod"><span class="nav-number">1.35.</span> <span class="nav-text">immutable pod &#x2F; stateless pod</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hostPath-security-issue"><span class="nav-number">1.36.</span> <span class="nav-text">hostPath security issue</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">promise.get_future();</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/02/05/cksknowledge/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CKS知识总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-05 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-05T17:34:46+08:00">2022-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="CKS知识总结"><a href="#CKS知识总结" class="headerlink" title="CKS知识总结"></a>CKS知识总结</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。</p>
+<p>一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC/secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。</p>
+<p>第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到了外部，涉及到外部的工具，外部的插件等等。</p>
+<p>第三个点是CKS的部分知识点需要自己做一定的探索，换句话说不操作一遍的话都不知道他是什么，他涉及到什么知识。</p>
+<p>同时，CKAD、CKA、CKS相同的点是都有前人为我们列好了考试大纲，列好了知识点和链接：<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Kubernetes-Certified-Administrator">CKA</a>/<a target="_blank" rel="noopener" href="https://github.com/dgkanatsios/CKAD-exercises">CKAD</a>/<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Certified-Kubernetes-Security-Specialist">CKS</a></p>
+<p>这里主要基于第3个难点，对涉及到的操作做一个细致的记录，方便大家参考，减少学习者的探索时间。</p>
+<span id="more"></span>
+
+<h2 id="搭建集群"><a href="#搭建集群" class="headerlink" title="搭建集群"></a>搭建集群</h2><p>由于操作性比较强，所以必然的需要一个可以操作和试验的集群，大家可以根据自己的喜好去搭建，可以去使用在线的云计算平台搭建，阿里云，腾讯云，gcloud等，也可以使用自己的机器去搭建，最少需要两个机器或者两个虚拟机。</p>
+<p>我提供一个在树莓派上搭建k8s的详细步骤，参考<a href="https://yizhi.ren/2022/01/25/setupk8s/">树莓派搭建k8s集群</a>。</p>
+<p>后面的步骤会基于树莓派上搭建的集群来操作，集群由一个master和一个worker组成。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">~$</span><span class="bash"> kubectl get node</span></span><br><span class="line">NAME      STATUS     ROLES                  AGE     VERSION</span><br><span class="line">server1   Ready      control-plane,master   6d22h   v1.22.1</span><br><span class="line">server2   Ready      &lt;none&gt;                 2m3s    v1.22.1</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装-ingress"><a href="#安装-ingress" class="headerlink" title="安装 ingress"></a>安装 ingress</h2><p>ingress controller我们使用ingress-nginx. 在kuberetes官方github账户下存在两个ingress的repo，一个是<a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-gce">ingress-gce</a>，一个是<a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-nginx">ingress-nginx</a>，gce是给google cloud专用的，我们当然选择一个通用的ingress-nginx。</p>
+<p>ingress-nginx的安装原本是简单的一行指令，但是ingress-nginx的image国内无法访问，需要自己在hub.docker.com搜索别人同步过来的包并替换。</p>
+<p>所以安装ingress-nginx的步骤如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">拷贝这里的内容</span><br><span class="line">https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml</span><br><span class="line"></span><br><span class="line">然后把里面</span><br><span class="line">k8s.gcr.io/ingress-nginx/controller:v1.1.0@sha256:f766669fdcf3dc26347ed273a55e754b427eb4411ee075a53f30718b4499076a</span><br><span class="line">替换成</span><br><span class="line">cangyin/ingress-nginx-controller:v1.1.0</span><br><span class="line"></span><br><span class="line">把里面的</span><br><span class="line">k8s.gcr.io/ingress-nginx/kube-webhook-certgen:v1.1.1@sha256:64d8c73dca984af206adf9d6d7e46aa550362b1d7a01f3a0a91b20cc67868660</span><br><span class="line">替换成</span><br><span class="line">liangjw/kube-webhook-certgen:v1.1.1</span><br><span class="line"></span><br><span class="line">最后kubect apply -f deploy.yaml</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>当然网络没问题的情况下就直接:</p>
+<p><code>kubectl apply -f https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml</code></p>
+<p>成功后：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">~$</span><span class="bash"> kl get svc -n ingress-nginx</span></span><br><span class="line">NAME                                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE</span><br><span class="line">ingress-nginx-controller             NodePort    10.20.148.137   &lt;none&gt;        80:31724/TCP,443:31447/TCP   20m</span><br><span class="line">ingress-nginx-controller-admission   ClusterIP   10.20.160.241   &lt;none&gt;        443/TCP                      20m</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="安装metrics-server"><a href="#安装metrics-server" class="headerlink" title="安装metrics server"></a>安装metrics server</h2><p>同样，网络不通的情况下metrics server安装时镜像也需要换成hub.docker.com下的包。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml</span><br><span class="line">然后编辑components.yaml，在args中添加--kubelet-insecure-tls参数</span><br><span class="line"><span class="meta">#</span><span class="bash"> https://blog.csdn.net/tanjunchen/article/details/104762428</span></span><br><span class="line"></span><br><span class="line">然后替换image成kubeimages/metrics-server:v0.5.1</span><br><span class="line"></span><br><span class="line">再kubectl apply -f components.yaml</span><br></pre></td></tr></table></figure>
+
+<p>成功后：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">~$</span><span class="bash"> kl get svc -n kube-system</span></span><br><span class="line">NAME             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)                  AGE</span><br><span class="line">kube-dns         ClusterIP   10.20.0.10     &lt;none&gt;        53/UDP,53/TCP,9153/TCP   8d</span><br><span class="line">metrics-server   ClusterIP   10.20.204.13   &lt;none&gt;        443/TCP                  18m</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="运行kube-bench"><a href="#运行kube-bench" class="headerlink" title="运行kube-bench"></a>运行kube-bench</h2><p>kube-bench用来检查集群有哪些配置不够安全。</p>
+<p>参考文档：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/aquasecurity/kube-bench/blob/main/docs/installation.md</span><br><span class="line">https://github.com/aquasecurity/kube-bench/blob/main/docs/running.md</span><br></pre></td></tr></table></figure>
+
+<p>二进制安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> install</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 0.6.6开始支持arm了, 所以可以直接装到树莓派上</span></span><br><span class="line">wget https://github.com/aquasecurity/kube-bench/releases/download/v0.6.6/kube-bench_0.6.6_linux_arm64.deb</span><br><span class="line">sudo apt install ./kube-bench_0.6.6_linux_arm64.deb</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> execute</span></span><br><span class="line">kube-bench  --config-dir /etc/kube-bench/cfg --config ./cfg/config.yaml</span><br><span class="line"><span class="meta">#</span><span class="bash"> 这是config默认路径，<span class="built_in">help</span>中有</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> kube-bench不带参就是检查/etc/kube-bench/cfg/config.yaml。</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> -c 1.1.8 可以指定检查哪一项</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 结果可在控制台直接看到</span></span><br></pre></td></tr></table></figure>
+
+<p>yaml安装：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/aquasecurity/kube-bench.git</span><br><span class="line">cd kube-bench</span><br><span class="line"><span class="meta">#</span><span class="bash"> kubectl apply -f job-master.yaml</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> kubectl apply -f job-worker.yaml</span></span><br><span class="line">kubectl apply -f job.yaml # 检查全部</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看结果</span></span><br><span class="line"><span class="meta">~/kube-bench$</span><span class="bash"> kl get pod -A | grep kube-bench</span></span><br><span class="line">default         kube-bench--1-ddvrh                         0/1     Completed   0               3m53s</span><br><span class="line"><span class="meta">~/kube-bench$</span><span class="bash"> kl logs kube-bench--1-ddvrh</span></span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>你还需要下载一个pdf文档，这个文档会对每一个检查条目做详细的说明并给出问题的解决方法。</p>
+<p>到<a target="_blank" rel="noopener" href="https://downloads.cisecurity.org/">CIS下载网站</a>,定位到Kubernetes相关的下载项，下载”CIS Kubernetes V1.20 Benchmark v1.0.0”(你看到的时候版本可能不一样了)。</p>
+<p><img src="/linkimage/cksknowledge/kube-bench-k8s-pdf.png" alt="CIS下载网站"></p>
+<p>基于我前面使用kubeadm安装的集群，下面会列举出kube-bench测出来的一些问题。</p>
+<h3 id="设置权限"><a href="#设置权限" class="headerlink" title="设置权限"></a>设置权限</h3><h4 id="kubelet权限"><a href="#kubelet权限" class="headerlink" title="kubelet权限"></a>kubelet权限</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 /usr/lib/systemd/system/kubelet.service</span><br><span class="line">chown root:root /usr/lib/systemd/system/kubelet.service</span><br><span class="line">chmod 644 /etc/kubernetes/kubelet.conf</span><br></pre></td></tr></table></figure>
+
+<h4 id="cni权限"><a href="#cni权限" class="headerlink" title="cni权限"></a>cni权限</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chmod 644 /etc/cni/net.d/10-weave.conflist</span><br><span class="line">chown root:root /etc/cni/net.d/10-weave.conflist</span><br></pre></td></tr></table></figure>
+
+<h4 id="etcd权限"><a href="#etcd权限" class="headerlink" title="etcd权限"></a>etcd权限</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">useradd etcd</span><br><span class="line">chown etcd:etcd /var/lib/etcd</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h3 id="kubelet配置参数"><a href="#kubelet配置参数" class="headerlink" title="kubelet配置参数"></a>kubelet配置参数</h3><h4 id="authentication"><a href="#authentication" class="headerlink" title="authentication"></a>authentication</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">vi /var/lib/kubelet/config.yaml</span><br><span class="line"># ensure anonymous is false</span><br><span class="line"># ensure clientCAFile is configured</span><br><span class="line"></span><br><span class="line">apiVersion: kubelet.config.k8s.io/v1beta1</span><br><span class="line">authentication:</span><br><span class="line">  anonymous:</span><br><span class="line">    enabled: false</span><br><span class="line">  webhook:</span><br><span class="line">    cacheTTL: 0s</span><br><span class="line">    enabled: true</span><br><span class="line">  x509:</span><br><span class="line">    clientCAFile: /etc/kubernetes/pki/ca.crt</span><br></pre></td></tr></table></figure>
+
+<p>注意上面的配置是kubeadm安装后默认的配置，没有什么问题。其中关于webhook的知识可以参考：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/reference/access-authn-authz/webhook/</span><br><span class="line">mode Webhook causes Kubernetes to query an outside REST service when determining user privileges.</span><br><span class="line">也就是webhook会触发一个rest请求到外部服务来决定一个请求是否有权限。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="protectKernelDefaults"><a href="#protectKernelDefaults" class="headerlink" title="protectKernelDefaults"></a>protectKernelDefaults</h4><p>protectKernelDefaults是决定k8s一个行为，当内核参数不满足k8s的期待的时候，k8s是报错还是修改内核参数。如果true就是报错，如果false就是修改。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">protectKernelDefaults, if true, causes the Kubelet to error if kernel </span><br><span class="line">flags are not as it expects. Otherwise the Kubelet will attempt to </span><br><span class="line">modify kernel flags to match its expectation.</span><br><span class="line"></span><br><span class="line">配置方法是 vi /var/lib/kubelet/config.yaml</span><br><span class="line">并添加protectKernelDefaults: true </span><br><span class="line">默认是false</span><br></pre></td></tr></table></figure>
+
+<p>k8s因为该参数启动失败报错的一个例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://www.ibm.com/docs/zh/cloud-private/3.1.2?topic=upgrade-kubelet-container-fails-start</span><br><span class="line"></span><br><span class="line">kubelet的protectKernelDefaults可能导致kubelet启动失败，错误信息类似：</span><br><span class="line">hyperkube[804]: F1023 17:02:19.964867     804 kubelet.go:1333] Failed to start ContainerManager [Invalid kernel flag: vm/overcommit_memory, expected value: 1, actual value: 0, Invalid kernel flag: kernel/panic, expected value: 10, actual value: 0, Invalid kernel flag: kernel/panic_on_oops, expected value: 1, actual value: 0]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在我的集群中如果开启了就会报错。</p>
+<h4 id="eventRecordQPS-eventBurst"><a href="#eventRecordQPS-eventBurst" class="headerlink" title="eventRecordQPS/eventBurst"></a>eventRecordQPS/eventBurst</h4><p>这两个参数是对kubelet产生的event进行流控的(event会上报给apiserver)，eventRecordQPS是控制qps，eventBurst是控制令牌桶的桶大小。设小了会丢event，设大了对apiserver可能产生潜在压力，对于我们个人搭建的小集群，设大一点就可以了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/</span><br><span class="line"></span><br><span class="line">vi /var/lib/kubelet/config.yaml</span><br><span class="line"># add below two lines</span><br><span class="line">eventRecordQPS: 100</span><br><span class="line">eventBurst: 200</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="apiserver配置参数"><a href="#apiserver配置参数" class="headerlink" title="apiserver配置参数"></a>apiserver配置参数</h3><h4 id="anonymous-auth"><a href="#anonymous-auth" class="headerlink" title="anonymous-auth"></a>anonymous-auth</h4><p>设置为true时候，如果一个请求没被别的验证流程拦截，那么这个请求就作为一个匿名请求，比如你不提供token的时候（不同于提供错误的token）。匿名请求的用户名和组分别为 <code>system:anonymous</code>和<code>system:unauthenticated</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/reference/access-authn-authz/authentication/#anonymous-requests</span><br><span class="line"></span><br><span class="line">/etc/kubernetes/manifests/kube-apiserver.yaml 中添加参数</span><br><span class="line">--anonymous-auth=false</span><br><span class="line"></span><br><span class="line">但设为true不是必须的，设置了会影响health check。</span><br><span class="line">If you are using RBAC authorization, it is generally considered reasonable to allow anonymous access to the API Server for health checks and discovery purposes, and hence this recommendation is not scored. However, you should consider whether anonymous discovery is an acceptable risk for your purposes.</span><br><span class="line"></span><br><span class="line">设为false可能会引起问题:</span><br><span class="line">https://github.com/kubernetes/kubeadm/issues/798#issuecomment-470579937</span><br><span class="line">https://github.com/kubernetes/kubernetes/issues/51076#issuecomment-412846482</span><br><span class="line">so leave anonymous-auth=true(default value) with RBAC is ok.</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="kubelet-certificate-authority"><a href="#kubelet-certificate-authority" class="headerlink" title="kubelet-certificate-authority"></a>kubelet-certificate-authority</h4><p>在默认的时候，apiserver访问kubelet的时候，当然，会走ssl验证，但是只会做单向验证，也就是kubelet会验证apiserver，apiserver不会验证kubelet的身份。kubelet-certificate-authority被设置的时候，apiserver访问kubelet时，apiserver就会验证kubelet的身份，并使用kubelet-certificate-authority配置的CA文件来验证。这里我们使用与集群相同的ca文件（default at /etc/kubernetes/pki/ca.crt）来创建kubelet server的证书：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">首先给kubelet server2创建证书：</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 1. 创建csr配置文件</span><br><span class="line">vi kubelet-server2.conf</span><br><span class="line"></span><br><span class="line">[ req ]</span><br><span class="line">default_bits = 2048</span><br><span class="line">prompt = no</span><br><span class="line">default_md = sha256</span><br><span class="line">req_extensions = req_ext</span><br><span class="line">distinguished_name = dn</span><br><span class="line"></span><br><span class="line">[ dn ]</span><br><span class="line">O = system:nodes</span><br><span class="line">CN = system:node:server2</span><br><span class="line"></span><br><span class="line">[ req_ext ]</span><br><span class="line">subjectAltName = @alt_names</span><br><span class="line"></span><br><span class="line">[ alt_names ]</span><br><span class="line">DNS.1 = server2</span><br><span class="line">IP.1 = 192.168.3.152</span><br><span class="line"></span><br><span class="line">[ v3_ext ]</span><br><span class="line">authorityKeyIdentifier=keyid,issuer:always</span><br><span class="line">basicConstraints=CA:FALSE</span><br><span class="line">keyUsage=keyEncipherment,dataEncipherment</span><br><span class="line">extendedKeyUsage=serverAuth</span><br><span class="line">subjectAltName=@alt_names</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 2. 创建server证书</span><br><span class="line"># 创建key</span><br><span class="line">openssl genrsa -out kubelet-server2.key 2048</span><br><span class="line"># 创建csr</span><br><span class="line">openssl req -new -key kubelet-server2.key -out kubelet-server2.csr -config kubelet-server2.conf</span><br><span class="line"># 创建crt</span><br><span class="line">openssl x509 -req -in kubelet-server2.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out kubelet-server2.crt -days 366 -extensions v3_ext -extfile kubelet-server2.conf</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 3. copy files to server2</span><br><span class="line">scp -P 22 kubelet-server2* root@192.168.3.152:/var/lib/kubelet/pki/</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 4. config kubelet config file</span><br><span class="line">vi /var/lib/kubelet/config.yaml # add below two</span><br><span class="line"># tlsCertFile: /var/lib/kubelet/pki/kubelet-server2.crt</span><br><span class="line"># tlsPrivateKeyFile: /var/lib/kubelet/pki/kubelet-server2.key</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 5. config apiserver command line</span><br><span class="line">vi /etc/kubernetes/manifests/kube-apiserver.yaml # add below one</span><br><span class="line"># - --kubelet-certificate-authority=/etc/kubernetes/pki/ca.crt</span><br></pre></td></tr></table></figure>
+
+<p>注意上面的流程中既包含apiserver的参数kubelet-certificate-authority，也包含kubelet需要配置的参数tlsCertFile和tlsPrivateKeyFile。</p>
+<p>经过验证，如果kubelet使用全新的ca来签名（而不是当前集群使用的CA），然后把全新的这个ca的cert配到apiserver的–kubelet-certificate-authority，这时候apiserver请求kubelet会出现unknown ca的错误，不成功，应该是这个全新ca还没有添加到apiserver的可信ca中。这个方向没有继续探索。</p>
+<h4 id="admission-control-EventRateLimit"><a href="#admission-control-EventRateLimit" class="headerlink" title="admission-control EventRateLimit"></a>admission-control EventRateLimit</h4><p>admission-control是apiserver提供的一系列内置的控制插件，可以拦截和修改请求。</p>
+<p>eventratelimit是用来控制请求的qps的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#eventratelimit</span><br><span class="line"></span><br><span class="line">总体步骤是：</span><br><span class="line">先创建好配置文件admission-control-config-file.yaml和eventconfig.yaml，然后修改kube-apiserver.yaml</span><br><span class="line"></span><br><span class="line"># 创建配置文件存放的目录</span><br><span class="line">mkdir /etc/kubernetes/admission/</span><br><span class="line">cd /etc/kubernetes/admission/</span><br><span class="line"></span><br><span class="line"># 配置admission-control-config-file.yaml，总的插件配置文件</span><br><span class="line">vi admission-control-config-file.yaml</span><br><span class="line">apiVersion: apiserver.config.k8s.io/v1</span><br><span class="line">kind: AdmissionConfiguration</span><br><span class="line">plugins:</span><br><span class="line">- name: EventRateLimit</span><br><span class="line">  path: eventconfig.yaml</span><br><span class="line"></span><br><span class="line"># 配置eventconfig.yaml</span><br><span class="line"># burst是令牌桶的桶大小，cacheSize是指LRU中最多存放多少个namespace/user的配置值</span><br><span class="line">vi eventconfig.yaml </span><br><span class="line">apiVersion: eventratelimit.admission.k8s.io/v1alpha1</span><br><span class="line">kind: Configuration</span><br><span class="line">limits:</span><br><span class="line">- type: Namespace</span><br><span class="line">  qps: 50</span><br><span class="line">  burst: 100</span><br><span class="line">  cacheSize: 2000</span><br><span class="line">- type: User</span><br><span class="line">  qps: 10</span><br><span class="line">  burst: 50</span><br><span class="line">  cacheSize: 1000</span><br><span class="line"></span><br><span class="line"># 配置kube-apiserver.yaml</span><br><span class="line"># enable-admission-plugins参数打开EventRateLimit项，</span><br><span class="line"># admission-control-config-file参数配置总的插件配置文件</span><br><span class="line"># mount created new directory</span><br><span class="line"></span><br><span class="line">vi kube-apiserver.yaml</span><br><span class="line"># edit two lines</span><br><span class="line">- --enable-admission-plugins=NodeRestriction,EventRateLimit</span><br><span class="line">- --admission-control-config-file=/etc/kubernetes/admission/admission-control-config-file.yaml</span><br><span class="line"></span><br><span class="line"># add</span><br><span class="line">- mountPath: /etc/kubernetes/admission</span><br><span class="line">  name: api-admission</span><br><span class="line">  readOnly: true</span><br><span class="line"></span><br><span class="line"># add</span><br><span class="line">- hostPath:</span><br><span class="line">    path: /etc/kubernetes/admission</span><br><span class="line">    type: DirectoryOrCreate</span><br><span class="line">  name: api-admission</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="admission-control-AlwaysPullImages"><a href="#admission-control-AlwaysPullImages" class="headerlink" title="admission-control AlwaysPullImages"></a>admission-control AlwaysPullImages</h4><p>同样是一个admission-control插件，会强制把pod中的imagePullPolicy改成AlwaysPullImages，这么做是为了防止没有镜像拉取权限的用户利用已经缓存在本地的镜像来拉起pod。每次都去拉取，搭配后面会接触到ImagePolicyWebhook插件，就可以做到每次部署镜像都检查一遍是否允许用户部署镜像。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">参考文档：</span><br><span class="line">https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#alwayspullimages </span><br><span class="line">https://trstringer.com/kubernetes-alwayspullimages/</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="admission-control-SecurityContextDeny"><a href="#admission-control-SecurityContextDeny" class="headerlink" title="admission-control SecurityContextDeny"></a>admission-control SecurityContextDeny</h4><p>同样是一个admission-control插件,开启后会禁止SecurityContext中的部分字段，但并不是禁止securitycontext中的所有字段。开了PodSecurityPolicy插件的话这个就不需要开启。kube-bench对SecurityContextDeny和PodSecurityPolicy只要有一个开了就不会报了，不过PodSecurityPolicy比SecurityContextDeny要复杂很多。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">开启后会禁止SecurityContext中的RunAsUser等字段,pod级别的和container级别的都有字段会涉及.</span><br><span class="line">代码在plugin/pkg/admission/securitycontext/scdeny/admission.go</span><br><span class="line">// Validate will deny any pod that defines SupplementalGroups, SELinuxOptions, RunAsUser or FSGroup</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="admission-control-PodSecurityContext"><a href="#admission-control-PodSecurityContext" class="headerlink" title="admission-control PodSecurityContext"></a>admission-control PodSecurityContext</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">禁止SecirityContex中的一些字段,但是这个PodSecurityContext已经被deprecated了.</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="insecure-port"><a href="#insecure-port" class="headerlink" title="insecure port"></a>insecure port</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">insecure-bind-address, insecure-port, port</span><br><span class="line">apiserver这几个参数都已经废除,并且不会再被使用了. 所以这几个参数不用管。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="profiling"><a href="#profiling" class="headerlink" title="profiling"></a>profiling</h4><p>–profiling=false</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">这个是关闭pprof页面. 如果需要这个页面就不要关闭,然后通过下面的步骤查看:</span><br><span class="line"></span><br><span class="line">:~# kubectl proxy</span><br><span class="line">Starting to serve on 127.0.0.1:8001</span><br><span class="line"></span><br><span class="line">:~# wget http://127.0.0.1:8001/debug/pprof</span><br><span class="line"></span><br><span class="line">apiserver scheduler controller-manager都可以关闭。</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="audit-policy-file"><a href="#audit-policy-file" class="headerlink" title="audit-policy-file"></a>audit-policy-file</h4><p>审计功能就是给请求记录日志，不同的请求可以设置不同的日志级别，比如只记录metadata，只记录request，等等。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://kubernetes.io/docs/tasks/debug-application-cluster/audit/</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 1. 创建audit-policy.yaml</span></span><br><span class="line">vi /etc/kubernetes/audit-policy.yaml</span><br><span class="line"><span class="meta">#</span><span class="bash"> 简单版的policy</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Log all requests at the Metadata level.</span></span><br><span class="line">apiVersion: audit.k8s.io/v1</span><br><span class="line">kind: Policy</span><br><span class="line">rules:</span><br><span class="line">- level: Metadata</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 2. 配置apiserver参数</span></span><br><span class="line">    - --audit-policy-file=/etc/kubernetes/audit-policy.yaml</span><br><span class="line">    - --audit-log-path=/var/log/kubernetes/audit/audit.log</span><br><span class="line">    - --audit-log-maxage=15</span><br><span class="line">    - --audit-log-maxbackup=10</span><br><span class="line">    - --audit-log-maxsize=10</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 3. 挂载相关文件和目录</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="bash">volumeMounts:</span></span><br><span class="line">    - mountPath: /etc/kubernetes/audit-policy.yaml</span><br><span class="line">      name: audit-policy</span><br><span class="line">      readOnly: true</span><br><span class="line">    - mountPath: /var/log/kubernetes/audit</span><br><span class="line">      name: audit-log</span><br><span class="line">      readOnly: false</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="bash">volumes:</span></span><br><span class="line">  - hostPath:</span><br><span class="line">      path: /etc/kubernetes/audit-policy.yaml</span><br><span class="line">      type: File</span><br><span class="line">    name: audit-policy</span><br><span class="line">  - hostPath:</span><br><span class="line">      path: /var/log/kubernetes/audit</span><br><span class="line">      type: DirectoryOrCreate</span><br><span class="line">    name: audit-log</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>之后你在/var/log/kubernetes/audit/audit.log文件中就能看到apiserver的请求日志了。</p>
+<h4 id="encryption-provider-config"><a href="#encryption-provider-config" class="headerlink" title="encryption-provider-config"></a>encryption-provider-config</h4><p>对写入etcd的数据进行编码，对读取的数据进行解码，这样用户直接读etcd的数据就会是乱码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/</span><br><span class="line"></span><br><span class="line">因为我们在”admission-control EventRateLimit“小节已经挂载了/etc/kubernetes/admission目录，所以这里不再配置挂载/etc/kubernetes/admission的操作。</span><br><span class="line"></span><br><span class="line">编辑encrypt-config.yaml文件：</span><br><span class="line">vi /etc/kubernetes/admission/encrypt-config.yaml</span><br><span class="line">apiVersion: apiserver.config.k8s.io/v1</span><br><span class="line">kind: EncryptionConfiguration</span><br><span class="line">resources:</span><br><span class="line">  - resources:</span><br><span class="line">    - secrets</span><br><span class="line">    providers:</span><br><span class="line">    - aescbc:</span><br><span class="line">        keys:</span><br><span class="line">        - name: key1</span><br><span class="line">          secret: &lt;BASE 64 ENCODED SECRET&gt;</span><br><span class="line">    - identity: &#123;&#125;</span><br><span class="line"></span><br><span class="line">其中secret通过</span><br><span class="line">head -c 32 /dev/urandom | base64</span><br><span class="line">获取。集群内用来HA的多个apiserver要用同一个secret。</span><br><span class="line"></span><br><span class="line">然后通过--encryption-provider-config参数传给apiserver。</span><br><span class="line">--encryption-provider-config=/etc/kubernetes/admission/encrypt-config.yaml</span><br></pre></td></tr></table></figure>
+
+<p>注意providers下的项目中，第一个provider的项用于加密，所有providers项用于依次解密。在我们的配置中key1用于加密，解密会先用key1解，解不出就用第二项解，第二项是空的，也就是原样返回。通常providers最后一项配为空，这样就可以防止在encrypt-config.yaml应用前存入的不加密数据会读不出来。</p>
+<p>我们可以验证一下EncryptionConfiguration的功能：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 首先创建一个读etcd的脚本，方便操作：</span></span><br><span class="line">vi read_etcd_resource.sh </span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="variable">$1</span> resource</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="variable">$2</span> namespace</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="variable">$3</span> resource name</span></span><br><span class="line">ETCDCTL_API=3 etcdctl --endpoints 127.0.0.1:2379 \</span><br><span class="line">  --cert=/etc/kubernetes/pki/etcd/server.crt \</span><br><span class="line">  --key=/etc/kubernetes/pki/etcd/server.key \</span><br><span class="line">  --cacert=/etc/kubernetes/pki/etcd/ca.crt \</span><br><span class="line">  get /registry/$1/$2/$3</span><br><span class="line"><span class="meta">  </span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 验证encrypt的方法：</span></span><br><span class="line">kubectl get secret</span><br><span class="line"><span class="meta">#</span><span class="bash"> 选择一个encrypt-config.yaml应用前已经存在的secre，比如tdefault-token-xxxxx</span></span><br><span class="line">sh etcd_read.sh secrets default default-token-xxxxx</span><br><span class="line"><span class="meta">#</span><span class="bash"> 返回可读明文。</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 创建一个新的secret</span></span><br><span class="line">kubectl create secret generic xx --from-literal aa==bb</span><br><span class="line"><span class="meta">#</span><span class="bash"> 读取先的secret</span></span><br><span class="line">sh etcd_read.sh secrets default xx</span><br><span class="line"><span class="meta">#</span><span class="bash"> 返回乱码，证明新建的secret已经被encode了</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="tls-cipher-suites"><a href="#tls-cipher-suites" class="headerlink" title="tls-cipher-suites"></a>tls-cipher-suites</h4><p>设置tls支持的加密算法，由于部分加密算法是不安全的，所以我们需要把支持的加密算法枚举出来，不安全的不枚举就不会被使用。枚举出的算法名配到tls-cipher-suites即可。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/</span><br><span class="line">--tls-cipher-suites strings              Comma-separated list of cipher</span><br><span class="line"> suites for the server. If omitted, the default Go cipher suites will be</span><br><span class="line"> used.</span><br><span class="line">有部分算法是不够安全的。不传的话是使用的默认算法列表，取决于tls内部，默认值不是k8s指定的。</span><br><span class="line"></span><br><span class="line">上面kubernetes文档里有给出建议的选项(要删掉空格)。</span><br><span class="line">Comma-separated list of cipher suites for the server. If omitted, the default Go cipher suites will be used.</span><br><span class="line">Preferred values: TLS_AES_128_GCM_SHA256, TLS_AES_256_GCM_SHA384, TLS_CHACHA20_POLY1305_SHA256, TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305, TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256, TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384, TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305, TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256, TLS_RSA_WITH_AES_128_CBC_SHA, TLS_RSA_WITH_AES_128_GCM_SHA256, TLS_RSA_WITH_AES_256_CBC_SHA, TLS_RSA_WITH_AES_256_GCM_SHA384.</span><br><span class="line">Insecure values: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_ECDSA_WITH_RC4_128_SHA, TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA, TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256, TLS_ECDHE_RSA_WITH_RC4_128_SHA, TLS_RSA_WITH_3DES_EDE_CBC_SHA, TLS_RSA_WITH_AES_128_CBC_SHA256, TLS_RSA_WITH_RC4_128_SHA.</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="request-timeout"><a href="#request-timeout" class="headerlink" title="request-timeout"></a>request-timeout</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">文档：</span><br><span class="line">https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/</span><br><span class="line"></span><br><span class="line">--request-timeout表示apiserver可以维持一个链接直到超时的时间。</span><br><span class="line">比如--request-timeout=300s。</span><br><span class="line"></span><br><span class="line">还有个--min-request-timeout，专用于watch request handler的超时时间，</span><br><span class="line">实际超时时间是在min-request-timeout之上加一个随机值。</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="controller-manager配置参数"><a href="#controller-manager配置参数" class="headerlink" title="controller manager配置参数"></a>controller manager配置参数</h3><h4 id="terminated-pod-gc-threshold"><a href="#terminated-pod-gc-threshold" class="headerlink" title="terminated-pod-gc-threshold"></a>terminated-pod-gc-threshold</h4><p>已经结束的pod（succeed和failed）不会自动删除，直到某个控制器删除或者手动删除。</p>
+<p>–terminated-pod-gc-threshold配置后，当超过配置值数量pod结束后，就会触发清理，超过几个就清理几个。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">文档：</span><br><span class="line">https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-garbage-collection</span><br><span class="line"></span><br><span class="line">代码在pkg/controller/podgc/gc_controller.go 的 func (gcc *PodGCController) gcTerminated(pods []*v1.Pod)</span><br><span class="line"></span><br><span class="line">The control plane cleans up terminated Pods (with a phase of Succeeded or Failed), when the number of Pods exceeds the configured threshold (determined by terminated-pod-gc-threshold in the kube-controller-manager).</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="profiling-1"><a href="#profiling-1" class="headerlink" title="profiling"></a>profiling</h4><p>在apiserver中我们已经禁用了apiserver的profiling，那么相应的controller manager的profiling也应该被禁用掉。给controller manager配置命令行参数–profiling=false即可。</p>
+<p>不过这里要补充一个知识，如何在controller manager的profiling打开的情况下，查看pprof页面。思路是在请求中带上TOKEN，并且给token对应的用户一个对应的权限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># get default user token</span><br><span class="line">kubectl describe secret $(kubectl get secrets -n default | grep ^default | cut -f1 -d &#x27; &#x27;) -n default | grep -E &#x27;^token&#x27; | cut -f2 -d&#x27;:&#x27; | tr -d &quot; &quot;</span><br><span class="line"></span><br><span class="line"># set token var</span><br><span class="line">TOKEN=xxx  # 上一条命令的内容</span><br><span class="line"></span><br><span class="line"># apply clusterrolebinding</span><br><span class="line">kl apply -f role.yaml</span><br><span class="line"></span><br><span class="line"># 访问带上token</span><br><span class="line">curl https://127.0.0.1:10257/debug/pprof/goroutine?debug=2 -k --header &quot;Authorization: Bearer $TOKEN&quot;</span><br><span class="line">curl https://127.0.0.1:10259/debug/pprof/goroutine?debug=2 -k --header &quot;Authorization: Bearer $TOKEN&quot;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># 其中role.yaml内容如下：</span><br><span class="line"></span><br><span class="line">cat role.yaml</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: debug-cluster-role</span><br><span class="line">rules:</span><br><span class="line">- nonResourceURLs:</span><br><span class="line">  - /debug/pprof/profile</span><br><span class="line">  - /debug/pprof/goroutine</span><br><span class="line">  verbs:</span><br><span class="line">  - get</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: debug-binding</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: debug-cluster-role</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: default</span><br><span class="line">  namespace: default</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="scheduller配置参数"><a href="#scheduller配置参数" class="headerlink" title="scheduller配置参数"></a>scheduller配置参数</h3><h4 id="profiling-2"><a href="#profiling-2" class="headerlink" title="profiling"></a>profiling</h4><p>同apiserver和controll manager,配置命令行参数–profiling=false即可。</p>
+<h2 id="automountServiceAccountToken"><a href="#automountServiceAccountToken" class="headerlink" title="automountServiceAccountToken"></a>automountServiceAccountToken</h2><p>我们创建pod的时候会自动挂载一个user，默认就是default，这个用户的token会挂载在/var/run/secrets/kubernetes.io/serviceaccount/token下，但是出于安全考虑，我们希望不要被自动挂载。</p>
+<p>pod和service account都可以设置automountServiceAccountToken这个字段，都设置了的话pod中的automountServiceAccountToken字段优先。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># sa中配置</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: build-robot</span><br><span class="line">automountServiceAccountToken: false</span><br><span class="line"></span><br><span class="line"># pod中配置</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: my-pod</span><br><span class="line">spec:</span><br><span class="line">  serviceAccountName: build-robot</span><br><span class="line">  automountServiceAccountToken: false</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="secret管理"><a href="#secret管理" class="headerlink" title="secret管理"></a>secret管理</h2><p>secret可以挂载到env或者volume中，但是由于环境变量容易暴露到日志中，因此secret应该尽量使用volume挂载而不是env。</p>
+<p>secret如果有更复杂的管理，或者需要跨k8s或者在非k8s环境下使用，还是需要进行外部管理的。</p>
+<h2 id="seccomp-default"><a href="#seccomp-default" class="headerlink" title="seccomp default"></a>seccomp default</h2><p>seccomp是操作系统用来限制进程的syscall的，k8s可以配置seccomp来限制容器中进程的syacall权限，哪些能call哪些不能call。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">文档：</span><br><span class="line">https://kubernetes.io/blog/2021/08/25/seccomp-default/</span><br><span class="line">https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/</span><br><span class="line"></span><br><span class="line">默认情况下k8s传给cri的seccomp是Unconfined，即不限制syscall。</span><br><span class="line">设置SeccompDefault后，会使用cri默认的seccomp，不同cri可能默认是不同的。</span><br><span class="line">If not specified differently in the pod manifest, then the feature will add a higher set of security constraints by using the default profile of the container runtime. </span><br><span class="line">These profiles may differ between runtimes like CRI-O or containerd. They also differ for its used hardware architectures</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>我们使用下面的步骤也验证seccomp default生效了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># 获取目前的seccomp</span><br><span class="line">kl run ng --image nginx --restart=Never</span><br><span class="line">CONTAINER_ID=$(sudo crictl --runtime-endpoint=/run/containerd/containerd.sock ps -q --name=ng)</span><br><span class="line">sudo crictl --runtime-endpoint=/run/containerd/containerd.sock inspect $CONTAINER_ID | jq .info.runtimeSpec.linux.seccomp</span><br><span class="line"># 返回null</span><br><span class="line"></span><br><span class="line"># 配置seccomp default</span><br><span class="line">root@k8sserver2:~# vi /etc/default/kubelet </span><br><span class="line">KUBELET_EXTRA_ARGS=&quot;--feature-gates=&#x27;SeccompDefault=true&#x27; --seccomp-default=RuntimeDefault&quot;</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart kubelet</span><br><span class="line"></span><br><span class="line"># 获取新的seccomp</span><br><span class="line">kl run gn --image nginx --restart=Never</span><br><span class="line">CONTAINER_ID=$(sudo crictl --runtime-endpoint=/run/containerd/containerd.sock ps -q --name=gn)</span><br><span class="line">sudo crictl --runtime-endpoint=/run/containerd/containerd.sock inspect $CONTAINER_ID | jq .info.runtimeSpec.linux.seccomp</span><br><span class="line"># 返回</span><br><span class="line">#&#123;</span><br><span class="line">#  &quot;defaultAction&quot;: &quot;SCMP_ACT_ERRNO&quot;,</span><br><span class="line">#  &quot;architectures&quot;: [</span><br><span class="line">#    &quot;SCMP_ARCH_ARM&quot;,</span><br><span class="line">#    &quot;SCMP_ARCH_AARCH64&quot;</span><br><span class="line">#  ],</span><br><span class="line">#  &quot;syscalls&quot;: [</span><br><span class="line">#    &#123;</span><br><span class="line">#      &quot;names&quot;: [</span><br><span class="line">#        &quot;accept&quot;,</span><br><span class="line">#        &quot;accept4&quot;,</span><br><span class="line"># ......</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="seccomp-localhost"><a href="#seccomp-localhost" class="headerlink" title="seccomp localhost"></a>seccomp localhost</h2><p>上面看了如何使用默认的seccomp，那么如果使用自定义的seccomp呢，可以看下面的步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">文档：</span><br><span class="line">https://kubernetes.io/docs/tutorials/clusters/seccomp/</span><br><span class="line"></span><br><span class="line"># 创建/var/lib/kubelet/seccomp,这个是seccomp文件默认被查找的位置</span><br><span class="line">mkdir /var/lib/kubelet/seccomp</span><br><span class="line">cd /var/lib/kubelet/seccomp</span><br><span class="line"></span><br><span class="line"># 下载所需的seccomp文件，我们这个seccomp的作用的对syscall进行日志记录，不做syscall拦截</span><br><span class="line">curl -L -o profiles/audit.json https://k8s.io/examples/pods/security/seccomp/profiles/audit.json</span><br><span class="line">#curl -L -o profiles/violation.json https://k8s.io/examples/pods/security/seccomp/profiles/violation.json</span><br><span class="line">#curl -L -o profiles/fine-grained.json https://k8s.io/examples/pods/security/seccomp/profiles/fine-grained.json</span><br><span class="line">ls profiles</span><br><span class="line"># audit.json  fine-grained.json  violation.json</span><br><span class="line"></span><br><span class="line"># 创建pod的yaml，里面包含自定义seccom配置localhostProfile: profiles/audit.json</span><br><span class="line">vi audit-log.yaml</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: audit-pod</span><br><span class="line">  labels:</span><br><span class="line">    app: audit-pod</span><br><span class="line">spec:</span><br><span class="line">  securityContext:</span><br><span class="line">    seccompProfile:</span><br><span class="line">      type: Localhost</span><br><span class="line">      localhostProfile: profiles/audit.json</span><br><span class="line">  containers:</span><br><span class="line">  - name: test-container</span><br><span class="line">    image: nginx</span><br><span class="line">    </span><br><span class="line"># 查看pod的ip:port</span><br><span class="line">kubectl apply -f audit-log.yaml</span><br><span class="line">kubectl expose pod audit-pod --type NodePort --port 80</span><br><span class="line">kubectl get service audit-pod</span><br><span class="line">NAME        TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">audit-pod   NodePort   10.20.162.9   &lt;none&gt;        80:31676/TCP   7s</span><br><span class="line"></span><br><span class="line"># 访问ip:port并查看日志</span><br><span class="line">访问ip:port</span><br><span class="line">curl 10.20.162.9</span><br><span class="line">同时在另一个终端查看日志</span><br><span class="line">tail -f /var/log/syslog</span><br><span class="line">可以看到这些日志：</span><br><span class="line">Dec 26 11:45:54 k8sserver2 kernel: [57795.753820] kauditd_printk_skb: 6 callbacks suppressed</span><br><span class="line">Dec 26 11:45:54 k8sserver2 kernel: [57795.753832] audit: type=1326 audit(1640519154.116:2520): auid=4294967295 uid=101 gid=101 ses=4294967295 subj=cri-containerd.apparmor.d pid=21257 comm=&quot;nginx&quot; exe=&quot;/usr/sbin/nginx&quot; sig=0 arch=c00000b7 syscall=242 compat=0 ip=0xffffb7021d14 code=0x7ffc0000</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line">经过验证如果拿掉pod中seccompProfile配置，就不能看到日志。说明seccomp生效了。</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="privileges-risk"><a href="#privileges-risk" class="headerlink" title="privileges risk"></a>privileges risk</h2><p>这部分知识比较偏向攻击层面，而不是防守层面。我们是通过学习他的攻击方式来加强自己在配置权限时候的安全意识。同时实际考试中并没有这一块考到，所以不想看的可以跳过。</p>
+<p>存在权限风险的操作主要有4个：bind，escalate，impersonate，create pod。详细的分析和测试可以跳到<a href="https://yizhi.ren/2022/02/05/dangerousprivileges/">k8s中的危险权限</a>查看。</p>
+<h2 id="podsecuritypolicy"><a href="#podsecuritypolicy" class="headerlink" title="podsecuritypolicy"></a>podsecuritypolicy</h2><h2 id="CSR-approve"><a href="#CSR-approve" class="headerlink" title="CSR approve"></a>CSR approve</h2><h2 id="ingress-usage"><a href="#ingress-usage" class="headerlink" title="ingress usage"></a>ingress usage</h2><h2 id="ingress-tls"><a href="#ingress-tls" class="headerlink" title="ingress tls"></a>ingress tls</h2><h2 id="dashboard"><a href="#dashboard" class="headerlink" title="dashboard"></a>dashboard</h2><h2 id="checksum"><a href="#checksum" class="headerlink" title="checksum"></a>checksum</h2><h2 id="RBAC"><a href="#RBAC" class="headerlink" title="RBAC"></a>RBAC</h2><h2 id="OPA-（Open-Policy-Agent"><a href="#OPA-（Open-Policy-Agent" class="headerlink" title="OPA （Open Policy Agent)"></a>OPA （Open Policy Agent)</h2><h2 id="GateKeeper"><a href="#GateKeeper" class="headerlink" title="GateKeeper"></a>GateKeeper</h2><h2 id="AppArmor"><a href="#AppArmor" class="headerlink" title="AppArmor"></a>AppArmor</h2><h2 id="IAM-统一身份认证（Identity-and-Access-Management）"><a href="#IAM-统一身份认证（Identity-and-Access-Management）" class="headerlink" title="IAM 统一身份认证（Identity and Access Management）"></a>IAM 统一身份认证（Identity and Access Management）</h2><h2 id="runtime-class"><a href="#runtime-class" class="headerlink" title="runtime class"></a>runtime class</h2><h2 id="缩小镜像"><a href="#缩小镜像" class="headerlink" title="缩小镜像"></a>缩小镜像</h2><h2 id="pod优雅终止流程"><a href="#pod优雅终止流程" class="headerlink" title="pod优雅终止流程"></a>pod优雅终止流程</h2><h2 id="log-place"><a href="#log-place" class="headerlink" title="log place"></a>log place</h2><h2 id="ImagePolicyWebhook"><a href="#ImagePolicyWebhook" class="headerlink" title="ImagePolicyWebhook"></a>ImagePolicyWebhook</h2><h2 id="kubesec"><a href="#kubesec" class="headerlink" title="kubesec"></a>kubesec</h2><h2 id="trivy"><a href="#trivy" class="headerlink" title="trivy"></a>trivy</h2><h2 id="anchore-syft"><a href="#anchore-syft" class="headerlink" title="anchore/syft"></a>anchore/syft</h2><h2 id="anchore-grype"><a href="#anchore-grype" class="headerlink" title="anchore/grype"></a>anchore/grype</h2><h2 id="sysdig-falco"><a href="#sysdig-falco" class="headerlink" title="sysdig/falco"></a>sysdig/falco</h2><h2 id="sysdig"><a href="#sysdig" class="headerlink" title="sysdig"></a>sysdig</h2><h2 id="connaisseur"><a href="#connaisseur" class="headerlink" title="connaisseur"></a>connaisseur</h2><h2 id="gadget"><a href="#gadget" class="headerlink" title="gadget"></a>gadget</h2><h2 id="immutable-pod-stateless-pod"><a href="#immutable-pod-stateless-pod" class="headerlink" title="immutable pod / stateless pod"></a>immutable pod / stateless pod</h2><h2 id="hostPath-security-issue"><a href="#hostPath-security-issue" class="headerlink" title="hostPath security issue"></a>hostPath security issue</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/payimage/wechat.png" alt="yizhiren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/payimage/zhifubao.png" alt="yizhiren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/05/dangerousprivileges/" rel="prev" title="k8s中的危险权限">
+                  <i class="fa fa-chevron-left"></i> k8s中的危险权限
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"c558c84f9591791b211ca455a29141d5"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
