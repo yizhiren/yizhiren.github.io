@@ -164,7 +164,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -204,6 +204,94 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2019/05/23/receiver/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/05/23/receiver/" class="post-title-link" itemprop="url">strange golang receiver</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-05-23 17:34:46" itemprop="dateCreated datePublished" datetime="2019-05-23T17:34:46+08:00">2019-05-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">代码</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="strange-golang-receiver"><a href="#strange-golang-receiver" class="headerlink" title="strange golang receiver"></a>strange golang receiver</h1><h2 id="对象receiver"><a href="#对象receiver" class="headerlink" title="对象receiver"></a>对象receiver</h2><p>receiver是什么呢，一句话来解释的话约等于this指针。<br>用过c++的同学我们可以来这么来理解。</p>
+<h3 id="理解c-中的this指针"><a href="#理解c-中的this指针" class="headerlink" title="理解c++中的this指针"></a>理解c++中的this指针</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Meta</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function">string <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;name;</span><br><span class="line">	&#125;</span><br><span class="line">	string name;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>这个类的成员函数getName中调用了this指针，可是this指针没有定义过呢，哪来的呢？</p>
+<p>答案是编译器加的，由于可执行文件中并不存在对象这种概念，但是存在函数的概念，所以编译器就必须把对象的调用转成函数的调用。</p>
+<p>编译器是这么做的，他把string getName();这个成员函数转换成string getName(Meta* this);</p>
+<p>看到了吧，编译器通过增加一个this参数来吧对象传递到成员函数中去，this指针就这么来了。</p>
+<h3 id="golang的’this’指针"><a href="#golang的’this’指针" class="headerlink" title="golang的’this’指针"></a>golang的’this’指针</h3><p>我们看到c++中this是隐式提供的，golang则选择了显式的提供this指针，提供的形式就是receiver。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (receiver) funcName(inputParameters...) (outputParameters...)&#123;</span><br><span class="line">	//</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2019/05/23/receiver/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -932,92 +1020,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2016/11/14/odr/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/sharedptr/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-      <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="promise.get_future();">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/11/14/sharedptr/" class="post-title-link" itemprop="url">shared_ptr 之shared_from_this</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2016-11-14 17:34:46" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">2016-11-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">代码</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="shared-ptr-之shared-from-this"><a href="#shared-ptr-之shared-from-this" class="headerlink" title="shared_ptr 之shared_from_this"></a>shared_ptr 之shared_from_this</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br>怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
-<p>首先来看一个典型的用法：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">std::shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">sp</span><span class="params">(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>))</span></span>;</span><br><span class="line">	std::shared_ptr&lt;<span class="keyword">int</span>&gt; sp2 = sp;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>可以看出两点，一个是shared_ptr是可以赋值给别的变量的，不需要像unique_ptr那样通过move来赋值，因为shared_ptr不是独占指针而是共享，所以赋值是很平常的操作。 二是你不需要去手动释放该指针，new出来的变量会在最后一个相关联的shared_ptr消失时被释放，也就是在simple函数退出时，sp和sp2相继被销毁，于是new出来的变量也紧接着被释放，没有后顾之忧。</p>
-<p>再来看一个错误的用法：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fail</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> * p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">	<span class="function">std::shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">sp</span><span class="params">(p)</span></span>;</span><br><span class="line">	<span class="function">std::shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">sp2</span><span class="params">(p)</span></span>;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2016/11/14/sharedptr/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

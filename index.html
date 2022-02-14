@@ -164,7 +164,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -350,6 +350,91 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/02/05/dangerousprivileges/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/02/05/podsecuritypolicy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/05/podsecuritypolicy/" class="post-title-link" itemprop="url">k8s中的PodSecurityPolicy</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-05 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-05T17:34:46+08:00">2022-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。</p>
+<p>但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的版本已经出到了v1.25了那么你可以不用看这部分了，根据官方文档，psp会在v1.25被彻底拿掉。至于psp的继任者<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">Pod Security Admission</a>我会在后续补上，当前我本地安装的k8s版本还不能使用，要v1.22才能使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/policy/pod-security-policy/</span><br><span class="line"></span><br><span class="line">PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25. It has been replaced by Pod Security Admission. </span><br></pre></td></tr></table></figure>
+
+
+<p>我们来了解一下这个功能，并演示以下如何开启并使用他。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/05/podsecuritypolicy/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -951,94 +1036,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2019/06/03/goscheduler/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2019/05/23/receiver/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-      <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="promise.get_future();">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/05/23/receiver/" class="post-title-link" itemprop="url">strange golang receiver</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-05-23 17:34:46" itemprop="dateCreated datePublished" datetime="2019-05-23T17:34:46+08:00">2019-05-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">代码</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="strange-golang-receiver"><a href="#strange-golang-receiver" class="headerlink" title="strange golang receiver"></a>strange golang receiver</h1><h2 id="对象receiver"><a href="#对象receiver" class="headerlink" title="对象receiver"></a>对象receiver</h2><p>receiver是什么呢，一句话来解释的话约等于this指针。<br>用过c++的同学我们可以来这么来理解。</p>
-<h3 id="理解c-中的this指针"><a href="#理解c-中的this指针" class="headerlink" title="理解c++中的this指针"></a>理解c++中的this指针</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Meta</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function">string <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;name;</span><br><span class="line">	&#125;</span><br><span class="line">	string name;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>这个类的成员函数getName中调用了this指针，可是this指针没有定义过呢，哪来的呢？</p>
-<p>答案是编译器加的，由于可执行文件中并不存在对象这种概念，但是存在函数的概念，所以编译器就必须把对象的调用转成函数的调用。</p>
-<p>编译器是这么做的，他把string getName();这个成员函数转换成string getName(Meta* this);</p>
-<p>看到了吧，编译器通过增加一个this参数来吧对象传递到成员函数中去，this指针就这么来了。</p>
-<h3 id="golang的’this’指针"><a href="#golang的’this’指针" class="headerlink" title="golang的’this’指针"></a>golang的’this’指针</h3><p>我们看到c++中this是隐式提供的，golang则选择了显式的提供this指针，提供的形式就是receiver。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (receiver) funcName(inputParameters...) (outputParameters...)&#123;</span><br><span class="line">	//</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/05/23/receiver/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
