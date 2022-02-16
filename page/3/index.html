@@ -164,7 +164,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -204,6 +204,89 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2016/11/14/odr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2016/11/14/odr/" class="post-title-link" itemprop="url">ODR-The One Definition Rule</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2016-11-14 17:34:46" itemprop="dateCreated datePublished" datetime="2016-11-14T17:34:46+08:00">2016-11-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">代码</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="ODR-One-Definition-Rule-下的奇淫异技"><a href="#ODR-One-Definition-Rule-下的奇淫异技" class="headerlink" title="ODR-(One Definition Rule) 下的奇淫异技"></a>ODR-(One Definition Rule) 下的奇淫异技</h2><h3 id="一行输出引起的-故事"><a href="#一行输出引起的-故事" class="headerlink" title="一行输出引起的..故事"></a>一行输出引起的..故事</h3><p>首先看这个终端的输出结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost xxxx]# g++ -o binary binary.cpp libb.a liba.a</span><br><span class="line">[root@localhost xxxx]# ./binary </span><br><span class="line">1</span><br><span class="line">1</span><br><span class="line">[root@localhost xxxx]# g++ -o binary binary.cpp liba.a libb.a</span><br><span class="line">[root@localhost xxxx]# ./binary </span><br><span class="line">2</span><br><span class="line">2</span><br><span class="line">[root@localhost xxxx]# cat binary.cpp</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">extern int fna();</span><br><span class="line">extern int fnb();</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    std::cout &lt;&lt; fna() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; fnb() &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>可以看到我们通过改变两个库的链接顺序，改变了两个函数的返回值。how?<br>如果你对这个结果并没什么兴趣，你也许对下面的内容也不感兴趣。但是如果你挺有兴趣的话我们就来一起看看。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/11/14/odr/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

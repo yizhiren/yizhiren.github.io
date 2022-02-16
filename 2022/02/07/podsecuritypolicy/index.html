@@ -24,22 +24,22 @@
 <meta name="description" content="简介k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。 但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="k8s中的PodSecurityPolicy">
-<meta property="og:url" content="http://yizhi.ren/2022/02/05/podsecuritypolicy/index.html">
+<meta property="og:url" content="http://yizhi.ren/2022/02/07/podsecuritypolicy/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="简介k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。 但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-02-05T09:34:46.000Z">
-<meta property="article:modified_time" content="2022-02-05T09:34:46.000Z">
+<meta property="article:published_time" content="2022-02-07T09:34:46.000Z">
+<meta property="article:modified_time" content="2022-02-07T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://yizhi.ren/2022/02/05/podsecuritypolicy/">
+<link rel="canonical" href="http://yizhi.ren/2022/02/07/podsecuritypolicy/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2022/02/05/podsecuritypolicy/","path":"2022/02/05/podsecuritypolicy/","title":"k8s中的PodSecurityPolicy"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2022/02/07/podsecuritypolicy/","path":"2022/02/07/podsecuritypolicy/","title":"k8s中的PodSecurityPolicy"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>k8s中的PodSecurityPolicy | 一支人</title>
@@ -167,7 +167,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">24</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -217,7 +217,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/02/05/podsecuritypolicy/">
+    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/02/07/podsecuritypolicy/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
@@ -241,7 +241,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-02-05 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-05T17:34:46+08:00">2022-02-05</time>
+      <time title="创建时间：2022-02-07 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-07T17:34:46+08:00">2022-02-07</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -289,7 +289,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ubuntu@server1:/etc/kubernetes/manifests$ sudo vi kube-apiserver.yaml</span><br><span class="line">...</span><br><span class="line">- --enable-admission-plugins=NodeRestriction,PodSecurityPolicy</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"># enable-admission-plugins后面添加PodSecurityPolicy</span><br></pre></td></tr></table></figure>
 
 <p>之后我们来尝试创建pod，然后查看pod被psp应用了没有。</p>
-<p>在<a href="https://yizhi.ren/2022/02/05/dangerousprivileges/#create-pod">create pod</a>中我们创建过这样一个sa：</p>
+<p>在<a href="https://yizhi.ren/2022/02/06/dangerousprivileges/#create-pod">create pod</a>中我们创建过这样一个sa：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">~$ alias kl=kubectl</span><br><span class="line"></span><br><span class="line"># user createpod</span><br><span class="line">~$ kl create sa createpod</span><br><span class="line">serviceaccount/createpod created</span><br><span class="line">~$ kl create role createpodrole --verb=list,create --resource=pod</span><br><span class="line">role.rbac.authorization.k8s.io/createpodrole created</span><br><span class="line">~$ kl create rolebinding createpod --serviceaccount=default:createpod --role=createpodrole</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/createpod created</span><br><span class="line">~$ kl get secret | grep createpod</span><br><span class="line">createpod-token-dl28b       kubernetes.io/service-account-token   3      66s</span><br><span class="line">~$ TOKEN=$(kl get secret createpod-token-dl28b -o jsonpath=&#x27;&#123;.data.token&#125;&#x27; | base64 -d)</span><br><span class="line">~$ kl config set-credentials createpod --token=$TOKEN</span><br><span class="line">User &quot;createpod&quot; set.</span><br><span class="line">~$ kl config set-context createpod --cluster kubernetes --user createpod</span><br><span class="line">Context &quot;createpod&quot; created.</span><br></pre></td></tr></table></figure>
 
 <p>我们尝试用这个sa来创建pod，这个sa所在的group为system:serviceaccounts，所以按照预期，这个pod会绑定clusterrole:restrict-previleged-psp-binding, restrict-previleged-psp-binding会绑定psp:restrict-privileged.我们来确认一下：</p>
@@ -345,13 +345,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/01/25/setupk8s/" rel="prev" title="树莓派搭建k8s集群">
-                  <i class="fa fa-chevron-left"></i> 树莓派搭建k8s集群
+                <a href="/2022/02/06/dangerousprivileges/" rel="prev" title="k8s中的危险权限">
+                  <i class="fa fa-chevron-left"></i> k8s中的危险权限
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/02/05/dangerousprivileges/" rel="next" title="k8s中的危险权限">
-                  k8s中的危险权限 <i class="fa fa-chevron-right"></i>
+                <a href="/2022/02/08/hostpath/" rel="next" title="k8s中的hostPath的安全隐患">
+                  k8s中的hostPath的安全隐患 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -424,7 +424,7 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"e8910784b0ba9a72291440880a2b5474"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"a806217906118c9112598465663786d8"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>
