@@ -52,6 +52,7 @@
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/rediscluster.jpg">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/loutong.png">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/lingpaitong.png">
+<meta property="og:image" content="http://yizhi.ren/linkimage/microservices/slidewindowlimit.jpeg">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/servicemeshsidecar.png">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/servicemeshcallflow.png">
 <meta property="og:image" content="http://yizhi.ren/linkimage/microservices/servicemeshcontrol.png">
@@ -467,7 +468,7 @@
 <h4 id="日志展示"><a href="#日志展示" class="headerlink" title="日志展示"></a>日志展示</h4><p>通过分布式跟踪系统的可视化监控页面，展示调用链和各项统计信息，避免去服务器上查看日志的烦恼。</p>
 <p>接下来我们来看图中红色部分，服务部署和服务通信，这两块内容在别的架构中也有存在，只是微服务有他自己的特点。服务部署和服务通信，属于微服务的辅助支撑。</p>
 <h3 id="服务通信"><a href="#服务通信" class="headerlink" title="服务通信"></a>服务通信</h3><p>我们在前面列举微服务特征时就提过，微服务的通信是简单化的，它强调使用轻量的通信机制，包括轻量的消息通道，轻量的消息协议。</p>
-<h4 id="消息通道"><a href="#消息通道" class="headerlink" title="消息通道"></a>消息通道</h4><p>轻量消息通道意味着消息总线只负责消息路由，不处理消息编排，消息转换等额外的工作。有的同学说我们的微服务不需要消息总线，我们都是服务之间直连的，这样是不是更轻量呢？我们要说明，作为消息通道的消息总线并不总是需要的，这很大程度上取决于业务模型，消息总线适合生产者-消费者模型，生产者发布消息，消费者订阅消息并消费消息。</p>
+<h4 id="消息通道"><a href="#消息通道" class="headerlink" title="消息通道"></a>消息通道</h4><p>轻量消息通道意味着消息总线只负责消息路由，不处理消息编排(组合排序等)，消息转换等额外的工作。有的同学说我们的微服务不需要消息总线，我们都是服务之间直连的，这样是不是更轻量呢？我们要说明，作为消息通道的消息总线并不总是需要的，这很大程度上取决于业务模型，消息总线适合生产者-消费者模型，生产者发布消息，消费者订阅消息并消费消息。</p>
 <p>我们以RabbitMQ为例，RabbitMQ作为一个消息代理来实现分布式系统之间的通信，从而促进微服务的松耦合。</p>
 <p><img src="/linkimage/microservices/rabbitmq.png" alt="rabbitmq"></p>
 <p>图片来自<a target="_blank" rel="noopener" href="https://m.2cto.com/kf/201612/575219.html">RabbitMQ下的生产消费者模式与订阅发布模式</a></p>
@@ -661,6 +662,10 @@
 <p><img src="/linkimage/microservices/lingpaitong.png" alt="lingpaitong"></p>
 <p>图片来自<a target="_blank" rel="noopener" href="https://blog.csdn.net/yanpenglei/article/details/81583960">接口限流算法：漏桶算法&amp;令牌桶算法</a></p>
 <p>令牌桶相比漏斗和队列有个好处是在空闲的时候令牌桶可以积压充足的令牌，这些令牌可以在一定程度上满足短时间的一个流量高峰，不会让这波请求发生排队等候的情况。</p>
+<p><code>滑动窗口</code><br>滑动窗口确保任何时间点到他之前一秒的时间段内，都满足限流值。</p>
+<p><img src="/linkimage/microservices/slidewindowlimit.jpeg" alt="slidewindowlimit"></p>
+<p>图片来自<a target="_blank" rel="noopener" href="https://www.cxymm.net/article/fedorafrog/114846084">三种常见的限流算法（漏桶、令牌桶、滑动窗口）</a></p>
+<p>这种限流方法的好处是任何最新的一秒时间都是满足限流要求的，相比一秒一秒的切分统计周期要好很多。另外相比漏桶和令牌桶他缺了一个缓冲器。</p>
 <h4 id="降级机制"><a href="#降级机制" class="headerlink" title="降级机制"></a>降级机制</h4><p>降级设计，本质上为了解决资源不足和访问量过大的问题。在有限的资源内对部分系统进行降级，使能够抗住大量的请求。暂时牺牲部分功能，系统能够平稳运行。</p>
 <p>降级需要牺牲的一些方面：</p>
 <p><code>一致性：</code> 从强一致性到最终一致性。</p>
@@ -722,6 +727,7 @@
 <p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/f8e55238f44f">Nginx健康检查（health_check）实践</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.51cto.com/6284444/2149987">构建双主高可用HAProxy负载均衡系统</a></p>
 <p><a target="_blank" rel="noopener" href="https://m.2cto.com/kf/201612/575219.html">RabbitMQ下的生产消费者模式与订阅发布模式</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cxymm.net/article/fedorafrog/114846084">三种常见的限流算法（漏桶、令牌桶、滑动窗口）</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/webservices/1003_xiaojg_soabc/">面向服务的体系架构（SOA）和业务组件（BC）的思考</a></p>
 <p><a target="_blank" rel="noopener" href="https://storage.googleapis.com/pub-tools-public-publication-data/pdf/36356.pdf">Dapper, a Large-Scale Distributed Systems Tracing Infrastructure</a></p>
 
