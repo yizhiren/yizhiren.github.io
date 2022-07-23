@@ -174,7 +174,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">27</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -280,7 +280,7 @@
         <h1 id="Go调度器"><a href="#Go调度器" class="headerlink" title="Go调度器"></a>Go调度器</h1><p>我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。</p>
 <h2 id="为什么要有Runtime"><a href="#为什么要有Runtime" class="headerlink" title="为什么要有Runtime"></a>为什么要有Runtime</h2><h3 id="开销上"><a href="#开销上" class="headerlink" title="开销上"></a>开销上</h3><p>我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。<br>POSIX线程(POSIX是线程标准，定义了创建和操纵线程的一套API)通常是在已有的进程模型中增加的逻辑扩展，所以线程控制和进程控制很相似。线程也有自己的信号掩码(signal mask)， 线程也可以设置CPU亲和性(CPU affinity)，也可以放进cgroups中进行资源管理。假如goroutines(go的执行单元)对应线程的话，使用这些特性对线程进行控制管理就增加了开销，因为go程序运行goroutines(go的执行单元)不需要这些特性。这类消耗在goroutine达到比如10,0000个的时候就会很大。所以go需要有个运行时在调度goroutines而不是只是让操作系统调度线程。</p>
 <h3 id="垃圾回收上"><a href="#垃圾回收上" class="headerlink" title="垃圾回收上"></a>垃圾回收上</h3><p>go包含垃圾回收(GC)的特性，在垃圾回收的时候所有goroutines必须处于暂停的状态，这样go的内存才会处于一种一致的状态. 所以我们必须等待所有线程处于内存一致的状态才能进行垃圾回收。</p>
-<p>在没有调度器的时候，线程调度是随操作系统的意的，你不得不试图去等待所有的已经暂停和还没暂停的线程，而且不知道等多久(如果线程进入了阻塞状态比如sleep中是无法立即响应signal的)。</p>
+<p>在没有调度器的时候，线程调度是随操作系统的意的，你不得不试图去等待所有的已经暂停和还没暂停的线程，而且不知道等多久, 暂停后如何让他们保持暂停直到gc结束，也是一个难题。</p>
 <p>在有调度器的时候，调度器可以决定只在内存一致的时候才发起调度（即只要有活跃的线程就不执行新的任务），因此当需要执行gc的时候，调度器便决定只在内存一致的时候才发起调度，所以所有线程都无法再次活跃，调度器只需要等待当前活跃的线程暂停即可。后面还会讲到调度器还想办法避免一个活跃的线程长时间不停下来。</p>
 <p>需要调度器自然就需要运行调度器的运行时。</p>
 <p>基于这两个原因， golang需要一个运行时(Runtime).</p>
