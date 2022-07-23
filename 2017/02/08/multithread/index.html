@@ -24,28 +24,28 @@
 <meta name="description" content="线程扩展要考虑的问题简介如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="线程扩展需要考虑的问题">
-<meta property="og:url" content="http://yizhi.ren/2017/02/08/multithread/index.html">
+<meta property="og:url" content="https://yizhi.ren/2017/02/08/multithread/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="线程扩展要考虑的问题简介如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从n">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/multithread/1.jpg">
-<meta property="og:image" content="http://yizhi.ren/linkimage/multithread/2.jpg">
-<meta property="og:image" content="http://yizhi.ren/linkimage/multithread/3.jpg">
-<meta property="og:image" content="http://yizhi.ren/linkimage/multithread/4.jpg">
-<meta property="og:image" content="http://yizhi.ren/linkimage/multithread/5.jpg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/multithread/1.jpg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/multithread/2.jpg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/multithread/3.jpg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/multithread/4.jpg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/multithread/5.jpg">
 <meta property="article:published_time" content="2017-02-08T09:34:46.000Z">
 <meta property="article:modified_time" content="2017-02-08T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="线程">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/multithread/1.jpg">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/multithread/1.jpg">
 
 
-<link rel="canonical" href="http://yizhi.ren/2017/02/08/multithread/">
+<link rel="canonical" href="https://yizhi.ren/2017/02/08/multithread/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2017/02/08/multithread/","path":"2017/02/08/multithread/","title":"线程扩展需要考虑的问题"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2017/02/08/multithread/","path":"2017/02/08/multithread/","title":"线程扩展需要考虑的问题"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>线程扩展需要考虑的问题 | 一支人</title>
@@ -226,7 +226,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2017/02/08/multithread/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2017/02/08/multithread/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">

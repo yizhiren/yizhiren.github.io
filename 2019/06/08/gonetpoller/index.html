@@ -24,26 +24,26 @@
 <meta name="description" content="Golang netpoller本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。 网络阻塞在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要fut">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang netpoller">
-<meta property="og:url" content="http://yizhi.ren/2019/06/08/gonetpoller/index.html">
+<meta property="og:url" content="https://yizhi.ren/2019/06/08/gonetpoller/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="Golang netpoller本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。 网络阻塞在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要fut">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel1.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel2.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel3.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gonetpoller/threadmodel1.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gonetpoller/threadmodel2.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gonetpoller/threadmodel3.png">
 <meta property="article:published_time" content="2019-06-08T09:34:46.000Z">
 <meta property="article:modified_time" content="2019-06-08T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="狗狼">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/gonetpoller/threadmodel1.png">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/gonetpoller/threadmodel1.png">
 
 
-<link rel="canonical" href="http://yizhi.ren/2019/06/08/gonetpoller/">
+<link rel="canonical" href="https://yizhi.ren/2019/06/08/gonetpoller/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2019/06/08/gonetpoller/","path":"2019/06/08/gonetpoller/","title":"golang netpoller"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2019/06/08/gonetpoller/","path":"2019/06/08/gonetpoller/","title":"golang netpoller"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>golang netpoller | 一支人</title>
@@ -224,7 +224,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2019/06/08/gonetpoller/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2019/06/08/gonetpoller/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">

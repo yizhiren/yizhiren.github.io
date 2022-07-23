@@ -24,29 +24,29 @@
 <meta name="description" content="linux namespacelinux通过namespace技术为进程提供虚拟视图，这项技术是容器的基础。本文主要介绍每个namespace的实现原理，但很可能不对技术本身做探讨。比如会讨论如何实现cgroup的虚拟视图，但不会研究cgroup的控制器的实现原理。目前在内核(v5.19-rc2,为写作之日的最新版本)中已经支持的namespace有8个。 1234567891011https:&#x2F;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux namespace">
-<meta property="og:url" content="http://yizhi.ren/2022/06/15/namespace/index.html">
+<meta property="og:url" content="https://yizhi.ren/2022/06/15/namespace/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="linux namespacelinux通过namespace技术为进程提供虚拟视图，这项技术是容器的基础。本文主要介绍每个namespace的实现原理，但很可能不对技术本身做探讨。比如会讨论如何实现cgroup的虚拟视图，但不会研究cgroup的控制器的实现原理。目前在内核(v5.19-rc2,为写作之日的最新版本)中已经支持的namespace有8个。 1234567891011https:&#x2F;">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/namespace/dfsmount.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/namespace/vethpair.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/namespace/bridgevethpair.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/namespace/cgroupv1.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/namespace/cgroupv2.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/namespace/twocssset.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/namespace/dfsmount.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/namespace/vethpair.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/namespace/bridgevethpair.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/namespace/cgroupv1.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/namespace/cgroupv2.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/namespace/twocssset.png">
 <meta property="article:published_time" content="2022-06-15T09:34:46.000Z">
 <meta property="article:modified_time" content="2022-06-15T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/namespace/dfsmount.png">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/namespace/dfsmount.png">
 
 
-<link rel="canonical" href="http://yizhi.ren/2022/06/15/namespace/">
+<link rel="canonical" href="https://yizhi.ren/2022/06/15/namespace/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2022/06/15/namespace/","path":"2022/06/15/namespace/","title":"linux namespace"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2022/06/15/namespace/","path":"2022/06/15/namespace/","title":"linux namespace"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>linux namespace | 一支人</title>
@@ -227,7 +227,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/06/15/namespace/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/06/15/namespace/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">

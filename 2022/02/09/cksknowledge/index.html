@@ -24,32 +24,32 @@
 <meta name="description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到">
 <meta property="og:type" content="article">
 <meta property="og:title" content="k8s安全知识即CKS考试知识点总结">
-<meta property="og:url" content="http://yizhi.ren/2022/02/09/cksknowledge/index.html">
+<meta property="og:url" content="https://yizhi.ren/2022/02/09/cksknowledge/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/rbac-link.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/rbac-authorization.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/opa.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/gatekeeper-v3.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/aggregation-api-auth-flow.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/high_low_container_runtime.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/falco_architecture.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/cksknowledge/falco_rule_match.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/rbac-link.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/rbac-authorization.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/opa.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/gatekeeper-v3.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/aggregation-api-auth-flow.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/high_low_container_runtime.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/falco_architecture.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/falco_rule_match.png">
 <meta property="article:published_time" content="2022-02-09T09:34:46.000Z">
 <meta property="article:modified_time" content="2022-02-09T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
 
 
-<link rel="canonical" href="http://yizhi.ren/2022/02/09/cksknowledge/">
+<link rel="canonical" href="https://yizhi.ren/2022/02/09/cksknowledge/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2022/02/09/cksknowledge/","path":"2022/02/09/cksknowledge/","title":"k8s安全知识即CKS考试知识点总结"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2022/02/09/cksknowledge/","path":"2022/02/09/cksknowledge/","title":"k8s安全知识即CKS考试知识点总结"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>k8s安全知识即CKS考试知识点总结 | 一支人</title>
@@ -230,7 +230,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/02/09/cksknowledge/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/09/cksknowledge/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">

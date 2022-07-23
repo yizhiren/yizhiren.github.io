@@ -24,31 +24,31 @@
 <meta name="description" content="树莓派搭建k8s集群简介我们有很多时候需要搭建一个k8s集群，可能为了开发，可能为了测试，可能为了学习。在选择机器上可以有几个选择，一个是使用几台PC，一个是开几个虚拟机，一个是使用几个轻量的开发板。这里我主要以学习为目的，并且选择使用轻量开发板的方式，并且以最常用的树莓派作为代表，来搭建一个k8s集群。 由于主要以学习考试为主，这里暂时不考虑搭建单机集群的方式，因为没法接触到涉及多个节点的操作场">
 <meta property="og:type" content="article">
 <meta property="og:title" content="树莓派搭建k8s集群">
-<meta property="og:url" content="http://yizhi.ren/2022/01/25/setupk8s/index.html">
+<meta property="og:url" content="https://yizhi.ren/2022/01/25/setupk8s/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="树莓派搭建k8s集群简介我们有很多时候需要搭建一个k8s集群，可能为了开发，可能为了测试，可能为了学习。在选择机器上可以有几个选择，一个是使用几台PC，一个是开几个虚拟机，一个是使用几个轻量的开发板。这里我主要以学习为目的，并且选择使用轻量开发板的方式，并且以最常用的树莓派作为代表，来搭建一个k8s集群。 由于主要以学习考试为主，这里暂时不考虑搭建单机集群的方式，因为没法接触到涉及多个节点的操作场">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/cluster-device.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/pi-imager.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/mint-open-writer.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/mint-write-image.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/mint-mount-sd-ui.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/mint-mount-sd-commandline.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/rpi-netplan-init.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/setupk8s/rpi-netplan-overwrite.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/cluster-device.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/pi-imager.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-open-writer.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-write-image.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-mount-sd-ui.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-mount-sd-commandline.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/rpi-netplan-init.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/rpi-netplan-overwrite.png">
 <meta property="article:published_time" content="2022-01-25T09:34:46.000Z">
 <meta property="article:modified_time" content="2022-01-25T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="kubernetes">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/setupk8s/cluster-device.png">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/setupk8s/cluster-device.png">
 
 
-<link rel="canonical" href="http://yizhi.ren/2022/01/25/setupk8s/">
+<link rel="canonical" href="https://yizhi.ren/2022/01/25/setupk8s/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2022/01/25/setupk8s/","path":"2022/01/25/setupk8s/","title":"树莓派搭建k8s集群"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2022/01/25/setupk8s/","path":"2022/01/25/setupk8s/","title":"树莓派搭建k8s集群"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>树莓派搭建k8s集群 | 一支人</title>
@@ -229,7 +229,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2022/01/25/setupk8s/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/01/25/setupk8s/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">

@@ -24,27 +24,27 @@
 <meta name="description" content="Golang Test Coverage简介本文主要是通过一个详细的例子来讲解golang中集成单元测试和系统测试覆盖率的一般方案。 想当初接手一个毛坯房一般的golang项目，几个go文件，一个build.sh，一个makefile，别的没有了。 写完怎么验证对没对？build通过，然后得部署到环境中，自己构造请求来检查返回值。但是请求是pb格式的，根本无法手工构造，要是json格式的还好弄点。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang coverage">
-<meta property="og:url" content="http://yizhi.ren/2019/06/15/gocoverage/index.html">
+<meta property="og:url" content="https://yizhi.ren/2019/06/15/gocoverage/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="Golang Test Coverage简介本文主要是通过一个详细的例子来讲解golang中集成单元测试和系统测试覆盖率的一般方案。 想当初接手一个毛坯房一般的golang项目，几个go文件，一个build.sh，一个makefile，别的没有了。 写完怎么验证对没对？build通过，然后得部署到环境中，自己构造请求来检查返回值。但是请求是pb格式的，根本无法手工构造，要是json格式的还好弄点。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gocoverage/coveragehtml.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gocoverage/gracefulexit.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gocoverage/totalcovbiz.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/gocoverage/totalcovmain.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gocoverage/coveragehtml.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gocoverage/gracefulexit.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gocoverage/totalcovbiz.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/gocoverage/totalcovmain.png">
 <meta property="article:published_time" content="2019-06-15T09:34:46.000Z">
 <meta property="article:modified_time" content="2019-06-15T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="狗狼">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/gocoverage/coveragehtml.png">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/gocoverage/coveragehtml.png">
 
 
-<link rel="canonical" href="http://yizhi.ren/2019/06/15/gocoverage/">
+<link rel="canonical" href="https://yizhi.ren/2019/06/15/gocoverage/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2019/06/15/gocoverage/","path":"2019/06/15/gocoverage/","title":"golang coverage"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2019/06/15/gocoverage/","path":"2019/06/15/gocoverage/","title":"golang coverage"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>golang coverage | 一支人</title>
@@ -225,7 +225,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2019/06/15/gocoverage/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2019/06/15/gocoverage/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">

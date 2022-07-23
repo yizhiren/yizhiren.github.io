@@ -24,26 +24,26 @@
 <meta name="description" content="Go调度器我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。 为什么要有Runtime开销上我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。POSIX线程(POSIX是线程标准，定义">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang scheduler">
-<meta property="og:url" content="http://yizhi.ren/2019/06/03/goscheduler/index.html">
+<meta property="og:url" content="https://yizhi.ren/2019/06/03/goscheduler/index.html">
 <meta property="og:site_name" content="一支人">
 <meta property="og:description" content="Go调度器我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。 为什么要有Runtime开销上我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。POSIX线程(POSIX是线程标准，定义">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yizhi.ren/linkimage/goscheduler/layer.png">
-<meta property="og:image" content="http://yizhi.ren/linkimage/goscheduler/mpg.jpg">
-<meta property="og:image" content="http://yizhi.ren/linkimage/goscheduler/schedule.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/goscheduler/layer.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/goscheduler/mpg.jpg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/goscheduler/schedule.png">
 <meta property="article:published_time" content="2019-06-03T09:34:46.000Z">
 <meta property="article:modified_time" content="2019-06-03T09:34:46.000Z">
 <meta property="article:author" content="yizhiren">
 <meta property="article:tag" content="狗狼">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yizhi.ren/linkimage/goscheduler/layer.png">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/goscheduler/layer.png">
 
 
-<link rel="canonical" href="http://yizhi.ren/2019/06/03/goscheduler/">
+<link rel="canonical" href="https://yizhi.ren/2019/06/03/goscheduler/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://yizhi.ren/2019/06/03/goscheduler/","path":"2019/06/03/goscheduler/","title":"golang scheduler"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2019/06/03/goscheduler/","path":"2019/06/03/goscheduler/","title":"golang scheduler"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>golang scheduler | 一支人</title>
@@ -224,7 +224,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yizhi.ren/2019/06/03/goscheduler/">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2019/06/03/goscheduler/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
