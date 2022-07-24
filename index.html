@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="promise.get_future();">
+<meta property="og:type" content="website">
+<meta property="og:title" content="一支人">
+<meta property="og:url" content="https://yizhi.ren/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="promise.get_future();">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="yizhiren">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://yizhi.ren/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":true,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>一支人</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">一支人</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">promise.get_future();</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/07/24/hello-world/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/24/hello-world/" class="post-title-link" itemprop="url">Hello World</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-24 08:37:40" itemprop="dateCreated datePublished" datetime="2022-07-24T08:37:40+08:00">2022-07-24</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/07/11/sync/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/07/11/sync/" class="post-title-link" itemprop="url">同步三要素</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-11 17:34:46" itemprop="dateCreated datePublished" datetime="2022-07-11T17:34:46+08:00">2022-07-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E4%BB%A3%E7%A0%81/" itemprop="url" rel="index"><span itemprop="name">代码</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="同步三要素"><a href="#同步三要素" class="headerlink" title="同步三要素"></a>同步三要素</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在我之前写过一篇<a href="https://yizhi.ren/2017/09/19/reorder/">lockfree</a>的文章，里面提到了CAS和内存屏障以及之间的关系，这里先总结一下。</p>
+<p><img src="/linkimage/reorder/techniques.png" alt="lockfree技术点关系图"></p>
+<p>lockfree主要是通过一定的编程规范来避免线程之间流程阻塞。不阻塞并不难，难的是不阻塞的基础上确保结果的正确性。</p>
+<p>图中有两条重要的路线，一条是并发写，写的过程是一个Read-Modify-Write的过程，不是单步的，因此为了确保正确性，需要一个把RMW做成原子操作，于是CAS就出场了，这是一个处理器支持的操作，在汇编级别支持RMW原子性。</p>
+<p>另一条线是多核指令顺序一致性，cpu为了性能，会做指令乱序，这种乱序在同一cpu的程序看来是感知不到的（cpu会自己保证这一点），但是会被其他cpu上的程序感知到，带来异常，为了消除这种乱序，我们需要使用经过封装的原子变量类型，或者使用内存屏障。如果要防止乱序的场景是一个线程写一个值，一个线程读一个值，那么我们通过acquire和release两个轻量屏障就可以实现了，别的场景有可能需要使用全能内存屏障，别的场景是什么呢？比如生产者生产的同时还消费，消费者消费的同时还生产，这就比较复杂，可能需要全能屏障来解决。</p>
+<p>那么这两条路线的交集是什么呢，交集是多核执行RMW指令序列时，为了顺序一致性，除了要做到顺序一致，还需要保证结果正确。这个时候就需要CAS配合内存屏障了。</p>
+<p>总结完之后，这一文，主要是要展开讲一下这里面更本质的东西，cpu乱序的本质是什么，内存屏障的本质是什么，cas的本质是什么，并延伸到锁的本质是什么。涉及到的技术主要是3点，包括：缓存一致性协议，内存屏障，锁。这三点可总结为同步三要素。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/11/sync/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/06/15/namespace/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/06/15/namespace/" class="post-title-link" itemprop="url">linux namespace</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-15 17:34:46" itemprop="dateCreated datePublished" datetime="2022-06-15T17:34:46+08:00">2022-06-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="linux-namespace"><a href="#linux-namespace" class="headerlink" title="linux namespace"></a>linux namespace</h1><p>linux通过namespace技术为进程提供虚拟视图，这项技术是容器的基础。本文主要介绍每个namespace的实现原理，但很可能不对技术本身做探讨。比如会讨论如何实现cgroup的虚拟视图，但不会研究cgroup的控制器的实现原理。<br>目前在内核(v5.19-rc2,为写作之日的最新版本)中已经支持的namespace有8个。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/torvalds/linux/blob/v5.19-rc2/include/linux/nsproxy.h#L31</span><br><span class="line">uts namespace</span><br><span class="line">ipc namespace</span><br><span class="line">mnt namespace</span><br><span class="line">pid namespace</span><br><span class="line">net namespace</span><br><span class="line">time namespace</span><br><span class="line">cgroup namespace</span><br><span class="line"></span><br><span class="line">https://github.com/torvalds/linux/blob/v5.19-rc2/include/linux/user_namespace.h#L66</span><br><span class="line">user namespace</span><br></pre></td></tr></table></figure>
+<p>这些namespace起作用的场景是3个系统调用：</p>
+<ol>
+<li>clone, 他接收namespace等参数，并完成fork进程的功能。<br><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man2/clone.2.html">https://man7.org/linux/man-pages/man2/clone.2.html</a></li>
+<li>unshare,他创建新的namespace，并把本进程放到新namespace内。<br><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man1/unshare.1.html">https://man7.org/linux/man-pages/man1/unshare.1.html</a></li>
+<li>setns, 把当前进程加入到某些指定的namespace。<br><a target="_blank" rel="noopener" href="https://man7.org/linux/man-pages/man2/setns.2.html">https://man7.org/linux/man-pages/man2/setns.2.html</a></li>
+</ol>
+<p>在分别讲每一个namespace之前，我们大致了解下内核代码的相关结构。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/06/15/namespace/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/09/cksknowledge/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/09/cksknowledge/" class="post-title-link" itemprop="url">k8s安全知识即CKS考试知识点总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-09 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-09T17:34:46+08:00">2022-02-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="CKS知识总结"><a href="#CKS知识总结" class="headerlink" title="CKS知识总结"></a>CKS知识总结</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。</p>
+<p>一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC/secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。</p>
+<p>第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到了外部，涉及到外部的工具，外部的插件等等。</p>
+<p>第三个点是CKS的部分知识点需要自己做一定的探索，换句话说不操作一遍的话都不知道他是什么，他涉及到什么知识。</p>
+<p>同时，CKAD、CKA、CKS相同的点是都有前人为我们列好了考试大纲，列好了知识点和链接：<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Kubernetes-Certified-Administrator">CKA</a>/<a target="_blank" rel="noopener" href="https://github.com/dgkanatsios/CKAD-exercises">CKAD</a>/<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Certified-Kubernetes-Security-Specialist">CKS</a></p>
+<p>这里主要基于第3个难点，对涉及到的操作做一个细致的记录，方便大家参考，减少学习者的探索时间。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/09/cksknowledge/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/08/hostpath/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/08/hostpath/" class="post-title-link" itemprop="url">k8s中的hostPath的安全隐患</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-08 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-08T17:34:46+08:00">2022-02-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>挂载一个hostPath的volumes的时候，需要设置挂载方式为read only， 不然存在安全风险。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">volumes:</span><br><span class="line">- name: test-volume</span><br><span class="line">  hostPath:</span><br><span class="line">    path: /data</span><br><span class="line">    type: Directory</span><br><span class="line">这时定义hostpath的volume，定义的时候没有readonly选项。</span><br><span class="line"></span><br><span class="line">volumeMounts:</span><br><span class="line">- name: test-volume</span><br><span class="line">  mountPath: /test-volume</span><br><span class="line">  readOnly: true</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在官方文档中有这么一段话</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/storage/volumes/#hostpath</span><br><span class="line"></span><br><span class="line">Warning:</span><br><span class="line">HostPath volumes present many security risks, and it is a best practice to avoid the use of HostPaths when possible. When a HostPath volume must be used, it should be scoped to only the required file or directory, and mounted as ReadOnly.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>简单讲就是在强调你在挂载hostpath的volume的时候必须设置readOnly，且必须约束可以挂载的目录。</p>
+<p>设置readOnly是因为，已经证明存在一些方法来绕过约束。比如我配置了hostPath不能访问A目录，但是我可以通过挂载B目录间接访问A目录；或者我配置了hostPath只能访问A目录，但是我可以通过A目录，间接访问到B目录。是不是很神奇。</p>
+<p>下面演示两个例子，来说明不设置readOnly和不约束可挂载目录所带来的隐患。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/08/hostpath/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/07/podsecuritypolicy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/07/podsecuritypolicy/" class="post-title-link" itemprop="url">k8s中的PodSecurityPolicy</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-07 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-07T17:34:46+08:00">2022-02-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。</p>
+<p>但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的版本已经出到了v1.25了那么你可以不用看这部分了，根据官方文档，psp会在v1.25被彻底拿掉。至于psp的继任者<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">Pod Security Admission</a>我会在后续补上，当前我本地安装的k8s版本还不能使用，要v1.22才能使用。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/policy/pod-security-policy/</span><br><span class="line"></span><br><span class="line">PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25. It has been replaced by Pod Security Admission. </span><br></pre></td></tr></table></figure>
+
+
+<p>我们来了解一下这个功能，并演示以下如何开启并使用他。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/07/podsecuritypolicy/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/06/dangerousprivileges/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/06/dangerousprivileges/" class="post-title-link" itemprop="url">k8s中的危险权限</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-06 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-06T17:34:46+08:00">2022-02-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="k8s中的危险权限"><a href="#k8s中的危险权限" class="headerlink" title="k8s中的危险权限"></a>k8s中的危险权限</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>本文列举了k8s中几个危险的权限，危险的权限是什么意思呢，就是说如果某个低权限的用户，因为其拥有某个特殊的权限，那么他就可以通过一些操作来提升自己的权限，从而破坏系统的权限控制体系，并产生意料之外的破坏，以及导致数据的泄露等。</p>
+<p>这部分知识比较偏向攻击层面，而不是防守层面。我们通过一步步的手把手的操作，来观察如何突破权限，从而带来隐患的。</p>
+<p>存在权限风险的操作主要有4个：bind，escalate，impersonate，create pod，我们一一来分析和测试。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/06/dangerousprivileges/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/02/01/k8scert/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/02/01/k8scert/" class="post-title-link" itemprop="url">Kubernetes Certificate</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-01 17:34:46" itemprop="dateCreated datePublished" datetime="2022-02-01T17:34:46+08:00">2022-02-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="存档k8s的证书"><a href="#存档k8s的证书" class="headerlink" title="存档k8s的证书"></a>存档k8s的证书</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/02/01/k8scert/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/01/25/setupk8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/01/25/setupk8s/" class="post-title-link" itemprop="url">树莓派搭建k8s集群</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-25 17:34:46" itemprop="dateCreated datePublished" datetime="2022-01-25T17:34:46+08:00">2022-01-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="树莓派搭建k8s集群"><a href="#树莓派搭建k8s集群" class="headerlink" title="树莓派搭建k8s集群"></a>树莓派搭建k8s集群</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>我们有很多时候需要搭建一个k8s集群，可能为了开发，可能为了测试，可能为了学习。在选择机器上可以有几个选择，一个是使用几台PC，一个是开几个虚拟机，一个是使用几个轻量的开发板。这里我主要以学习为目的，并且选择使用轻量开发板的方式，并且以最常用的树莓派作为代表，来搭建一个k8s集群。</p>
+<p>由于主要以学习考试为主，这里暂时不考虑搭建单机集群的方式，因为没法接触到涉及多个节点的操作场景。</p>
+<p>同时也不考虑k3s，我知道k3s是专为轻量设备而设计的，功能跟k8s基本是一样的，但是k3s和k8s只是功能基本相同，但是在使用和配置上，都有很多不同，并且使用的是完全分开的文档。k8s在使用上经常需要查在线文档的，即便对k3s的文档很熟悉了，在使用k8s的时候还是会存在查不到k8s文档的情况。因此学习k8s的时候，用k3s做练习是不合适的。</p>
+<p>至于选择树莓派作为载体是个人选择，你可以选择使用pc或者选择使用虚拟机。如果你选择使用pc或者虚拟机，那么下面的章节中，【刷写系统】和【配置系统】会有差异，仅供参考。再之后的步骤则都是通用的。</p>
+<p>最终我们将完成以下集群的搭建：</p>
+<p><img src="/linkimage/setupk8s/cluster-device.png" alt="cluster-device"></p>
+<p>一个路由器，3个树莓派，树莓派通过wifi连接路由器，3个树莓派中一个master node,两个worker node。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/25/setupk8s/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2020/12/19/raft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/12/19/raft/" class="post-title-link" itemprop="url">raft 协议解析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-20 00:04:00" itemprop="dateCreated datePublished" datetime="2020-12-20T00:04:00+08:00">2020-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="raft-协议解析"><a href="#raft-协议解析" class="headerlink" title="raft 协议解析"></a>raft 协议解析</h1><h2 id="高可用的实现方案总结"><a href="#高可用的实现方案总结" class="headerlink" title="高可用的实现方案总结"></a>高可用的实现方案总结</h2><p>在工程实践中，高可用的方案有很多，例举几个，大家一定知道大部分的名词：主备，双备，HAProxy, F5, VRRP，Sentinel， gossip， paxos等。</p>
+<p>这一系列的技术方案，可以简化和归纳成两类：一类可以叫哨兵， 如图以haproxy为例：</p>
+<p><img src="/linkimage/raft/haproxy.png" alt="haproxy"></p>
+<p>图片来自 <a target="_blank" rel="noopener" href="https://www.haproxy.com/fr/blog/using-haproxy-with-the-proxy-protocol-to-better-secure-your-database/">Using HAProxy with the Proxy Protocol to Better Secure Your Database</a></p>
+<p>这一类方案，有个共同点，都有一个类似哨兵的角色，细化的讲，有的叫proxy，有的叫gateway，有的叫monitor，有的叫sentinel，有的叫router，他们的作用都是类似的，就是感知并屏蔽内部不健康的主机，并对外提供一个始终可用的服务。完成高可用的目的。</p>
+<p>另一类技术方案，可以叫一致性协议，如图基于gossip的redis cluster为例：</p>
+<p><img src="/linkimage/raft/rediscluster.jpg" alt="rediscluster"></p>
+<p>图片来自 <a href="https://yizhi.ren/2019/06/25/microservice/">微服务</a> </p>
+<p>这一类方案，也有一个共同点，就是都实现了一种内部节点之间的通信协议，协议能够发现异常节点，并且在内部通过某种机制来容错，不需要依赖外部的角色。 一致性协议的实现高可用的机制，最重要的一点就是半数同意的机制，因此能容忍半数-1的节点宕机。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/19/raft/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"d1546d731a9f30cc80127d57142a482b"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>

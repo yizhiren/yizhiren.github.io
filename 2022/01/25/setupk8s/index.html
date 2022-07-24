@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="树莓派搭建k8s集群简介我们有很多时候需要搭建一个k8s集群，可能为了开发，可能为了测试，可能为了学习。在选择机器上可以有几个选择，一个是使用几台PC，一个是开几个虚拟机，一个是使用几个轻量的开发板。这里我主要以学习为目的，并且选择使用轻量开发板的方式，并且以最常用的树莓派作为代表，来搭建一个k8s集群。 由于主要以学习考试为主，这里暂时不考虑搭建单机集群的方式，因为没法接触到涉及多个节点的操作场">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树莓派搭建k8s集群">
+<meta property="og:url" content="https://yizhi.ren/2022/01/25/setupk8s/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="树莓派搭建k8s集群简介我们有很多时候需要搭建一个k8s集群，可能为了开发，可能为了测试，可能为了学习。在选择机器上可以有几个选择，一个是使用几台PC，一个是开几个虚拟机，一个是使用几个轻量的开发板。这里我主要以学习为目的，并且选择使用轻量开发板的方式，并且以最常用的树莓派作为代表，来搭建一个k8s集群。 由于主要以学习考试为主，这里暂时不考虑搭建单机集群的方式，因为没法接触到涉及多个节点的操作场">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/cluster-device.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/pi-imager.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-open-writer.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-write-image.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-mount-sd-ui.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/mint-mount-sd-commandline.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/rpi-netplan-init.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/setupk8s/rpi-netplan-overwrite.png">
+<meta property="article:published_time" content="2022-01-25T09:34:46.000Z">
+<meta property="article:modified_time" content="2022-01-25T09:34:46.000Z">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="kubernetes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/setupk8s/cluster-device.png">
+
+
+<link rel="canonical" href="https://yizhi.ren/2022/01/25/setupk8s/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2022/01/25/setupk8s/","path":"2022/01/25/setupk8s/","title":"树莓派搭建k8s集群"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>树莓派搭建k8s集群 | 一支人</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">一支人</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%91%E8%8E%93%E6%B4%BE%E6%90%AD%E5%BB%BAk8s%E9%9B%86%E7%BE%A4"><span class="nav-number">1.</span> <span class="nav-text">树莓派搭建k8s集群</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B7%E5%86%99%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.2.</span> <span class="nav-text">刷写系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.3.</span> <span class="nav-text">配置系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%B3%BB%E7%BB%9F%E5%87%86%E5%A4%87%E5%AE%89%E8%A3%85"><span class="nav-number">1.4.</span> <span class="nav-text">初始化系统准备安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubeadm%E5%AE%89%E8%A3%85master-node"><span class="nav-number">1.5.</span> <span class="nav-text">kubeadm安装master node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubeadm%E5%AE%89%E8%A3%85worker-node"><span class="nav-number">1.6.</span> <span class="nav-text">kubeadm安装worker node</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.7.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">promise.get_future();</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2022/01/25/setupk8s/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          树莓派搭建k8s集群
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-25 17:34:46" itemprop="dateCreated datePublished" datetime="2022-01-25T17:34:46+08:00">2022-01-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="树莓派搭建k8s集群"><a href="#树莓派搭建k8s集群" class="headerlink" title="树莓派搭建k8s集群"></a>树莓派搭建k8s集群</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>我们有很多时候需要搭建一个k8s集群，可能为了开发，可能为了测试，可能为了学习。在选择机器上可以有几个选择，一个是使用几台PC，一个是开几个虚拟机，一个是使用几个轻量的开发板。这里我主要以学习为目的，并且选择使用轻量开发板的方式，并且以最常用的树莓派作为代表，来搭建一个k8s集群。</p>
+<p>由于主要以学习考试为主，这里暂时不考虑搭建单机集群的方式，因为没法接触到涉及多个节点的操作场景。</p>
+<p>同时也不考虑k3s，我知道k3s是专为轻量设备而设计的，功能跟k8s基本是一样的，但是k3s和k8s只是功能基本相同，但是在使用和配置上，都有很多不同，并且使用的是完全分开的文档。k8s在使用上经常需要查在线文档的，即便对k3s的文档很熟悉了，在使用k8s的时候还是会存在查不到k8s文档的情况。因此学习k8s的时候，用k3s做练习是不合适的。</p>
+<p>至于选择树莓派作为载体是个人选择，你可以选择使用pc或者选择使用虚拟机。如果你选择使用pc或者虚拟机，那么下面的章节中，【刷写系统】和【配置系统】会有差异，仅供参考。再之后的步骤则都是通用的。</p>
+<p>最终我们将完成以下集群的搭建：</p>
+<p><img src="/linkimage/setupk8s/cluster-device.png" alt="cluster-device"></p>
+<p>一个路由器，3个树莓派，树莓派通过wifi连接路由器，3个树莓派中一个master node,两个worker node。</p>
+<span id="more"></span>
+
+<h2 id="刷写系统"><a href="#刷写系统" class="headerlink" title="刷写系统"></a>刷写系统</h2><p>系统我们使用树莓派专用的ubuntu系统，我的理由是k8s官方文档中插入的系统命令都是debian系的apt指令，外加ubuntu官方提供了树莓派的版本。所以可以看出ubuntu对k8s和对树莓派都是友好的。还有很多系统可以选择，更多选择可以阅读<a target="_blank" rel="noopener" href="https://thenewstack.io/a-guide-to-linux-operating-systems-for-kubernetes/">这个页面</a>详细了解  。但是后面的步骤我都是按照ubuntu来做的，其他系统的话需要自己做一些探索了。<br>首先把sd卡通过读卡器插到电脑上，然后到<a target="_blank" rel="noopener" href="https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#2-prepare-the-sd-card">烧录工具下载页面</a> 下载树莓派专用的烧录的软件，安装后，打开软件。<br><img src="/linkimage/setupk8s/pi-imager.png" alt="cluster-device"><br>在【选择系统】的选择中，依次选择[Other general-purpose OS]，[ubuntu]，[Ubuntu Server 21.10 (RPi 3/4/400)]，在【sd卡】的选择中选中你的sd卡。然后点烧录就可以了。<br>如果你有自己的刷写软件，可以先下载<a target="_blank" rel="noopener" href="https://ubuntu.com/download/raspberry-pi/thank-you?version=21.10&architecture=server-arm64+raspi">系统镜像</a> ,随后通过你自己的刷写软件写到sd卡中就可以了。比如我的linux mint，只需要右键下载的镜像，选择”使用 磁盘映像写入器 打开“就可以打开磁盘工具的恢复磁盘映像功能来写入镜像,如下图。</p>
+<p><img src="/linkimage/setupk8s/mint-open-writer.png" alt="cluster-device"></p>
+<p><img src="/linkimage/setupk8s/mint-write-image.png" alt="cluster-device"></p>
+<h2 id="配置系统"><a href="#配置系统" class="headerlink" title="配置系统"></a>配置系统</h2><p>这一步一个是要完成登录密码和ip地址和wifi密码的配置，以便我们能通过ssh连接上去。另一个是配置hostname，便于区别不同的设备。</p>
+<p>在配置前，我们需要先设计一下我们3个树莓派的ip地址和hostname。<br>假设局域网的网段是192.168.3.0/24, 那么我们可以指定3个空闲的ip，比如192.168.3.151,192.168.3.152,192.168.3.153。然后hostname可以指定为master1，worker1，worker2。所以3个机器分别为:</p>
+<table>
+<thead>
+<tr>
+<th>机器信息</th>
+<th>hostname</th>
+<th>ip</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>master node</td>
+<td>server1</td>
+<td>192.168.3.151</td>
+</tr>
+<tr>
+<td>worker node1</td>
+<td>server2</td>
+<td>192.168.3.152</td>
+</tr>
+<tr>
+<td>worker node2</td>
+<td>server3</td>
+<td>192.168.3.153</td>
+</tr>
+</tbody></table>
+<p>然后我们以master node为例来配置hostname和ip。<br>在sd卡刚刷写完后，sd卡实际上是被分成两个区的，其中有一个system-boot分区，是可编辑的。<br>我们把刷写完的sd卡重新插到电脑上，然后挂载system-boot分区。<br>linux mint上我们可以通过”磁盘“工具直接通过界面操作来挂载分区，如图：</p>
+<p><img src="/linkimage/setupk8s/mint-mount-sd-ui.png" alt="cluster-device"></p>
+<p>也可以通过命令行，先fdisk -l查看设备信息，然后通过mount挂载就可以了，如图：</p>
+<p><img src="/linkimage/setupk8s/mint-mount-sd-commandline.png" alt="cluster-device"></p>
+<p>如上图所以，挂载完后我们能看到分区下有一个network-config文件，这个文件是用来配置系统首次启动时候的网络的。初始内容如下：</p>
+<p><img src="/linkimage/setupk8s/rpi-netplan-init.png" alt="cluster-device"></p>
+<p>我们根据我们网络和ip，改成如下：</p>
+<p><img src="/linkimage/setupk8s/rpi-netplan-overwrite.png" alt="cluster-device"></p>
+<p>wifi名字/wifi密码根据实际的填写。我使用了dhcp的方式连接wifi，按照<a target="_blank" rel="noopener" href="https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi#3-wifi-or-ethernet">官方文档</a>应该是可以直接配成静态ip的，但是我每次配成静态之后设备都无法连到wifi中，不知道原因，所以就先配成dhcp的。</p>
+<p>改完配置文件，sd卡插到树莓派上去启动设备，这个时候我们登录到我们的路由器管理界面观察设备列表，找出hostname为ubuntu的设备，或者通过设备启动前和启动后的差别来找出设备的初始ip，然后我们通过ssh登录设备，初始用户名和密码都是ubuntu。登录后我们完成相应的配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">ssh ubuntu@192.168.3.157  # 路由器管理界面找出来的设备初始ip</span><br><span class="line"><span class="meta">#</span><span class="bash"> 登录后自动强制让你设置新密码，改完后重新ssh上去</span></span><br><span class="line"></span><br><span class="line">ssh ubuntu@192.168.3.157</span><br><span class="line"></span><br><span class="line">cat &lt;&lt;EOF | sudo tee /etc/hostname</span><br><span class="line">server1</span><br><span class="line">EOF</span><br><span class="line"></span><br><span class="line">cp /etc/netplan/50-cloud-init.yaml ./  # backup</span><br><span class="line">sudo vi /etc/netplan/50-cloud-init.yaml </span><br><span class="line"><span class="meta">#</span><span class="bash"> 把其中wifi下的配置改成如下</span></span><br><span class="line">    wifis:</span><br><span class="line">        wlan0:</span><br><span class="line">            access-points:</span><br><span class="line">                &quot;xxxxx&quot;:</span><br><span class="line">                    password: &quot;yyyyy&quot;</span><br><span class="line">            optional: true</span><br><span class="line">            gateway4: 192.168.3.1</span><br><span class="line">            nameservers:</span><br><span class="line">                addresses: [192.168.3.1, 8.8.8.8]</span><br><span class="line">            addresses: [192.168.3.151/24]</span><br><span class="line"></span><br><span class="line">sudo reboot # 重启生效</span><br><span class="line">ssh ubuntu@192.168.3.151 # 用新的ip连上去</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="初始化系统准备安装"><a href="#初始化系统准备安装" class="headerlink" title="初始化系统准备安装"></a>初始化系统准备安装</h2><p>这一步我们需要做的是为安装k8s做准备，这一步我们可以脚本化了，不需要那么多手动的操作了。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ssh ubuntu@192.168.3.151 # ssh上去</span><br><span class="line">wget http://yizhi.ren/linkimage/setupk8s/step1.sh</span><br><span class="line">sh step1.sh arm64  # 支持arm64|amd64两个值</span><br><span class="line"><span class="meta">#</span><span class="bash"> 输入sudo密码如果需要，确认[OK]如果需要</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 等待一杯茶的功夫，并确认中间没有报错, 如果脚本结束的很快，就要仔细确认是不是出错了</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 脚本会准备好全部需要的组件/库/配置，其中CNI使用的是containerd， kubernets的各种库和组件的版本是v1.22.1</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> CNI和kubernets版本没有抽成参数，要修改的话得改改脚本</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 最后输入y重启</span></span><br></pre></td></tr></table></figure>
+
+<p>我们通过上面一系列同样的步骤，把其他两个设备也准备好。</p>
+<h2 id="kubeadm安装master-node"><a href="#kubeadm安装master-node" class="headerlink" title="kubeadm安装master node"></a>kubeadm安装master node</h2><p>其实使用kubeadm建立k8s的master节点本身只是一行指令，但是其中涉及很多参数，还涉及国内拉不到谷歌镜像的问题，这个脚本化就是通过配置需要的参数，然后把组装参数和镜像拉取的事给自动化。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">ssh ubuntu@192.168.3.151 # ssh上去</span><br><span class="line">wget http://yizhi.ren/linkimage/setupk8s/step2.sh</span><br><span class="line">vi step2.sh # 按需要配置以下几个参数</span><br><span class="line"><span class="meta">#</span><span class="bash">HOST1=192.168.3.151    <span class="comment"># master node ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">HOST2=192.168.3.152    <span class="comment"># worker node ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">HOST3=192.168.3.153    <span class="comment"># worker node ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">DOMAIN=jinqidiguo.com  <span class="comment"># 这个是给集群设置的域名，脚本会使用hosts来映射域名到HOST1的ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">POD_CIDR=10.244.0.0/16 <span class="comment"># pod的ip池</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">SERVICE_CIDR=10.20.0.0/16  <span class="comment"># service的ip池</span></span></span><br><span class="line"></span><br><span class="line">bash step2.sh SETUPMASTER</span><br><span class="line"><span class="meta">#</span><span class="bash"> 不要用sh，有部分语法sh不支持</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 脚本已经解决了国内拉不到谷歌镜像的问题，使用的国内镜像</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 等待完成，如果顺利你将会看到下面的控制台输出</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Your Kubernetes control-plane has initialized successfully!</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> ......</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> kubeadm join jinqidiguo.com:6443 --token br1b75.ierg26dgogbb9mhl \</span></span><br><span class="line"><span class="bash"><span class="comment"># 	--discovery-token-ca-cert-hash sha256:a4a94687aa61547f58f423d8722f824addb24f8a2158291dea3d26f0d92b72aa</span></span> </span><br><span class="line"><span class="meta">#</span><span class="bash"> ...</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 你需要记录下这两行kubeadm join指令，别的可以不关注。记下token和discovery-token-ca-cert-hash两个值</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> br1b75.ierg26dgogbb9mhl 和 sha256:a4a94687aa61547f58f423d8722f824addb24f8a2158291dea3d26f0d92b72aa 备用</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 如果失败可以bash step2.sh RESET，然后修复后重试</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>到这，master节点就建设完成了，这时候你可以使用kubectl来操作集群了，当然现在集群只有一个节点。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">~$</span><span class="bash"> kubectl get node</span></span><br><span class="line">NAME      STATUS     ROLES                  AGE   VERSION</span><br><span class="line">server1   NotReady   control-plane,master   35m   v1.22.1</span><br></pre></td></tr></table></figure>
+
+<p>接下来需要安装CNI插件，由于CNI插件大家的安装倾向可能是很不一样的，所以没有做到脚本里。</p>
+<p>这里以weave为例(其他CNI插件请自己踩坑)，执行下面的命令来安装即可，注意env.IPALLOC_RANGE参数要跟step1.sh中配置的POD_CIDR值一致：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl apply -f &quot;https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d &#x27;\n&#x27;)&amp;env.IPALLOC_RANGE=10.244.0.0/16&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>等待CNI启动成功后，node的状态会变成Ready：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">~$</span><span class="bash"> kubectl get node</span></span><br><span class="line">NAME      STATUS   ROLES                  AGE   VERSION</span><br><span class="line">server1   Ready    control-plane,master   65m   v1.22.1</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="kubeadm安装worker-node"><a href="#kubeadm安装worker-node" class="headerlink" title="kubeadm安装worker node"></a>kubeadm安装worker node</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">ssh ubuntu@192.168.3.152 # ssh上去</span><br><span class="line">wget http://yizhi.ren/linkimage/setupk8s/step2.sh</span><br><span class="line">vi step2.sh # 按需要配置以下几个参数</span><br><span class="line"><span class="meta">#</span><span class="bash">HOST1=192.168.3.151    <span class="comment"># master node ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">HOST2=192.168.3.152    <span class="comment"># worker node ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">HOST3=192.168.3.153    <span class="comment"># worker node ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">DOMAIN=jinqidiguo.com  <span class="comment"># 这个是给集群设置的域名，脚本会使用hosts来映射域名到HOST1的ip</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">POD_CIDR=10.244.0.0/16 <span class="comment"># pod的ip池</span></span></span><br><span class="line"><span class="meta">#</span><span class="bash">SERVICE_CIDR=10.20.0.0/16  <span class="comment"># service的ip池</span></span></span><br><span class="line"></span><br><span class="line">sh step2.sh JOINWORKER br1b75.ierg26dgogbb9mhl sha256:a4a94687aa61547f58f423d8722f824addb24f8a2158291dea3d26f0d92b72aa</span><br><span class="line"><span class="meta">#</span><span class="bash"> 其中br1b75.ierg26dgogbb9mhl和sha256:a4a94687aa61547f58f423d8722f824addb24f8a2158291dea3d26f0d92b72aa来自上面master节点记录下来的两行信息</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 等待完成，看到这个信息就表示成功了</span></span><br><span class="line">This node has joined the cluster:</span><br><span class="line">* Certificate signing request was sent to apiserver and a response was received.</span><br><span class="line">* The Kubelet was informed of the new secure connection details.</span><br><span class="line"></span><br><span class="line">Run &#x27;kubectl get nodes&#x27; on the control-plane to see this node join the cluster.</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 这时到master节点执行kubectl get node就能看到worker节点了, STATUS状态可能还NotReady, 多等一会</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">~$ kubectl get node</span><br><span class="line">NAME      STATUS     ROLES                  AGE     VERSION</span><br><span class="line">server1   Ready      control-plane,master   6d22h   v1.22.1</span><br><span class="line">server2   Ready      &lt;none&gt;                 2m3s    v1.22.1</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://thenewstack.io/a-guide-to-linux-operating-systems-for-kubernetes/">a-guide-to-linux-operating-systems-for-kubernetes</a><br><a target="_blank" rel="noopener" href="https://netplan.io/examples/">Netplan configuration examples</a><br><a target="_blank" rel="noopener" href="https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi">How to install Ubuntu Server on your Raspberry Pi</a><br><a target="_blank" rel="noopener" href="https://www.weave.works/docs/net/latest/kubernetes/kube-addon/#-changing-configuration-options">Changing Configuration Options</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/payimage/wechat.png" alt="yizhiren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/payimage/zhifubao.png" alt="yizhiren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/kubernetes/" rel="tag"># kubernetes</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/12/19/raft/" rel="prev" title="raft 协议解析">
+                  <i class="fa fa-chevron-left"></i> raft 协议解析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/02/01/k8scert/" rel="next" title="Kubernetes Certificate">
+                  Kubernetes Certificate <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"10c968f5c437457f66da7a75dd196672"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
