@@ -223,11 +223,11 @@ footer:
     enable: true
     icp: 浙ICP备14030596号-5
     # The digit in the num of gongan beian.
-    gongan_id:
+    gongan_id: 33011002016624
     # The full num of gongan beian.
-    gongan_num:
+    gongan_num: 浙公网安备 33011002016624号
     # The icon for gongan beian. See: http://www.beian.gov.cn/portal/download
-    gongan_icon_url:
+    gongan_icon_url: https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175
 
 
 # ---------------------------------------------------------------
