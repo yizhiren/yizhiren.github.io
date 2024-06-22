@@ -363,7 +363,7 @@ void bar(void)
 // 下面这个顺序跟上图并不完全对应，但是有一点是一致的，那就是cpu1.read a没有读到cpu0.a=1的值。
   cpu0                    cpu1
   
-													b=1;
+                          b=1;
                           smp_wmb();
                           read a;
 
@@ -507,9 +507,9 @@ void bar(void)
   
 void foo(void)
 {
-	read a;
-	acquire();
-	yyy;
+    read a;
+    acquire();
+    yyy;
 }
 
 ```
@@ -525,9 +525,9 @@ void foo(void)
   
 void foo(void)
 {
-	while(a!=1)continue;
-	acquire();
-	yyy;
+    while(a!=1)continue;
+    acquire();
+    yyy;
 }
 
 ```
