@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 6.0.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<meta name="description" content="SOA框架iceoryx原理解析简介在我之前的一篇微服务的文章中曾经总结了微服务跟SOA的差异点和相同点，总结的结论如下： 1234差异可以归纳为：SOA面向企业范围，微服务面向应用范围。SOA带有异构集成的语义，微服务没有这个语义。SOA服务内部支持组件分离的架构，微服务则是更彻底的组件分离架构-组件在网络上隔离。 基于这个总结，如果我们现在要写一套SOA服务框架，我们可以推导出这个框架的哪些特">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOA框架iceoryx原理解析">
+<meta property="og:url" content="https://yizhi.ren/2024/06/22/iceoryx/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="SOA框架iceoryx原理解析简介在我之前的一篇微服务的文章中曾经总结了微服务跟SOA的差异点和相同点，总结的结论如下： 1234差异可以归纳为：SOA面向企业范围，微服务面向应用范围。SOA带有异构集成的语义，微服务没有这个语义。SOA服务内部支持组件分离的架构，微服务则是更彻底的组件分离架构-组件在网络上隔离。 基于这个总结，如果我们现在要写一套SOA服务框架，我们可以推导出这个框架的哪些特">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="d:/code/blog_source/source/linkimage/iceoryx/iceoryx_logo.jpg">
+<meta property="og:image" content="d:/code/blog_source/source/linkimage/iceoryx/iceoryx_process.jpg">
+<meta property="og:image" content="d:/code/blog_source/source/linkimage/iceoryx/roudi_publish_create_flow.png">
+<meta property="article:published_time" content="2024-06-22T09:10:46.000Z">
+<meta property="article:modified_time" content="2024-06-22T09:10:46.000Z">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="通信">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:/code/blog_source/source/linkimage/iceoryx/iceoryx_logo.jpg">
+
+
+<link rel="canonical" href="https://yizhi.ren/2024/06/22/iceoryx/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2024/06/22/iceoryx/","path":"2024/06/22/iceoryx/","title":"SOA框架iceoryx原理解析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SOA框架iceoryx原理解析 | 一支人</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">一支人</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
+        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SOA%E6%A1%86%E6%9E%B6iceoryx%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">SOA框架iceoryx原理解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.2.1.</span> <span class="nav-text">标准化服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%8C%E4%B8%BB%E6%9C%BA%E9%80%9A%E4%BF%A1"><span class="nav-number">1.2.2.</span> <span class="nav-text">同主机通信</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">1.3.</span> <span class="nav-text">架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">进程模型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E4%BA%92"><span class="nav-number">1.4.</span> <span class="nav-text">交互</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#REG-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">REG 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CREATE-PUBLISHER-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.2.</span> <span class="nav-text">CREATE_PUBLISHER 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CREATE-SUBSCRIBER-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.3.</span> <span class="nav-text">CREATE_SUBSCRIBER 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CREATE-CONDITION-VARIABLE-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.4.</span> <span class="nav-text">CREATE_CONDITION_VARIABLE 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TERMINATION-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.5.</span> <span class="nav-text">TERMINATION 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KEEPALIVE-%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.6.</span> <span class="nav-text">KEEPALIVE 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.7.</span> <span class="nav-text">其他命令</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#roudi"><span class="nav-number">2.</span> <span class="nav-text">roudi</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#runtime"><span class="nav-number">2.1.</span> <span class="nav-text">runtime</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">promise.get_future();</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2024/06/22/iceoryx/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+      <meta itemprop="description" content="promise.get_future();">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SOA框架iceoryx原理解析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-06-22 17:10:46" itemprop="dateCreated datePublished" datetime="2024-06-22T17:10:46+08:00">2024-06-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="SOA框架iceoryx原理解析"><a href="#SOA框架iceoryx原理解析" class="headerlink" title="SOA框架iceoryx原理解析"></a>SOA框架iceoryx原理解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在我之前的一篇<a href="https://yizhi.ren/2019/06/25/microservice/">微服务</a>的文章中曾经总结了微服务跟SOA的差异点和相同点，总结的结论如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">差异可以归纳为：</span><br><span class="line">SOA面向企业范围，微服务面向应用范围。</span><br><span class="line">SOA带有异构集成的语义，微服务没有这个语义。</span><br><span class="line">SOA服务内部支持组件分离的架构，微服务则是更彻底的组件分离架构-组件在网络上隔离。</span><br></pre></td></tr></table></figure>
+<p>基于这个总结，如果我们现在要写一套SOA服务框架，我们可以推导出这个框架的哪些特性呢？</p>
+<blockquote>
+<p>从第一条中我们可以看出这套框架将是一个企业级别的框架，他不像微服务那样可以给每个服务灵活和独立的特性，SOA框架一旦推广使用，他就是企业级别的。</p>
+</blockquote>
+<blockquote>
+<p>从第二条中我们可以看出，这个框架承担着异构集成的职责，异构集成简单讲就是适配加标准化公开这两点。展开来讲的话就是适配现有系统中的的专用数据格式、协议、传输机制，并使用标准化的机制将这些公开为服务。</p>
+</blockquote>
+<blockquote>
+<p>从第三点上我们可以看出，这个框架所公开的服务，他们不一定像微服务那样一个服务与一个服务之间是网络隔离的，他们有可能是位于同一个主机上的，换句话说SOA的服务与服务之间可以网络隔离也可以网络不隔理。</p>
+</blockquote>
+<p>这里面第一点可以认为是第二点的一个顺其自然的结果，由于各个服务都采用标准化的方式公开，那采用同一套框架是顺理成章的。所以下面我就只关注第二点和第三点。</p>
+<p>这次要对其分析的这个框架叫iceoryx中文叫冰羚（其实就是对ice-oryx的翻译）。他是一个在特定领域（至少在智驾领域）很有名的SOA通信框架，在SOA特性的第二点和第三点特性中他都有很典型的体现，如下：</p>
+<span id="more"></span>
+
+<h3 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h3><h4 id="标准化服务"><a href="#标准化服务" class="headerlink" title="标准化服务"></a>标准化服务</h4><p>为了做到第二点标准化的服务公开，iceoryx首先要求每个服务提供服务描述信息，用来唯一标志服务网络中的一个服务；<br>其次规定了专用数据格式，必须使用用户预定义的结构体（注意iceoryx没有规定使用IDL，IDL是在DDS等别的框架中的要求），或者无结构（也就是二进制流），用户想要传递自己已有的结构，需要在收发前后做数据结构的转换和赋值，这点在各类通信框架中到并不特殊;<br>再次，在传输机制上，iceoryx封装了较为复杂的消息编排和消息路由机制，确保消息是按照各异构服务提供方和消费方的要求做了保持或者丢弃，以及按需路由到了各个异构服务。要知道微服务是不做消息编排和路由的，这个也是SOA框架复杂麻烦的地方。即便只有一个服务需要这个特性，作为公司级的框架，你就不得不提供这个特性。</p>
+<h4 id="同主机通信"><a href="#同主机通信" class="headerlink" title="同主机通信"></a>同主机通信</h4><p>为了做到第三点对同一主机上的不同服务进行通信，iceoryx直接把自己瞄准在了这个细分领域，专注于提供同一主机上的不同服务之间的通信，他没有提供对不同主机上的服务的通信能力，因此在实践上，往往是跟其他框架整合使用。由于限定在同一主机上，他可以提供远高于主机之间的通信吞吐和远低于主机之间的通信延迟。</p>
+<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p>我们已经知道iceoryx具有提供标准化服务的能力以及高性能同主机通信的能力，那么我们来逐步分析和拆解iceoryx是如何来实现这些特性的，从架构到流程到实现，尽可能的了解他的内部设计。</p>
+<p><img src="D:\code\blog_source\source/linkimage/iceoryx/iceoryx_logo.jpg" alt="iceoryx logo"><br>这个是他的logo，很漂亮，会让你忍不住想，这大概是个很酷的框架。</p>
+<h4 id="进程模型"><a href="#进程模型" class="headerlink" title="进程模型"></a>进程模型</h4><p>接下来首先来看一下iceoryx运行时候的进程模型：<br><img src="D:\code\blog_source\source/linkimage/iceoryx/iceoryx_process.jpg" alt="iceoryx process"><br>整个进程模型，包括3类角色，一个角色是RouDi，是一个中心进程节点，类似于Daemon进程，本身不属于业务进程，只是提供服务支持。RouDi的意思就是Route &amp; Discovery，路由和发现，用来做消息路由和服务发现。<br>一个角色是Runtime，Runtime被集成到各个业务进程中，给进程提供服务集成的能力，根据使用方式不同，有的进程变成publisher，有的变成subscriber，有的既是publisher又是subscriber。<br>第三个角色是share memory，本身被RouDi创建和销毁，但被publisher和subscriber同时使用，被用来作为高效的数据传递介质。是其高性能的关键所在。</p>
+<p>RouDi和Runtime之间通过domain socket（运行在Linux系统的话）通信，RouDi作为server，Runtime作为client。</p>
+<h3 id="交互"><a href="#交互" class="headerlink" title="交互"></a>交互</h3><p>roudi与runtime的交互过程，首先是roudi要先启动，如果runtime先启动，会等待若干秒，等待roudi启动，等不到就退出。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">2024-06-29 16:32:03.011 [Warning]: RouDi not found - waiting ...</span><br><span class="line">2024-06-29 16:33:03.099 [ Fatal ]: Timeout registering at RouDi. Is RouDi running?</span><br></pre></td></tr></table></figure>
+
+<p>所以所有的交互过程都是基于roudi已经启动成功的情况，暂不考虑roudi晚启动的异常情况。</p>
+<p>交互总共包括以下几个指令，<code>REG</code>、<code>CREATE_PUBLISHER</code>、<code>CREATE_SUBSCRIBER</code>、<code>CREATE_CLIENT</code>，<code>CREATE_SERVER</code>、<code>CREATE_CONDITION_VARIABLE</code>、<code>CREATE_INTERFACE</code>、<code>PREPARE_APP_TERMINATION</code>、<code>TERMINATION</code>，如下面的代码所示， roudi收到对应的命令后会进入对应的命令处理逻辑。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RouDi::processMessage</span><span class="params">(<span class="keyword">const</span> runtime::IpcMessage&amp; message,</span></span></span><br><span class="line"><span class="params"><span class="function">                           <span class="keyword">const</span> iox::runtime::IpcMessageType&amp; cmd,</span></span></span><br><span class="line"><span class="params"><span class="function">                           <span class="keyword">const</span> RuntimeName_t&amp; runtimeName)</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// 处理不同的命令</span></span><br><span class="line">    <span class="built_in"><span class="keyword">switch</span></span> (cmd)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::REG:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::CREATE_PUBLISHER:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::CREATE_SUBSCRIBER:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::CREATE_CLIENT:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::CREATE_SERVER:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::CREATE_CONDITION_VARIABLE:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::CREATE_INTERFACE:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::PREPARE_APP_TERMINATION:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">case</span> runtime::IpcMessageType::TERMINATION:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">        &#123;</span><br><span class="line">            ...</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="REG-命令"><a href="#REG-命令" class="headerlink" title="REG 命令"></a>REG 命令</h4><p><code>REG</code>命令是用来告诉roudi我runtime启动了，我的名字叫xx，我的其他信息是xxx，请记录。如果原先存在同名的runtime会在此时信息被更新。每个runtime因此必须有独一无二的name。</p>
+<h4 id="CREATE-PUBLISHER-命令"><a href="#CREATE-PUBLISHER-命令" class="headerlink" title="CREATE_PUBLISHER 命令"></a>CREATE_PUBLISHER 命令</h4><p><code>CREATE_PUBLISHER</code>命令是告诉roudi，我要在xx这个runtime下创建一个publisher。roudi于是分配一片内存给这个publisher，这片内存是在专为publisher们准备的相同大小内存块的内存池中选取的一个，随后把这个内存的地址回复给runtime，这个地址本质上是一个offset值，不是一个真正的内存地址，因为roudi和runtime在不同进程，大家各自有各自的内存虚地址，我给你一个虚地址过去没有什么意义。在回复地址给到runtime之前，roudi还会同时做一个服务发现的工作，他会遍历当前已经存在的subscribers，把其中topic跟你这个publisher相同的subscriber选出来，这些subscriber，每一个也都绑定了一段专属的内存块，这些选出来的subscriber对应的内存块地址会被填入到publisher的专属内存地址中，一个存放subscriber信息的队列中。这样就完成了一个初始的服务发现的工作，publisher能够成功拿到当前有哪些关注我这个topic的subscribers。runtime拿到roudi的回复，就可以做后续的消息发布工作了。下面的代码反应了这个过程：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">expected&lt;PublisherPortRouDiType::MemberType_t*, PortPoolError&gt;</span></span><br><span class="line"><span class="function"><span class="title">PortManager::acquirePublisherPortData</span><span class="params">(<span class="keyword">const</span> capro::ServiceDescription&amp; service,</span></span></span><br><span class="line"><span class="params"><span class="function">                                      <span class="keyword">const</span> popo::PublisherOptions&amp; publisherOptions,</span></span></span><br><span class="line"><span class="params"><span class="function">                                      <span class="keyword">const</span> RuntimeName_t&amp; runtimeName,</span></span></span><br><span class="line"><span class="params"><span class="function">                                      mepoo::MemoryManager* <span class="keyword">const</span> payloadDataSegmentMemoryManager,</span></span></span><br><span class="line"><span class="params"><span class="function">                                      <span class="keyword">const</span> PortConfigInfo&amp; portConfigInfo)</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">acquirePublisherPortDataWithoutDiscovery</span>(</span><br><span class="line">               service, publisherOptions, runtimeName, payloadDataSegmentMemoryManager, portConfigInfo)</span><br><span class="line">        .<span class="built_in">and_then</span>([&amp;](<span class="keyword">auto</span> publisherPortData) &#123;</span><br><span class="line">            PublisherPortRouDiType <span class="built_in">port</span>(publisherPortData);</span><br><span class="line">            <span class="keyword">this</span>-&gt;<span class="built_in">doDiscoveryForPublisherPort</span>(port);</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面的图则描述了这个过程。</p>
+<p><img src="D:\code\blog_source\source\linkimage\iceoryx\roudi_publish_create_flow.png" alt="publisher create flow"></p>
+<h4 id="CREATE-SUBSCRIBER-命令"><a href="#CREATE-SUBSCRIBER-命令" class="headerlink" title="CREATE_SUBSCRIBER 命令"></a>CREATE_SUBSCRIBER 命令</h4><p><code>CREATE_SUBSCRIBER</code>命令同<code>CREATE_PUBLISHER</code>类似的，roudi先是分配一段内存给这个subscriber，然后遍历全部的publisher，把这段内存地址的信息塞到相同topic的publisher的对应结构中去，如此完成初始的服务发现机制，然后把这段内存地址响应给subscriber，后续subscriber就可以根据这个信息去读取对应的数据。上图中在subscriber1的内存区域中有一个dat数组，就是存放publisher发过来的数据的。另外熟悉共享内存数据传递的同学应该知道，数据放在指定位置后，还得去做通知唤醒，告诉对方有新数据。不过呢<code>CREATE_SUBSCRIBER</code>这个命令不负责这件事，但又做了部分的工作。当RouDi把subscriber的内存信息塞到publisher的对应结构中时，随同一起塞入的还有一个指针，指向通知器，只不过这个时候这个指针是空指针，也就是压根不会做通知。不做通知的话subscriber怎么读消息的，答案是轮询，这个场景也是合理的，轮询在适当场景下有更佳的性能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename ChunkQueueDataProperties, typename LockingPolicy&gt;</span><br><span class="line">struct ChunkQueueData : public LockingPolicy</span><br><span class="line">&#123;</span><br><span class="line">	//...</span><br><span class="line">    RelativePointer&lt;ConditionVariableData&gt; m_conditionVariableDataPtr; // 默认是空指针</span><br><span class="line">    optional&lt;uint64_t&gt; m_conditionVariableNotificationIndex;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="CREATE-CONDITION-VARIABLE-命令"><a href="#CREATE-CONDITION-VARIABLE-命令" class="headerlink" title="CREATE_CONDITION_VARIABLE 命令"></a>CREATE_CONDITION_VARIABLE 命令</h4><p><code>CREATE_CONDITION_VARIABLE</code>命令的作用就是创建一个通知器，当用户代码中创建一个Listener, 他就会发送<code>CREATE_CONDITION_VARIABLE</code>的命令，然后在用户代码中调用listener的attachEvent函数，完成subscriber与通知器的绑定，上面<code>CREATE_SUBSCRIBER</code>命令介绍中提到的通知器指针，就会在这个时候被赋值，这样每次subscriber有新数据到来就会通知用户指定的回调。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">listener</span><br><span class="line">    .<span class="built_in">attachEvent</span>(subscriberLeft,</span><br><span class="line">                 iox::popo::SubscriberEvent::DATA_RECEIVED,</span><br><span class="line">                 iox::popo::<span class="built_in">createNotificationCallback</span>(onSampleReceivedCallback))</span><br><span class="line">    .<span class="built_in">or_else</span>([](<span class="keyword">auto</span>) &#123;</span><br><span class="line">        std::cerr &lt;&lt; <span class="string">&quot;unable to attach subscriberLeft&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        std::<span class="built_in">exit</span>(EXIT_FAILURE);</span><br></pre></td></tr></table></figure>
+
+<h4 id="TERMINATION-命令"><a href="#TERMINATION-命令" class="headerlink" title="TERMINATION 命令"></a>TERMINATION 命令</h4><p><code>TERMINATION</code>命令发生在Runtime进程退出的时候，RouDi收到后会做一些清理操作，包括从订阅关系中移除这个进程，以及从进程列表中移除这个进程。如果Runtime进程异常退出，没来得及发送这个命令，那么这些清理操作将会发生在进程与RouDi心跳超时之后。</p>
+<h4 id="KEEPALIVE-命令"><a href="#KEEPALIVE-命令" class="headerlink" title="KEEPALIVE 命令"></a>KEEPALIVE 命令</h4><p>关于心跳这个命令，在iceoryx的<code>release_2.0</code>分支下是一条独立的命令<code>KEEPALIVE</code>, 由runtime定时发送给RouDi，但是在master分支下，已经取消了这个命令，而是在REG命令处理的时候直接分配一段内存存放心跳信息，后面Runtime直接向这块内存更新心跳信息。</p>
+<h4 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h4><p>此外其他的命令我在使用订阅发布机制的情况下并没有观察到，这里我不做描述，可以自行查阅代码，就在<code>RouDi::processMessage</code>这个函数里面。</p>
+<h2 id="roudi"><a href="#roudi" class="headerlink" title="roudi"></a>roudi</h2><h3 id="runtime"><a href="#runtime" class="headerlink" title="runtime"></a>runtime</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/payimage/wechat.png" alt="yizhiren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/payimage/zhifubao.png" alt="yizhiren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E9%80%9A%E4%BF%A1/" rel="tag"># 通信</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/07/11/sync/" rel="prev" title="同步三要素">
+                  <i class="fa fa-chevron-left"></i> 同步三要素
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yizhiren</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"05a37aaeae61567a93be66ccdff78f63"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
