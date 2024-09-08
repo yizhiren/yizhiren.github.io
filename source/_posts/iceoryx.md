@@ -162,7 +162,6 @@ PortManager::acquirePublisherPortData(const capro::ServiceDescription& service,
 下面的图则描述了这个过程。
 
 ![publisher create flow](/linkimage/iceoryx/roudi_publish_create_flow.png)
-
 (右键-在新标签页中打开图片，可以看得更清晰)
 
 #### CREATE_SUBSCRIBER 命令
@@ -190,7 +189,148 @@ struct ChunkQueueData : public LockingPolicy
          .or_else([](auto) {
              std::cerr << "unable to attach subscriberLeft" << std::endl;
              std::exit(EXIT_FAILURE);
+         });
 ```
+具体一点讲，listener对象中包含了roudi新创建的ConditionVariableData，ConditionVariableData中则包含了一个semaphore, 随后，listener会启动一个线程，线程会操作semaphore.wait()，进行等待。ConditionVariableData是被roudi创建的，pub和sub两侧都能拿到的，那么在数据传递后，pub端会随即操作semaphore.post(), 于是listener这边wait的线程就会唤醒并执行回调。ConditionVariableData在设计上支持多种事件的，因此里面有个数组，可以对应不同的事件，数组某个下标被设置上，就表示对应的事件发生，就执行对应的回调。ConditionVariableData这个类的定义可以看出这种设计。
+```c++
+struct ConditionVariableData
+{
+    ConditionVariableData() noexcept;
+    explicit ConditionVariableData(const RuntimeName_t& runtimeName) noexcept;
+
+    ConditionVariableData(const ConditionVariableData& rhs) = delete;
+    ConditionVariableData(ConditionVariableData&& rhs) = delete;
+    ConditionVariableData& operator=(const ConditionVariableData& rhs) = delete;
+    ConditionVariableData& operator=(ConditionVariableData&& rhs) = delete;
+    ~ConditionVariableData() noexcept = default;
+
+    optional<UnnamedSemaphore> m_semaphore;
+    RuntimeName_t m_runtimeName;
+    std::atomic_bool m_toBeDestroyed{false};
+    std::atomic_bool m_activeNotifications[MAX_NUMBER_OF_NOTIFIERS];
+    std::atomic_bool m_wasNotified{false};
+};
+```
+还原整个过程可以看下图：
+![condition_variable_data_flow](/linkimage/iceoryx/condition_variable_data_flow.png)
+(右键-在新标签页中打开图片，可以看得更清晰)
+
+```
+@startuml
+
+group CreateConditionVariableData
+Listener -> Roudi: CREATE_CONDITION_VARIABLE 
+Roudi -> ProcessManager : addConditionVariableForProcess
+ProcessManager -> PortManager : acquireConditionVariableData
+PortManager -> PortPool : addConditionVariableData
+PortPool -> ConditionVariableData: Create
+ConditionVariableData-> PortPool : ConditionVariableDataPtr
+PortPool -> PortManager : ConditionVariableDataPtr
+PortManager -> ProcessManager :ConditionVariableDataPtr
+ProcessManager -> Listener: ConditionVariableDataPtr
+end
+
+group SaveCallback
+Listener -> Listener: AddEvent
+Listener -> Event_t: Init
+end
+
+group SetConditionVariable
+Listener -> Subscriber: SetConditionVariable
+Subscriber -> SubscriberPortUser: SetConditionVariable
+SubscriberPortUser -> ChunkReceiver : SetConditionVariable
+ChunkReceiver -> ChunkQueuePopper : SetConditionVariable
+ChunkQueuePopper -> ChunkQueueData : SetConditionVariableData
+end
+
+group WaitSemaphore
+Listener -> ConditionListener: wait
+ConditionListener -> ConditionVariableData : WaitOnSemaphore
+end
+
+group PostSemaphore
+Publisher -> PublisherPortUser: sendChunk
+PublisherPortUser -> ChunkSender : send
+ChunkSender -> ChunkDistributor : DeliverToAllStoredQueues
+ChunkDistributor -> ChunkDistributor : PushToQueue
+ChunkDistributor -> ChunkQueuePusher : Push
+ChunkQueuePusher -> ChunkQueueData : PushChunk
+ChunkQueuePusher -> ChunkQueueData : GetConditionVariableData
+ChunkQueuePusher -> ConditionNotifier : Notify
+ConditionNotifier -> ConditionVariableData : PostOnSemaphore
+end
+
+group WakeupOnSemaphore
+ConditionVariableData -> ConditionListener : WakeupOnSemaphore
+ConditionListener -> Listener : EventId
+end
+
+group ExecuteCallback
+Listener -> Listener : GetEvent
+Listener -> Event_t : Callback
+end
+
+@enduml
+
+```
+
+再补一个关系图，下面这个图是来自仓库中官方的一个图(doc/design/listener.md)。
+```
+                                   +---------------------------+
+                                   | ConditionVariableData     |
+                                   |   - m_semaphore           |
+                                   |   - m_runtimeName         |
+                                   |   - m_toBeDestroyed       |
+                                   |   - m_activeNotifications |
+                                   +---------------------------+
+                                        | 1               | 1
+                                        |                 |
+                                        | 1               | n
++-----------------------------------------------+ +--------------------------------------------------+
+| ConditionListener                             | | ConditionNotifier                                |
+|   ConditionListener(ConditionVariableData & ) | |   ConditionNotifier(ConditionVariableData &,     |
+|                                               | |                 uint64_t notificationIndex)      |
+|   bool                  wasNotified()         | |                                                  |
+|   void                  destroy()             | |   void notify()                                  |
+|   NotificationVector_t  wait()                | |                                                  |
+|   NotificationVector_t  timedWait()           | |   - m_condVarDataPtr    : ConditionVariableData* |
+|                                               | |   - m_notificationIndex                          |
+|   - m_condVarDataPtr : ConditionVariableData* | +--------------------------------------------------+
+|   - m_toBeDestroyed  : std::atomic_bool       |       
++-----------------------------------------------+       
+        | 1                                              
+        |                                                    
+        | 1                                                   
++-------------------------------------------------+           
+| Listener                                        |           
+|   attachEvent(Triggerable, EventType, Callback) |          
+|   detachEvent(Triggerable, EventType)           |          
+|                                                 |          
+|   - m_events : Event_t[]                        |          
+|   - m_thread : std::thread                      |           
+|   - m_conditionListener : ConditionListener     |          
+|                                                 |           
+| +----------------------------+                  |          
+| | Event_t                    |                  |          
+| |   void executeCallback()   |                  |          
+| |   bool reset()             |                  |          
+| |   bool init(...)           |                  |          
+| |                            |                  |           +-------------------------------------------------------+
+| |   - m_origin               |                  |           | Event_t                                               |
+| |   - m_callback             |                  |           |                                                       |
+| |   - m_invalidationCallback |                  |           |   void executeCallback()                              |
+| |   - m_eventId              |                  | - 1 - 1 - |   void isInitialized()                                |
+| +----------------------------+                  |           |   void init()                                         |
++-------------------------------------------------+           |   void reset()                                        |
+                                                              |   void isEqualTo()                                    |
+                                                              |                                                       |
+                                                              |   - m_callback : GenericCallbackPtr_t                 |
+                                                              |   - m_eventType : uint64_t                            |
+                                                              +-------------------------------------------------------+
+```
+这个图中可以看出listener持有ConditionListener，listener正是通过ConditionListener实现的semaphore.wait()， 而ConditionVariableData、ConditionListener、Listener之间的关系则是1:1:1的关系。
+另一部分ConditionNotifier是用来完成semaphore.post()操作的，因此ConditionNotifier可以构造多次执行多次,是1:n的关系。而原图中剩下的部分似乎是内容过期，已经不对了，我移除了，并 补上了Event_t部分。
+
 
 #### TERMINATION 命令
 `TERMINATION`命令发生在Runtime进程退出的时候，RouDi收到后会做一些清理操作，包括从订阅关系中移除这个进程，以及从进程列表中移除这个进程。如果Runtime进程异常退出，没来得及发送这个命令，那么这些清理操作将会发生在进程与RouDi心跳超时之后。
@@ -258,7 +398,7 @@ IceOryxRouDiApp
 
 2. 这里面多个Block都是继承`MemoryBlock`基类，并最终被放到`vector<MemoryBlock*>`这个数组里面；
 
-3. 这几面`PosixShmMemoryProvider`是继承`MemoryProvider`接口的，并最终被放到`vector<MemoryProvider*>`这个数组里面。
+3. 这里面`PosixShmMemoryProvider`是继承`MemoryProvider`接口的，并最终被放到`vector<MemoryProvider*>`这个数组里面。
 
 这个关系中还是看不出重点，我们来看一下初始化之后这些类（或者对象）的关系变成什么样：
 
@@ -272,12 +412,12 @@ IceOryxRouDiApp
 	|	|		 └ vector<MemoryProvider*>
 	|	|			└ PosixShmMemoryProvider
 	|	|				└ vector<MemoryBlock*>
-    |   |   	   			├ introspectionMemPoolBlock
-    |   |					├ discoveryMemPoolBlock
-    |   |					├ heartbeatPoolBlock
-    |   |					├ segmentManagerBlock
-    |	|					└ portPoolBlock
-    |	|						└ 【PortPoolData】
+	|	|					├ introspectionMemPoolBlock
+	|	|					├ discoveryMemPoolBlock
+	|	|					├ heartbeatPoolBlock
+	|	|					├ segmentManagerBlock
+	|	|					└ portPoolBlock
+	|	|						└ 【PortPoolData】
 	|	└ ｛PortManager｝
 	|		├ PortPool
 	|		└ IceOryxRouDiMemoryManager
@@ -304,7 +444,7 @@ IceOryxRouDiMemoryManager::createAndAnnounceMemory()
 		└> MemoryProvider::create()
 ```
 
-`MemoryProvider::create` 内部做了两件事，一个是计算出他下面挂的`vector<MemoryBlock*>`中全部block所需的内存之和，并向系统申请一整块的内存，由于我们在`PosixShmMemoryProvider`类中，因此他申请内存的方式就是使用共享内存，在linux中就会在/dev/shm/下面创建一个共享内存文件，叫TODO(shm文件名)。另一个事是从这一大片内存中切切切，切一段给这个MemoryBlock，切一段给那个MemoryBlock，切的时候都是字节对齐的，也是一段接一段连续地切的。当前，申请内存的时候已经计算上字节对齐所需要的额外的字节数的。
+`MemoryProvider::create` 内部做了两件事，一个是计算出他下面挂的`vector<MemoryBlock*>`中全部block所需的内存之和，并向系统申请一整块的内存，由于我们在`PosixShmMemoryProvider`类中，因此他申请内存的方式就是使用共享内存，在linux中就会在/dev/shm/下面创建一个共享内存文件，叫iceoryx_mgmt。另一个事是从这一大片内存中切切切，切一段给这个MemoryBlock，切一段给那个MemoryBlock，切的时候都是字节对齐的，也是一段接一段连续地切的。当前，申请内存的时候已经计算上字节对齐所需要的额外的字节数的。
 
 ```c++
 expected<void, MemoryProviderError> MemoryProvider::create() noexcept
@@ -334,7 +474,7 @@ expected<void, MemoryProviderError> MemoryProvider::create() noexcept
 
 
 
-注意这里只是申请了内存，可以认为是一段裸的内存。由于iceoryx设计上是不允许重复使用共享内存文件的，每次启动都会去清理旧的内存并新建新内存，因此这里的共享内存文件一定是新创建的，并被自动初始化为全零，这是shm_open默认的行为TODO(get doc link from ipc code)。
+注意这里只是申请了内存，可以认为是一段裸的内存。由于iceoryx设计上是不允许重复使用共享内存文件的，每次启动都会去清理旧的内存并新建新内存，因此这里的共享内存文件一定是新创建的，新建后被自动初始化为全零，这是共享内存默认的行为。
 
 
 
@@ -378,4 +518,3 @@ void MemoryProvider::announceMemoryAvailable() noexcept
 
 
 ### Runtime
-
