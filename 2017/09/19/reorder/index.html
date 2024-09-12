@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Lock-Free什么是Lock-FreeLock-Free也叫LockLess也就是无锁编程，它是一种在多线程之间安全的共享数据的一种方式，并且不需要有获取和释放锁的开销。但是不使用锁来进行编程却只是无锁编程的一部分。我们先用一个图来看看如何判断是不是无锁编程：从这个图上可以看出，无锁编程中的锁并不是直接指向lock或者说mutex，而是指一种把整个程序锁住的可能性，无论是死锁还是活锁，甚至是因">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Lock-Free什么是Lock-FreeLock-Free也叫LockLess也就是无锁编程，它是一种在多线程之间安全的共享数据的一种方式，并且不需要有获取和释放锁的开销。但是不使用锁来进行编程却只是无锁编程的一部分。我们先用一个图来看看如何判断是不是无锁编程：从这个图上可以看出，无锁编程中的锁并不是直接指向lock或者说mutex，而是指一种把整个程序锁住的可能性，无论是死锁还是活锁，甚至是因">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Lock-Free">
 <meta property="og:url" content="https://yizhi.ren/2017/09/19/reorder/index.html">
@@ -49,11 +48,15 @@
 <title>Lock-Free | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -66,8 +69,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -87,7 +90,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -96,13 +99,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,15 +132,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -164,13 +155,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -191,27 +182,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -229,11 +208,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Lock-Free | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -276,8 +260,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="Lock-Free"><a href="#Lock-Free" class="headerlink" title="Lock-Free"></a>Lock-Free</h1><h2 id="什么是Lock-Free"><a href="#什么是Lock-Free" class="headerlink" title="什么是Lock-Free"></a>什么是Lock-Free</h2><p>Lock-Free也叫LockLess也就是无锁编程，它是一种在多线程之间安全的共享数据的一种方式，并且不需要有获取和释放锁的开销。但是不使用锁来进行编程却只是无锁编程的一部分。我们先用一个图来看看如何判断是不是无锁编程：<br><img src="/linkimage/reorder/its-lock-free.png" alt="如何确认是lockfree"><br>从这个图上可以看出，无锁编程中的锁并不是直接指向lock或者说mutex，而是指一种把整个程序锁住的可能性，无论是死锁还是活锁，甚至是因为你做了你能想到的最差的线程调度决策。如此一来，即使是共享锁也被排除在外。因为当你用<code>std::shared_lock&lt;std::shared_mutex&gt; lock(mutex_);</code> 拿到锁之后，你可以简单地再也不调度这个线程，来导致 <code>std::unique_lock&lt;std::shared_mutex&gt; lock(mutex_);</code>永远得不到锁。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="Lock-Free"><a href="#Lock-Free" class="headerlink" title="Lock-Free"></a>Lock-Free</h1><h2 id="什么是Lock-Free"><a href="#什么是Lock-Free" class="headerlink" title="什么是Lock-Free"></a>什么是Lock-Free</h2><p>Lock-Free也叫LockLess也就是无锁编程，它是一种在多线程之间安全的共享数据的一种方式，并且不需要有获取和释放锁的开销。但是不使用锁来进行编程却只是无锁编程的一部分。我们先用一个图来看看如何判断是不是无锁编程：<br><img src="/linkimage/reorder/its-lock-free.png" alt="如何确认是lockfree"><br>从这个图上可以看出，无锁编程中的锁并不是直接指向lock或者说mutex，而是指一种把整个程序锁住的可能性，无论是死锁还是活锁，甚至是因为你做了你能想到的最差的线程调度决策。如此一来，即使是共享锁也被排除在外。因为当你用<code>std::shared_lock&lt;std::shared_mutex&gt; lock(mutex_);</code> 拿到锁之后，你可以简单地再也不调度这个线程，来导致 <code>std::unique_lock&lt;std::shared_mutex&gt; lock(mutex_);</code>永远得不到锁。</p>
 <p>下面这个例子中我们不使用mutex和lock，但是它依然不是Lock-Free，因为你可以调度执行这个函数的两个线程使得它俩都不退出循环。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while (X == 0)</span><br><span class="line">&#123;</span><br><span class="line">    X = 1 - X;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -292,7 +275,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 以64位机器为例，总线宽度即是8字节</span><br><span class="line">int x;  // 4字节，地址自动与4对齐，即可</span><br><span class="line">long y;  // 8字节，地址与8对齐</span><br><span class="line">long *z=(long*)malloc(sizeof(long)); // malloc,地址与16对齐</span><br><span class="line">// malloc的对齐值通常是sizeof(long double)，最大简单变量的大小</span><br></pre></td></tr></table></figure>
 <p>因此对于32bit机器的<code>long long</code>和<code>double</code>，以及23bit和64bit的<code>long double</code>类型，我们不能确保原子性。但是你可能要说了，我们平时32位机器从来没为double和long long加过锁啊。是的，那是因为intel x86的处理器为我们增加了8字节的保证，确保32bit系统依然可以保证64位内存读取的原子性。其他处理器是没有这个保证的。<br><a target="_blank" rel="noopener" href="http://www.cs.cmu.edu/~410-f10/doc/Intel_Reordering_318147.pdf">参考intel reorder的文档.</a></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Intel 64 memory ordering guarantees that for each of the following memory-access</span><br><span class="line">instructions, the constituent memory operation appears to execute as a single memory access</span><br><span class="line">regardless of memory type:</span><br><span class="line">  1. Instructions that read or write a single byte.</span><br><span class="line">  2. Instructions that read or write a word (2 bytes) whose address is aligned on a 2 byte</span><br><span class="line">boundary.</span><br><span class="line">  3. Instructions that read or write a doubleword (4 bytes) whose address is aligned on a 4</span><br><span class="line">byte boundary.</span><br><span class="line">  4. Instructions that read or write a quadword (8 bytes) whose address is aligned on an 8</span><br><span class="line">byte boundary. </span><br></pre></td></tr></table></figure>
-<p>因此对于单步读写、且在x86/x64上，除了long double类型，其他都是原子性的操作。<br>而对于多步的RMW(读改写)的原子操作，如果我们采用Lock-Free的话该怎么做呢？<br>不同的CPU采用不同的方式来支持原子操作，有的采用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Load-link/store-conditional">LL+SC</a>,有的采用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Compare-and-swap">CAS</a>，两者效果是等价的。<br>原子RMW操作是Lock-Free中不可或缺的一部分，没有原子操作，即使程序只在单个处理器上运行，依然会有问题，因为RMW运行中途可能会发生线程切换，导致中间状态被其他线程看到，产生与并发时同样的问题</p>
+<p>因此对于单步读写、且在x86&#x2F;x64上，除了long double类型，其他都是原子性的操作。<br>而对于多步的RMW(读改写)的原子操作，如果我们采用Lock-Free的话该怎么做呢？<br>不同的CPU采用不同的方式来支持原子操作，有的采用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Load-link/store-conditional">LL+SC</a>,有的采用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Compare-and-swap">CAS</a>，两者效果是等价的。<br>原子RMW操作是Lock-Free中不可或缺的一部分，没有原子操作，即使程序只在单个处理器上运行，依然会有问题，因为RMW运行中途可能会发生线程切换，导致中间状态被其他线程看到，产生与并发时同样的问题</p>
 <h4 id="CAS循环"><a href="#CAS循环" class="headerlink" title="CAS循环"></a>CAS循环</h4><p>最常被讨论的RMW问题应该是CAS（compare-and-swap）了。<br>编程者通常重复循环执行CAS来达成某个操作。这个过程典型的步骤是，先拷贝一个共享的变量到一个本地的变量，再根据需要执行一些特殊的操作，然后尝试写一个共享变量。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// </span><br><span class="line"></span><br><span class="line">void LockFreeQueue::push_front(Node* newHead) &#123;</span><br><span class="line">   // copy a shared variable to a local</span><br><span class="line">   Node* oldHead = m_head;</span><br><span class="line">   </span><br><span class="line">   // some work by need</span><br><span class="line">   newHead-&gt;next = oldHead;</span><br><span class="line">   </span><br><span class="line">   // write variable to a shared variable</span><br><span class="line">   while (!m_head.compare_exchange_weak(newHead-&gt;next, newHead));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这样的循环依旧是Lock-Free的，因为当compare_exchange_weak返回false时意味着另一个线程操作成功了。<br>关于compare_exchange_weak返回false的原因，除了campare失败（此时意味着另一个线程成功了）其实还可能是其他原因，这是因为cas在有些平台上是有多条指令来实现的（x86是只有一条指令的），线程切换、地址被其他线程使用都会导致指令失败。不过好在这也只是导致多执行几次while循环。<br>参考这个问题 <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/25199838/understanding-stdatomiccompare-exchange-weak-in-c11">Understanding std::atomic::compare_exchange_weak() in C++11
@@ -309,10 +292,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">int count = 0;</span><br><span class="line">int reorder = 0;</span><br><span class="line">while(1)&#123;</span><br><span class="line">    x=0;y=0;r1=0;r2=0;</span><br><span class="line">    sem1.signal(); // notify thread1 run</span><br><span class="line">    sem2.signal(); // notify thread2 run</span><br><span class="line">                   // thread1 and thread2 running</span><br><span class="line">    sem.wait();    // wait thread1 and thread2 complete </span><br><span class="line">    sem.wait();    //</span><br><span class="line">    if(r1==0 &amp;&amp; r2==0)&#123;  // check result</span><br><span class="line">        reorder ++;</span><br><span class="line">    &#125;</span><br><span class="line">    count ++;</span><br><span class="line">    cout &lt;&lt; &quot;reorder count(&quot; &lt;&lt; reorder &lt;&lt; &quot;), total count(&quot; &lt;&lt; count &lt;&lt; &quot;)&quot; &lt;&lt; endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>点此查看<a href="/linkimage/reorder/reorder.cpp">完整代码</a><br>我得到了这样的结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">reorder count(705), total count(139507)</span><br><span class="line">reorder count(705), total count(139508)</span><br><span class="line">reorder count(706), total count(139509)</span><br><span class="line">reorder count(706), total count(139510)</span><br><span class="line">reorder count(706), total count(139511)</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<p>发生概率略大于1/200.可见情况发生了。而能够产生乱序的原因有两个，一个是编译器优化，一个是cpu乱序。我首先插入代码来阻止编译器优化，阻止编译器擅自调换代码的顺序。</p>
+<p>发生概率略大于1&#x2F;200.可见情况发生了。而能够产生乱序的原因有两个，一个是编译器优化，一个是cpu乱序。我首先插入代码来阻止编译器优化，阻止编译器擅自调换代码的顺序。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void thread1()&#123;</span><br><span class="line">    x = 1;</span><br><span class="line">    asm volatile(&quot;&quot; ::: &quot;memory&quot;);</span><br><span class="line">    r1 = y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void thread2()&#123;</span><br><span class="line">    y = 1;</span><br><span class="line">    asm volatile(&quot;&quot; ::: &quot;memory&quot;);</span><br><span class="line">    r2 = x;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>asm volatile(&quot;&quot; ::: &quot;memory&quot;);</code>这行代码可以阻止编译器的优化，且不会插入任何汇编代码。发现执行结果没有改变，所以原因和编译器无关。</p>
-<h4 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h4><p>上面例子中，阻止内存乱序发生的方法是在两条指令之间引入CPU屏障或者说内存屏障。在不同的处理器中，内存屏障的指令是不同的，x86/x64中可以使用mfence指令。</p>
+<h4 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h4><p>上面例子中，阻止内存乱序发生的方法是在两条指令之间引入CPU屏障或者说内存屏障。在不同的处理器中，内存屏障的指令是不同的，x86&#x2F;x64中可以使用mfence指令。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">void thread1()&#123;</span><br><span class="line">    x = 1;</span><br><span class="line">    asm volatile(&quot;mfence&quot; ::: &quot;memory&quot;);</span><br><span class="line">    r1 = y;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void thread2()&#123;</span><br><span class="line">    y = 1;</span><br><span class="line">    asm volatile(&quot;mfence&quot; ::: &quot;memory&quot;);</span><br><span class="line">    r2 = x;</span><br><span class="line">&#125;</span><br><span class="line">/*</span><br><span class="line">...</span><br><span class="line">reorder count(0), total count(148438)</span><br><span class="line">reorder count(0), total count(148439)</span><br><span class="line">reorder count(0), total count(148440)</span><br><span class="line">...</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
 <p>最后乱序消失了。<br>这里mfence就是内存屏障了，mfence属于全功能的屏障，可以阻止指令上下的代码发生乱序。除了全功能屏障，还有Acquire和Release。<br>Acquire应用于读操作，可以是单纯的读或者是属于RMW中的R，Acquire紧跟读操作，它可以阻止该读操作与随后的所有的读写指令乱序。<br>Release应用于写操作，可以是单纯的写或者是RMW中的W，Release指令后紧跟写操作，它可以阻止该写操作与任何之前的读写指令乱序。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//http://preshing.com/20120913/acquire-and-release-semantics/</span><br><span class="line"></span><br><span class="line">Acquire semantics is a property that can only apply to operations that read from shared memory, whether they are read-modify-write operations or plain loads. The operation is then considered a read-acquire. Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.</span><br><span class="line"></span><br><span class="line">Release semantics is a property that can only apply to operations that write to shared memory, whether they are read-modify-write operations or plain stores. The operation is then considered a write-release. Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -329,7 +312,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -355,12 +338,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2017/04/09/epollleveltrigger/" rel="prev" title="Epoll Level Trigger">
-                  <i class="fa fa-chevron-left"></i> Epoll Level Trigger
+                  <i class="fa fa-angle-left"></i> Epoll Level Trigger
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2019/05/03/lvs/" rel="next" title="LVS的原理-工作模式">
-                  LVS的原理-工作模式 <i class="fa fa-chevron-right"></i>
+                  LVS的原理-工作模式 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -381,17 +364,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -417,12 +399,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -434,9 +434,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"628dccf22580f0971ab46d4073fa2f7c"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"628dccf22580f0971ab46d4073fa2f7c"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="LVS简介什么是LVS:1LVS是Linux Virtual Server的简写，意即Linux虚拟服务器，是一个虚拟的服务器集群系统。本项目在1998年5月由章文嵩博士成立，是中国国内最早出现的自由软件项目之一.  LVS的作用：LVS的原理很简单，当用户的请求过来时，会直接分发到LVS机器（director server）上，然后它把用户的请求根据设置好的调度算法，智能均衡地分发到后端真正服务">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="LVS简介什么是LVS:1LVS是Linux Virtual Server的简写，意即Linux虚拟服务器，是一个虚拟的服务器集群系统。本项目在1998年5月由章文嵩博士成立，是中国国内最早出现的自由软件项目之一.  LVS的作用：LVS的原理很简单，当用户的请求过来时，会直接分发到LVS机器（director server）上，然后它把用户的请求根据设置好的调度算法，智能均衡地分发到后端真正服务">
 <meta property="og:type" content="article">
 <meta property="og:title" content="LVS的原理-工作模式">
 <meta property="og:url" content="https://yizhi.ren/2019/05/03/lvs/index.html">
@@ -50,11 +49,15 @@
 <title>LVS的原理-工作模式 | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -67,8 +70,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -88,7 +91,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -97,13 +100,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -136,15 +133,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -165,13 +156,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -192,27 +183,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -230,11 +209,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LVS的原理-工作模式 | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -277,8 +261,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h2 id="LVS简介"><a href="#LVS简介" class="headerlink" title="LVS简介"></a>LVS简介</h2><h3 id="什么是LVS"><a href="#什么是LVS" class="headerlink" title="什么是LVS:"></a>什么是LVS:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LVS是Linux Virtual Server的简写，意即Linux虚拟服务器，是一个虚拟的服务器集群系统。本项目在1998年5月由章文嵩博士成立，是中国国内最早出现的自由软件项目之一.</span><br></pre></td></tr></table></figure>
+    <div class="post-body" itemprop="articleBody"><h2 id="LVS简介"><a href="#LVS简介" class="headerlink" title="LVS简介"></a>LVS简介</h2><h3 id="什么是LVS"><a href="#什么是LVS" class="headerlink" title="什么是LVS:"></a>什么是LVS:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LVS是Linux Virtual Server的简写，意即Linux虚拟服务器，是一个虚拟的服务器集群系统。本项目在1998年5月由章文嵩博士成立，是中国国内最早出现的自由软件项目之一.</span><br></pre></td></tr></table></figure>
 
 <h3 id="LVS的作用："><a href="#LVS的作用：" class="headerlink" title="LVS的作用："></a>LVS的作用：</h3><p>LVS的原理很简单，当用户的请求过来时，会直接分发到LVS机器（director server）上，然后它把用户的请求根据设置好的调度算法，智能均衡地分发到后端真正服务器(real server)上。<br>简单的讲，LVS就是一种负载均衡服务器。</p>
 <h3 id="LVS的角色："><a href="#LVS的角色：" class="headerlink" title="LVS的角色："></a>LVS的角色：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DS：director server，即负载均衡器，根据一定的负载均衡算法将流量分发到后端的真实服务器上.</span><br><span class="line">RS：real server 真实的提供服务的server，可被DS划分到一个或多个负载均衡组.</span><br><span class="line">BDS：backup director server，为了保证负载均衡器的高可用衍生出的备份.</span><br><span class="line">VS：vitual server，负载均衡集群对外提供的IP+Port.</span><br><span class="line">VIP：VS的IP，client请求服务的DIP（destination IP address），定义在DS上，client或其网关需要有其路由</span><br></pre></td></tr></table></figure>
@@ -304,7 +287,7 @@
 <p>从流程上看，NAT方式的数据进出都经过DS，DS容易成为性能瓶颈；RS和DS必须在同一个VLAN，即处于同一个局域网。</p>
 <h4 id="DR方式"><a href="#DR方式" class="headerlink" title="DR方式"></a>DR方式</h4><p>DR(Direct Routing),Director Server作为群集的访问入口，但不作为网关使用，后端服务器池中的Real Server与Director Server在同一个物理网络中，发送给客户机的数据包不需要经过Director Server。即input经过DR，output不经过DR。为了响应对整个群集的访问，DS与RS都需要配置有VIP地址。<br><img src="/linkimage/lvs/drflow.png" alt="dr flow"></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 参考上面LVS请求的流程，修改数据包的源MAC地址为DS的MAC，目标MAC地址为RS的MAC，重新封装数据包然后选路将数据包发送给Real Server。</span><br><span class="line">2. RS发现请求报文的MAC地址是自己的MAC地址，就接收此报文，处理请求后正常发送响应报文(源MAC地址为RS出口网卡（eth0）的MAC，目标MAC为CIP的MAC),将响应报文通过lo接口传送给eth0网卡然后向外发出。</span><br><span class="line">RS直接将响应报文传送到客户端，不经过DS。</span><br></pre></td></tr></table></figure>
-<p>由此可总结特点如下：<br>从上面第一点分析，DS只修改了数据链路层的MAC，没有修改传输层的数据，所以NAT不支持端口映射。<br>从上面第二点分析，DS没有修改IP，数据包的IP还是VIP，所以为了让RS认为数据包是发给他的，必须给RS绑定一个VIP，通常就绑定到lo上面去，所以RS的lo都需要绑定VIP。<br>同时DS必须能通过ARP请求查到RS的MAC，如果不在同一网段则会隔离arp，所以DS和RS必须在同一个VLAN。<br>此时网络中就同时存在DS和RS的多个IP为VIP的机器，所以这里需要抑制RS的arp响应，否则DS和RS就都会回应自己是VIP，造成混乱。所以设置arp_ignore=1或者2，见下面arp_ignore的解释。<br>再从上面第二点分析，RS响应数据包的源MAC是eth0，而源IP是VIP，但是如果这个mac和ip对让别的机器知道了，就存在DS_MAC-VIP和RS_ETH0_MAC-VIP映射，造成混乱。这里就需要设置arg_annouce=2，让响应的数据包的ARP查询中源IP使用eth0的IP，设置方法见下面的解释。<br>同时可知该模式下响应不经过DS，因此其性能会优于NAT方式。<br>同时可知DS不需要承担数据转发的工作，因此不需要开启Ip-Forward.</p>
+<p>由此可总结特点如下：<br>从上面第一点分析，DS只修改了数据链路层的MAC，没有修改传输层的数据，所以NAT不支持端口映射。<br>从上面第二点分析，DS没有修改IP，数据包的IP还是VIP，所以为了让RS认为数据包是发给他的，必须给RS绑定一个VIP，通常就绑定到lo上面去，所以RS的lo都需要绑定VIP。<br>同时DS必须能通过ARP请求查到RS的MAC，如果不在同一网段则会隔离arp，所以DS和RS必须在同一个VLAN。<br>此时网络中就同时存在DS和RS的多个IP为VIP的机器，所以这里需要抑制RS的arp响应，否则DS和RS就都会回应自己是VIP，造成混乱。所以设置arp_ignore&#x3D;1或者2，见下面arp_ignore的解释。<br>再从上面第二点分析，RS响应数据包的源MAC是eth0，而源IP是VIP，但是如果这个mac和ip对让别的机器知道了，就存在DS_MAC-VIP和RS_ETH0_MAC-VIP映射，造成混乱。这里就需要设置arg_annouce&#x3D;2，让响应的数据包的ARP查询中源IP使用eth0的IP，设置方法见下面的解释。<br>同时可知该模式下响应不经过DS，因此其性能会优于NAT方式。<br>同时可知DS不需要承担数据转发的工作，因此不需要开启Ip-Forward.</p>
 <p>这里补充对ARP的设置方法：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">我们知道仰制arp帧需要在server上执行以下命令，如下:</span><br><span class="line"></span><br><span class="line">echo &quot;1&quot; &gt;/proc/sys/net/ipv4/conf/lo/arp_ignore</span><br><span class="line">echo &quot;2&quot; &gt;/proc/sys/net/ipv4/conf/lo/arp_announce</span><br><span class="line">echo &quot;1&quot; &gt;/proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">echo &quot;2&quot; &gt;/proc/sys/net/ipv4/conf/all/arp_announce</span><br><span class="line">因为arp对逻辑口没有意义。实际上起作用的只有以下两条:</span><br><span class="line"></span><br><span class="line">echo &quot;1&quot; &gt;/proc/sys/net/ipv4/conf/all/arp_ignore</span><br><span class="line">echo &quot;2&quot; &gt;/proc/sys/net/ipv4/conf/all/arp_announce</span><br></pre></td></tr></table></figure>
 <p>arp_ignore的意义</p>
@@ -312,7 +295,7 @@
 <p>arp_annouce的意义</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">arp_annouce用来设置当lo的数据包通过eth0发送ARP查询时（lo和eth0指的任意两个网卡）,数据包的源ip是用lo的ip还是eth0的ip。</span><br><span class="line">0（默认）用的lo的ip</span><br><span class="line">1 用eth0的ip，除非eth0和lo是同一网段的，则使用lo的ip。</span><br><span class="line">2 用eth0的ip。</span><br></pre></td></tr></table></figure>
 <p>可以看到，DR方法虽然效率更高，但是RS的设置比较麻烦，要设置lo绑定VIP，还要设置arp_ignore和arp_annouce。</p>
-<p>这里暂停一下，不知道你发现没有，NAT和DR两种方式，都存在一个严重的问题，DS和RS都必须在同一个网段，那异地部署怎么办呢？<br>所以后面列举一下解决跨网段问题的转发方式，TUN/FUNNNAT。NAT/DR/TUN/FULLNAT加在一起就是全部LVS的转发方式了。</p>
+<p>这里暂停一下，不知道你发现没有，NAT和DR两种方式，都存在一个严重的问题，DS和RS都必须在同一个网段，那异地部署怎么办呢？<br>所以后面列举一下解决跨网段问题的转发方式，TUN&#x2F;FUNNNAT。NAT&#x2F;DR&#x2F;TUN&#x2F;FULLNAT加在一起就是全部LVS的转发方式了。</p>
 <h4 id="TUN方式"><a href="#TUN方式" class="headerlink" title="TUN方式"></a>TUN方式</h4><p>我们回忆下，在DR方式下，DS只修改数据包中数据链路层的MAC信息，IP信息不修改。于是DS通过MAC来定位RS，由此限制了DS和RS要处于同一网段。<br>那么如果DS可以不通过MAC就可以定位到RS的话，也就不用限制RS和DS处于同一网段了。<br>而IP Tunnel正好可以解决这一问题。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ip隧道简单解释一下，ip隧道可以理解为IP in IP, 即发送方在IP头的外部再包装一个IP头，接收方先解出第一层IP头，然后再按照正常流程处理剩下的的IP数据包。</span><br><span class="line">比如下面的数据是10.10.1.10发往20.20.1.20</span><br><span class="line">src ip      |  dst ip</span><br><span class="line">10.10.1.10  |  20.20.1.20</span><br><span class="line">数据经过tunl网络设备后变成</span><br><span class="line">src ip      |  dst ip     | src ip      |  dst ip</span><br><span class="line">30.30.1.30  |  40.40.1.40 | 10.10.1.10  |  20.20.1.20</span><br><span class="line">数据包可以通过网络链路到达40.40.1.40，IP层处理函数把数据交给ip隧道程序解析，解出第一层IP头，并把解出的原始数据包放入接收队列，接下来如果20.20.1.20匹配了另一个网卡的IP，则数据包就被完整接受和处理。</span><br></pre></td></tr></table></figure>
 <p>有了ip tunnel技术，我们就可以把RS分布到不同的机房下，如下图<br><img src="/linkimage/lvs/tunflow.png" alt="tun flow"></p>
@@ -397,7 +380,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -423,12 +406,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2017/09/19/reorder/" rel="prev" title="Lock-Free">
-                  <i class="fa fa-chevron-left"></i> Lock-Free
+                  <i class="fa fa-angle-left"></i> Lock-Free
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2019/05/23/receiver/" rel="next" title="strange golang receiver">
-                  strange golang receiver <i class="fa fa-chevron-right"></i>
+                  strange golang receiver <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -449,17 +432,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -485,12 +467,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -502,9 +502,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"e106d4341175933c7c27c5e150a1280e"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"e106d4341175933c7c27c5e150a1280e"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

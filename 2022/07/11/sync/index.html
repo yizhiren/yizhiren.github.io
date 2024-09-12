@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="同步三要素简介在我之前写过一篇lockfree的文章，里面提到了CAS和内存屏障以及之间的关系，这里先总结一下。  lockfree主要是通过一定的编程规范来避免线程之间流程阻塞。不阻塞并不难，难的是不阻塞的基础上确保结果的正确性。 图中有两条重要的路线，一条是并发写，写的过程是一个Read-Modify-Write的过程，不是单步的，因此为了确保正确性，需要一个把RMW做成原子操作，于是CAS就">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="同步三要素简介在我之前写过一篇lockfree的文章，里面提到了CAS和内存屏障以及之间的关系，这里先总结一下。  lockfree主要是通过一定的编程规范来避免线程之间流程阻塞。不阻塞并不难，难的是不阻塞的基础上确保结果的正确性。 图中有两条重要的路线，一条是并发写，写的过程是一个Read-Modify-Write的过程，不是单步的，因此为了确保正确性，需要一个把RMW做成原子操作，于是CAS就">
 <meta property="og:type" content="article">
 <meta property="og:title" content="同步三要素">
 <meta property="og:url" content="https://yizhi.ren/2022/07/11/sync/index.html">
@@ -60,11 +59,15 @@
 <title>同步三要素 | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -77,8 +80,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -98,7 +101,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -107,13 +110,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -146,15 +143,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -175,13 +166,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -202,27 +193,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -240,11 +219,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="同步三要素 | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -287,8 +271,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="同步三要素"><a href="#同步三要素" class="headerlink" title="同步三要素"></a>同步三要素</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在我之前写过一篇<a href="https://yizhi.ren/2017/09/19/reorder/">lockfree</a>的文章，里面提到了CAS和内存屏障以及之间的关系，这里先总结一下。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="同步三要素"><a href="#同步三要素" class="headerlink" title="同步三要素"></a>同步三要素</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>在我之前写过一篇<a href="https://yizhi.ren/2017/09/19/reorder/">lockfree</a>的文章，里面提到了CAS和内存屏障以及之间的关系，这里先总结一下。</p>
 <p><img src="/linkimage/reorder/techniques.png" alt="lockfree技术点关系图"></p>
 <p>lockfree主要是通过一定的编程规范来避免线程之间流程阻塞。不阻塞并不难，难的是不阻塞的基础上确保结果的正确性。</p>
 <p>图中有两条重要的路线，一条是并发写，写的过程是一个Read-Modify-Write的过程，不是单步的，因此为了确保正确性，需要一个把RMW做成原子操作，于是CAS就出场了，这是一个处理器支持的操作，在汇编级别支持RMW原子性。</p>
@@ -414,7 +397,7 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 <p>可以看到，cpu乱序的本质是缓存一致性协议的异步化，他加速了cpu指令的执行，但是带来的后果是其他cpu看到的指令顺序错乱，引起预期外的结果。</p>
 <h2 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h2><p>为了抵消cpu乱序的副作用，cpu引入了内存屏障的概念，他可以强制执行<code>StoreBuffer</code>和<code>InvalidateQueue</code>的清空，或者说等待他们的清空。<br>内存屏障分为写屏障和读屏障，写屏障,出现在写写之间，即如下场景。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">1</span>;</span><br><span class="line">smp_wmb();</span><br><span class="line">b=<span class="number">1</span>;</span><br></pre></td></tr></table></figure>
-<p>当执行到<code>smp_mb</code>的时候，cpu可以选择原地等待<code>a=1</code>执行完；或者给<code>a=1</code>添加标记（<code>StoreBuffer</code>中的每一项都标记上），然后<code>b=1</code>执行的时候，发现<code>StoreBuffer</code>中有带标记的项，于是<code>b=1</code>也放进<code>StoreBuffer</code>，即使b的状态已经是E或者M，不是独占就照原先的逻辑，放进去的同时发送<code>Invalidate</code>/<code>ReadInvalidate</code>消息，但是<code>b=1</code>不会做标记，当<code>StoreBuffer</code>中全部带标记的操作都完成后，<code>b=1</code>才会开始执行，这时候如果b的缓存状态不是独占会涉及到重发<code>Invalidate</code>/<code>ReadInvalidate</code>消息。<br>读屏障，出现在读读之间,比如：</p>
+<p>当执行到<code>smp_mb</code>的时候，cpu可以选择原地等待<code>a=1</code>执行完；或者给<code>a=1</code>添加标记（<code>StoreBuffer</code>中的每一项都标记上），然后<code>b=1</code>执行的时候，发现<code>StoreBuffer</code>中有带标记的项，于是<code>b=1</code>也放进<code>StoreBuffer</code>，即使b的状态已经是E或者M，不是独占就照原先的逻辑，放进去的同时发送<code>Invalidate</code>&#x2F;<code>ReadInvalidate</code>消息，但是<code>b=1</code>不会做标记，当<code>StoreBuffer</code>中全部带标记的操作都完成后，<code>b=1</code>才会开始执行，这时候如果b的缓存状态不是独占会涉及到重发<code>Invalidate</code>&#x2F;<code>ReadInvalidate</code>消息。<br>读屏障，出现在读读之间,比如：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(b==<span class="number">0</span>)<span class="keyword">continue</span>;</span><br><span class="line">smp_rmb();</span><br><span class="line">assert(a==<span class="number">1</span>);</span><br></pre></td></tr></table></figure>
 <p>当执行到smp_rmb的时候，cpu会给<code>InvalidateQueue</code>中的每一项添加一个标记，当后续遇到读指令的时候，发现<code>InvalidateQueue</code>中有带标记的项，就阻塞直到<code>InvalidateQueue</code>中的每一项都应用到缓存中。添加了读写屏障后，完整代码如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 初始时a==0,b==0</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	a=<span class="number">1</span>;</span><br><span class="line">	smp_wmb();</span><br><span class="line">	b=<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">while</span>(b==<span class="number">0</span>)<span class="keyword">continue</span>;</span><br><span class="line">	smp_rmb();</span><br><span class="line">	assert(a==<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -436,7 +419,7 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 <p>理论上不存在<code>0-0</code>的可能性，但是实际上我们知道写是可以异步化的，因此可能乱序成如下结果：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	read b;</span><br><span class="line">	a=<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	read a;</span><br><span class="line">	b=<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>如此就可以导致<code>0-0</code>的结果。我在<a href="https://yizhi.ren/2017/09/19/reorder/?highlight=lockfre#%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7">lockfree</a>一文中也通过代码验证过这一结论，发生<code>0-0</code>的概率大概1/200。</p>
+<p>如此就可以导致<code>0-0</code>的结果。我在<a href="https://yizhi.ren/2017/09/19/reorder/?highlight=lockfre#%E9%A1%BA%E5%BA%8F%E4%B8%80%E8%87%B4%E6%80%A7">lockfree</a>一文中也通过代码验证过这一结论，发生<code>0-0</code>的概率大概1&#x2F;200。</p>
 <p>我们从流程上来看一下这一现象发生的过程。</p>
 <p><img src="/linkimage/sync/result00.png" alt="result00"></p>
 <p>可以看到两个cpu都发生了乱序写读乱序，导致两边都会读到0。为了解决乱序，我们需要一个写屏障来在读之前清空<code>StoreBuffer</code>。</p>
@@ -530,7 +513,7 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 <td>nop</td>
 </tr>
 </tbody></table>
-<p>上面讲到的cpu指令和acquire/release的实现都可以通过linux源码看到：</p>
+<p>上面讲到的cpu指令和acquire&#x2F;release的实现都可以通过linux源码看到：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https:<span class="comment">//github.com/torvalds/linux/blob/master/arch/powerpc/include/asm/barrier.h</span></span><br><span class="line">https:<span class="comment">//github.com/torvalds/linux/blob/master/arch/x86/include/asm/barrier.h</span></span><br></pre></td></tr></table></figure>
 <p>现在我们把上面的表格全部合并到一起来做个总结：</p>
 <table>
@@ -594,7 +577,7 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 <p>由于acquire不会清空<code>StoreBuffer</code>因此<code>zzz=1</code>是可以乱序到acuqire之后的；同样release不具有清空<code>InvalidateQueue</code>的功能，因此<code>read b</code>可能读到release之前就在<code>InvalidateQueue</code>中而还没有令b失效的b的旧缓存值，相当于是乱序到了release之前。但是即便如此，yyy是可以确认在xxx之后发生的，这一点能保证就达到目的了。</p>
 <h2 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h2><p>我们来看看锁跟内存屏障有什么关系。首先锁的本质是什么，本质是把一个内存地址从0变成1（加锁），再从1变成0（解锁）。</p>
 <p>而为了保证每一次修改的原子性，我们需要使用cas（compare-and-swap）来操作。</p>
-<h3 id="cas"><a href="#cas" class="headerlink" title="cas"></a>cas</h3><p>cas是原子性的修改一个内存值的指令，他接收3个参数 <code>bool cas(ptr, old, new);</code>，ptr是内存地址，old是旧值，new是新值，他会比较ptr所在地址的值跟old之间是否相等，相等就把new设置到ptr所在的内存, 如果设置成功返回true，否则返回false。<br>他的底层实现是基于cpu提供相关指令，在x86体系中使用的是cmpxchg系列指令，我们来看一下源码中相关的定义：</p>
+<h3 id="cas"><a href="#cas" class="headerlink" title="cas"></a>cas</h3><p>cas是原子性的修改一个内存值的指令，他接收3个参数 <code>bool cas(ptr, old, new);</code>，ptr是内存地址，old是旧值，new是新值，他会比较ptr所在地址的值跟old之间是否相等，相等就把new设置到ptr所在的内存, 如果设置成功返回true，否则返回false。	<br>他的底层实现是基于cpu提供相关指令，在x86体系中使用的是cmpxchg系列指令，我们来看一下源码中相关的定义：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://github.com/torvalds/linux/blob/v5.19-rc7/tools/arch/x86/include/asm/cmpxchg.h</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Atomic compare and exchange.  Compare OLD with MEM, if identical,</span></span><br><span class="line"><span class="comment"> * store NEW in MEM.  Return the initial value in MEM.  Success is</span></span><br><span class="line"><span class="comment"> * indicated by comparing RETURN with OLD.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __raw_cmpxchg(ptr, old, new, size, lock)			\</span></span><br><span class="line"><span class="meta">(&#123;									\</span></span><br><span class="line"><span class="meta">	__typeof__(*(ptr)) __ret;					\</span></span><br><span class="line"><span class="meta">	__typeof__(*(ptr)) __old = (old);				\</span></span><br><span class="line"><span class="meta">	__typeof__(*(ptr)) __new = (new);				\</span></span><br><span class="line"><span class="meta">	switch (size) &#123;							\</span></span><br><span class="line"><span class="meta">	case __X86_CASE_B:						\</span></span><br><span class="line"><span class="meta">	&#123;								\</span></span><br><span class="line"><span class="meta">		...		\</span></span><br><span class="line"><span class="meta">		break;							\</span></span><br><span class="line"><span class="meta">	&#125;								\</span></span><br><span class="line"><span class="meta">	case __X86_CASE_W:						\</span></span><br><span class="line"><span class="meta">	&#123;								\</span></span><br><span class="line"><span class="meta">		...		\</span></span><br><span class="line"><span class="meta">		break;							\</span></span><br><span class="line"><span class="meta">	&#125;								\</span></span><br><span class="line"><span class="meta">	case __X86_CASE_L:						\</span></span><br><span class="line"><span class="meta">	&#123;								\</span></span><br><span class="line"><span class="meta">		...				\</span></span><br><span class="line"><span class="meta">		break;							\</span></span><br><span class="line"><span class="meta">	&#125;								\</span></span><br><span class="line"><span class="meta">	case __X86_CASE_Q:						\</span></span><br><span class="line"><span class="meta">	&#123;								\</span></span><br><span class="line"><span class="meta">		volatile u64 *__ptr = (volatile u64 *)(ptr);		\</span></span><br><span class="line"><span class="meta">		asm volatile(lock <span class="meta-string">&quot;cmpxchgq %2,%1&quot;</span>			\</span></span><br><span class="line"><span class="meta">			     : <span class="meta-string">&quot;=a&quot;</span> (__ret), <span class="meta-string">&quot;+m&quot;</span> (*__ptr)		\</span></span><br><span class="line"><span class="meta">			     : <span class="meta-string">&quot;r&quot;</span> (__new), <span class="meta-string">&quot;0&quot;</span> (__old)			\</span></span><br><span class="line"><span class="meta">			     : <span class="meta-string">&quot;memory&quot;</span>);				\</span></span><br><span class="line"><span class="meta">		break;							\</span></span><br><span class="line"><span class="meta">	&#125;								\</span></span><br><span class="line"><span class="meta">	default:							\</span></span><br><span class="line"><span class="meta">		...\</span></span><br><span class="line"><span class="meta">	&#125;								\</span></span><br><span class="line"><span class="meta">	__ret;								\</span></span><br><span class="line"><span class="meta">&#125;)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LOCK_PREFIX <span class="meta-string">&quot;\n\tlock; &quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __cmpxchg(ptr, old, new, size)					\</span></span><br><span class="line"><span class="meta">	__raw_cmpxchg((ptr), (old), (new), (size), LOCK_PREFIX)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> cmpxchg(ptr, old, new)						\</span></span><br><span class="line"><span class="meta">	__cmpxchg(ptr, old, new, sizeof(*(ptr)))</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>可以看到<code>cmpxchg(ptr, old, new)</code>最终是预编译成<code>lock;cmpxchgq...</code>(假设<code>sizeof(*(ptr))</code>是<code>__X86_CASE_Q</code>)。这个指令中cmpxchgq完成cas的操作，而lock完成cpu独占的功能，因为我们不能允许每个线程同时执行cas都成功，cmpxchgq并不能自动触发缓存一致性协议的独占，因此需要lock来协助完成。</p>
@@ -625,7 +608,7 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">sem_t</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="keyword">sem_t</span>(<span class="keyword">int</span> cnt):count(cnt)&#123;&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">wait</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> cur = count;</span><br><span class="line">		<span class="keyword">while</span>(</span><br><span class="line">			!(cur &amp;&amp; cas(&amp;count,cur,cur<span class="number">-1</span>))</span><br><span class="line">		)cur = count;</span><br><span class="line">		acquire();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">post</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">int</span> cur = count;</span><br><span class="line">		release();</span><br><span class="line">		<span class="keyword">while</span>(</span><br><span class="line">			!(cur &amp;&amp; cas(&amp;count,cur,cur+<span class="number">1</span>))</span><br><span class="line">		)cur = count;</span><br><span class="line">	&#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">int</span> count;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">sem_t</span> <span class="title">sem</span><span class="params">(<span class="number">10</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">cpu0                      cpu1</span><br><span class="line">  </span><br><span class="line">                          sem.wait()</span><br><span class="line">                          xxx;</span><br><span class="line">                          sem.post()</span><br><span class="line">                         </span><br><span class="line">sem.wait()</span><br><span class="line">yyy;</span><br><span class="line">sem.post()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p><code>sem</code>的<code>wait()</code>和<code>post()</code>类似<code>spinlock</code>的<code>lock()</code>和<code>unlock()</code>，<code>wait</code>中包含<code>acquire</code>，<code>post</code>中包含<code>release</code>。如此我们可以同样做到被<code>wait()</code>和<code>post()</code>包围的代码段的顺序：xxx-&gt;yyy。</p>
-<p>在上面的实现中，我们在wait和post中都使用了while循环，所以我们这个sem_t叫spinsem更合适。我们没有用操作系统中真实sem_t的逻辑，真实的sem_t在wait的时候，如果count数&lt;=0的时候会进入休眠。这里我补充一下真实sem_t的wait函数的逻辑，不感兴趣就麻烦跳过，不影响对本文的理解。</p>
+<p>在上面的实现中，我们在wait和post中都使用了while循环，所以我们这个sem_t叫spinsem更合适。我们没有用操作系统中真实sem_t的逻辑，真实的sem_t在wait的时候，如果count数&lt;&#x3D;0的时候会进入休眠。这里我补充一下真实sem_t的wait函数的逻辑，不感兴趣就麻烦跳过，不影响对本文的理解。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://code.woboq.org/userspace/glibc/nptl/sem_wait.c.html#__new_sem_wait</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span></span><br><span class="line">__new_sem_wait (<span class="keyword">sem_t</span> *sem)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> (__new_sem_wait_fast ((struct new_sem *) sem, <span class="number">0</span>) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> __new_sem_wait_slow64 ((struct new_sem *) sem,</span><br><span class="line">				  CLOCK_REALTIME, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// sem_wait会先走fast路径，在信号量内部的count数&gt;0的情况，做一次cas，是非阻塞非等待的。</span></span><br><span class="line"><span class="comment">// 接着会走slow路径，</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">__new_sem_wait_fast (struct new_sem *sem, <span class="keyword">int</span> definitive_result<span class="comment">/*0*/</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">uint64_t</span> d = atomic_load_relaxed (&amp;sem-&gt;data);</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">//...</span></span><br><span class="line">      <span class="keyword">if</span> (atomic_compare_exchange_weak_acquire (&amp;sem-&gt;data, &amp;d, d - <span class="number">1</span>))</span><br><span class="line">				<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">while</span> (definitive_result);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">int</span></span><br><span class="line">__attribute__ ((noinline))</span><br><span class="line">__new_sem_wait_slow64 (struct new_sem *sem, <span class="keyword">clockid_t</span> clockid,</span><br><span class="line">		       <span class="keyword">const</span> struct __timespec64 *abstime)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> err = <span class="number">0</span>;</span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">    </span><br><span class="line">  <span class="comment">// 循环直到成功</span></span><br><span class="line">  <span class="keyword">for</span> (;;)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="comment">// 如果count数不够了</span></span><br><span class="line">      <span class="keyword">if</span> ((d &amp; SEM_VALUE_MASK) == <span class="number">0</span>)</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="comment">// 进入睡眠</span></span><br><span class="line">        err = do_futex_wait (sem, clockid, abstime);</span><br><span class="line">        <span class="keyword">if</span> (err == ETIMEDOUT || err == EINTR || err == EOVERFLOW)</span><br><span class="line">        &#123;</span><br><span class="line">           <span class="comment">// 如果出错就break返回</span></span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 否则重新获取count数并重试</span></span><br><span class="line">        <span class="comment">// 这里可能是因为睡眠被唤醒</span></span><br><span class="line">        <span class="comment">// 也可能是因为此时count数增加了不再是0了，在真正进入睡眠时会检查当前count数是否是0</span></span><br><span class="line">        <span class="comment">// 是0就睡眠，这是一步原子操作, 这点很重要，如果非原子性就会存在错过唤醒机会的问题</span></span><br><span class="line">        <span class="comment">// 非零就不睡。这些逻辑封装在do_futex_wait中了</span></span><br><span class="line">        d = atomic_load_relaxed (&amp;sem-&gt;data);</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="comment">// count数非0就尝试cas获取一下，跟fast路径下的差不多</span></span><br><span class="line">        <span class="keyword">if</span> (atomic_compare_exchange_weak_acquire (&amp;sem-&gt;data,</span><br><span class="line">            &amp;d, d - <span class="number">1</span> - ((<span class="keyword">uint64_t</span>) <span class="number">1</span> &lt;&lt; SEM_NWAITERS_SHIFT)))</span><br><span class="line">          &#123;</span><br><span class="line">            err = <span class="number">0</span>;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">//...</span></span><br><span class="line">  <span class="keyword">return</span> err;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>我们刚才已经实现了自旋锁，又实现了自旋信号量，我们可能已经发现，自旋锁跟自旋信号量差别不大，本质差别是锁的状态值就是0和1，而信号量的状态值可以是0-n。我们可以发现自旋锁就是一个初始值是1的自旋信号量，二者没有本质区别。</p>
@@ -645,7 +628,7 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -671,12 +654,12 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2022/06/15/namespace/" rel="prev" title="linux namespace">
-                  <i class="fa fa-chevron-left"></i> linux namespace
+                  <i class="fa fa-angle-left"></i> linux namespace
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2024/06/22/iceoryx/" rel="next" title="SOA框架iceoryx原理解析">
-                  SOA框架iceoryx原理解析 <i class="fa fa-chevron-right"></i>
+                  SOA框架iceoryx原理解析 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -697,17 +680,16 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -733,12 +715,30 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -750,9 +750,9 @@ cpu1 -&gt; cpu1 :  cmp_and_set_with_mesi(addr,0,1)
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"0810d0cb01cb07524bc2b5ac19db0592"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"0810d0cb01cb07524bc2b5ac19db0592"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

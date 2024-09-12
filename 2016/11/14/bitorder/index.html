@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,16 +15,17 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="位域的字节序问题的起源今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大&#x2F;小字节序）情况下的顺序是不同的。于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。 1234567891011121314151617181920&#x2F;&#x2F;IP头部，总长度20字节   typedef struct _ip_hdr  &amp;#123;      #if LITTLE">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="位域的字节序问题的起源今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大&#x2F;小字节序）情况下的顺序是不同的。于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。 1234567891011121314151617181920&#x2F;&#x2F;IP头部，总长度20字节   typedef struct _ip_hdr  &#123;      #if L">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Byte order of bitfield">
 <meta property="og:url" content="https://yizhi.ren/2016/11/14/bitorder/index.html">
 <meta property="og:site_name" content="一支人">
-<meta property="og:description" content="位域的字节序问题的起源今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大&#x2F;小字节序）情况下的顺序是不同的。于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。 1234567891011121314151617181920&#x2F;&#x2F;IP头部，总长度20字节   typedef struct _ip_hdr  &amp;#123;      #if LITTLE">
+<meta property="og:description" content="位域的字节序问题的起源今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大&#x2F;小字节序）情况下的顺序是不同的。于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。 1234567891011121314151617181920&#x2F;&#x2F;IP头部，总长度20字节   typedef struct _ip_hdr  &#123;      #if L">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2016-11-14T09:34:46.000Z">
 <meta property="article:modified_time" content="2016-11-14T09:34:46.000Z">
@@ -45,11 +44,15 @@
 <title>Byte order of bitfield | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -62,8 +65,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -83,7 +86,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -92,13 +95,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -131,15 +128,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -160,13 +151,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -187,27 +178,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -225,11 +204,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Byte order of bitfield | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -272,8 +256,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大&#x2F;小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">//IP头部，总长度20字节   </span><br><span class="line">typedef struct _ip_hdr  </span><br><span class="line">&#123;  </span><br><span class="line">    #if LITTLE_ENDIAN   </span><br><span class="line">    unsigned char ihl:4;     //首部长度   </span><br><span class="line">    unsigned char version:4, //版本    </span><br><span class="line">    #else   </span><br><span class="line">    unsigned char version:4, //版本   </span><br><span class="line">    unsigned char ihl:4;     //首部长度   </span><br><span class="line">    #endif   </span><br><span class="line">    unsigned char tos;       //服务类型   </span><br><span class="line">    unsigned short tot_len;  //总长度   </span><br><span class="line">    unsigned short id;       //标志   </span><br><span class="line">    unsigned short frag_off; //分片偏移   </span><br><span class="line">    unsigned char ttl;       //生存时间   </span><br><span class="line">    unsigned char protocol;  //协议   </span><br><span class="line">    unsigned short chk_sum;  //检验和   </span><br><span class="line">    struct in_addr srcaddr;  //源IP地址   </span><br><span class="line">    struct in_addr dstaddr;  //目的IP地址   </span><br><span class="line">&#125;ip_hdr;</span><br></pre></td></tr></table></figure>
 
 <span id="more"></span>
@@ -288,7 +271,7 @@
 <h3 id="总结规律"><a href="#总结规律" class="headerlink" title="总结规律"></a>总结规律</h3><p>通过上面传输过程的回顾，我们再结合我们自己的编码经验，可以总结发现：<br>2字节的数据通过ntohs和htons来转换字节序。<br>4字节的数据通过ntohl和htonl来转换字节序。<br>字节序的最小单位是1个字节，也就是说1个字节的数据无需转换。<br>一个字节的数据不论在哪种字节序的系统下都会解析成一样的值。</p>
 <p>我们在看ip头的结构体：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">//IP头部，总长度20字节   </span><br><span class="line">typedef struct _ip_hdr  </span><br><span class="line">&#123;  </span><br><span class="line">    #if LITTLE_ENDIAN   </span><br><span class="line">    unsigned char ihl:4;     //首部长度   </span><br><span class="line">    unsigned char version:4, //版本    </span><br><span class="line">    #else   </span><br><span class="line">    unsigned char version:4, //版本   </span><br><span class="line">    unsigned char ihl:4;     //首部长度   </span><br><span class="line">    #endif   </span><br><span class="line">    unsigned char tos;       //服务类型   </span><br><span class="line">    unsigned short tot_len;  //总长度   </span><br><span class="line">    unsigned short id;       //标志   </span><br><span class="line">    unsigned short frag_off; //分片偏移   </span><br><span class="line">    unsigned char ttl;       //生存时间   </span><br><span class="line">    unsigned char protocol;  //协议   </span><br><span class="line">    unsigned short chk_sum;  //检验和   </span><br><span class="line">    struct in_addr srcaddr;  //源IP地址   </span><br><span class="line">    struct in_addr dstaddr;  //目的IP地址   </span><br><span class="line">&#125;ip_hdr;</span><br></pre></td></tr></table></figure>
-<p>我们可以看出这个结构中除了char型的数据不需要转换，其他数据都要经过htonx/ntohx转换。<br>然而不管需不需要转换，都无需改变字段定义的顺序啊？</p>
+<p>我们可以看出这个结构中除了char型的数据不需要转换，其他数据都要经过htonx&#x2F;ntohx转换。<br>然而不管需不需要转换，都无需改变字段定义的顺序啊？</p>
 <h3 id="规律之外"><a href="#规律之外" class="headerlink" title="规律之外"></a>规律之外</h3><p>我们虽然总结了规律，但是规律却没法描述位域字段。什么叫位域，也就是变量后面跟上冒号接数字表示这个变量占几个比特位的这种字段，比如：<br>unsigned char ihl:4   这表示ihl只占用了4个比特位。<br>这种字段我们是怎么来处理大小端的呢？</p>
 <p>实际上这种比特位的字段的规律可以类比：<br>多个位域字段   -&gt; 类比到 -&gt; 多字节<br>最小单位字节   -&gt; 类比到 -&gt; 最小单位为一个位域字段</p>
 <p>也就是把一个位域字段想成一个字节，多个位域字段想成一个多字节变量。<br>比如:</p>
@@ -306,9 +289,9 @@
 <p>对于多个位域字段，你可以认为系统总是从上往下依次把他们从低内存向高内存排列过去。当然这指的是小端。<br>大端则相反，总是把他们从上往下从高内存向低内存排列，但是一个字段是作为一个整体，不做拆分或者转换。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;memory.h&gt;</span><br><span class="line"></span><br><span class="line">struct WORD&#123;</span><br><span class="line">        unsigned short bit1:4;</span><br><span class="line">        unsigned short bit2:9;</span><br><span class="line">        unsigned short bit3:3;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">        WORD word;</span><br><span class="line">        memset(&amp;word,0,sizeof(word));</span><br><span class="line"></span><br><span class="line">        // 111,100000001,0001  =&gt; 7,257,1</span><br><span class="line">        unsigned short low16bit=0xF011;</span><br><span class="line">        memcpy(&amp;word,&amp;low16bit,sizeof(low16bit));</span><br><span class="line"></span><br><span class="line">        printf(&quot;size:%d,bit1:%d,bit2:%d,bit3:%d\n&quot;,sizeof(word),word.bit1,word.bit2,word.bit3);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// size:2,bit1:1,bit2:257,bit3:7</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>这是小端的结果，大端是不同的。<br>我们还可以看到当4+9+3==16,正好是16的倍数的时候，字段是紧凑排列的。不是16倍数时候就不一定紧凑了。</p>
+<p>这是小端的结果，大端是不同的。<br>我们还可以看到当4+9+3&#x3D;&#x3D;16,正好是16的倍数的时候，字段是紧凑排列的。不是16倍数时候就不一定紧凑了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;memory.h&gt;</span><br><span class="line"></span><br><span class="line">struct WORD&#123;</span><br><span class="line">        unsigned short bit1:4;</span><br><span class="line">        unsigned short bit2:9;</span><br><span class="line">        unsigned short bit3:11;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">        WORD word;</span><br><span class="line">        memset(&amp;word,0,sizeof(word));</span><br><span class="line"></span><br><span class="line">        // 111,100000001,0001</span><br><span class="line">        unsigned short low16bit=0xF011;</span><br><span class="line">        memcpy(&amp;word,&amp;low16bit,sizeof(low16bit));</span><br><span class="line"></span><br><span class="line">         //0000,0000,0000,0010</span><br><span class="line">         unsigned short high16bit=0x2;</span><br><span class="line">         memcpy((char*)(&amp;word)+2,&amp;high16bit,sizeof(high16bit));</span><br><span class="line"></span><br><span class="line">        printf(&quot;size:%d,bit1:%d,bit2:%d,bit3:%d\n&quot;,sizeof(word),word.bit1,word.bit2,word.bit3);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// size:4,bit1:1,bit2:257,bit3:2</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>我们看到4+9+11==24，但是sizeof是4，而且可以看到bit3并没有紧跟着bit2而是被安排到了一个新的字节当中去。</p>
+<p>我们看到4+9+11&#x3D;&#x3D;24，但是sizeof是4，而且可以看到bit3并没有紧跟着bit2而是被安排到了一个新的字节当中去。</p>
 
     </div>
 
@@ -318,7 +301,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -344,12 +327,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2016/11/14/condition/" rel="prev" title="condition_variable为什么需要mutex">
-                  <i class="fa fa-chevron-left"></i> condition_variable为什么需要mutex
+                  <i class="fa fa-angle-left"></i> condition_variable为什么需要mutex
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2016/11/14/autoptr/" rel="next" title="auto_ptr 特性和源码解析">
-                  auto_ptr 特性和源码解析 <i class="fa fa-chevron-right"></i>
+                  auto_ptr 特性和源码解析 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -370,17 +353,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -406,12 +388,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -423,9 +423,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"6f635ce18e6d2a3889c361b07faa2095"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"6f635ce18e6d2a3889c361b07faa2095"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

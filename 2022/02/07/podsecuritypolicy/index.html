@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="简介k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。 但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简介k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。 但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="k8s中的PodSecurityPolicy">
 <meta property="og:url" content="https://yizhi.ren/2022/02/07/podsecuritypolicy/index.html">
@@ -45,11 +44,15 @@
 <title>k8s中的PodSecurityPolicy | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -62,8 +65,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -83,7 +86,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -92,13 +95,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -131,15 +128,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -160,13 +151,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -187,27 +178,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -225,11 +204,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s中的PodSecurityPolicy | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -272,8 +256,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>k8s中内置了一种安全策略，能够用来约束pod的行为，他叫PodSecurityPolicy，位于apiserver中，默认被关闭。psp定义了哪些是能做的，他的作用范围大都是在securityContext这个结构中，其他也有，比如可以定义哪些volume是支持的，定义哪些端口是允许的。他通过限制这些结构来达到约束pod的目的。</p>
 <p>但是psp是一个即将被废弃的功能，如果你看到文章的时候k8s的版本已经出到了v1.25了那么你可以不用看这部分了，根据官方文档，psp会在v1.25被彻底拿掉。至于psp的继任者<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">Pod Security Admission</a>我会在后续补上，当前我本地安装的k8s版本还不能使用，要v1.22才能使用。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/concepts/policy/pod-security-policy/</span><br><span class="line"></span><br><span class="line">PodSecurityPolicy is deprecated as of Kubernetes v1.21, and will be removed in v1.25. It has been replaced by Pod Security Admission. </span><br></pre></td></tr></table></figure>
 
@@ -284,8 +267,8 @@
 <p>以下的操作是基于自己搭建的k8s集群，搭建集群的步骤参考<a href="https://yizhi.ren/2022/01/25/setupk8s/">树莓派搭建k8s集群</a>。</p>
 <h1 id="psp为什么废弃"><a href="#psp为什么废弃" class="headerlink" title="psp为什么废弃"></a>psp为什么废弃</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/#why-is-podsecuritypolicy-going-away</span><br><span class="line"></span><br><span class="line">The way PSPs are applied to Pods has proven confusing to nearly everyone that has attempted to use them. It is easy to accidentally grant broader permissions than intended, and difficult to inspect which PSP(s) apply in a given situation. The “changing Pod defaults” feature can be handy, but is only supported for certain Pod settings and it’s not obvious when they will or will not apply to your Pod. Without a “dry run” or audit mode, it’s impractical to retrofit PSP to existing clusters safely, and it’s impossible for PSP to ever be enabled by default.</span><br><span class="line"></span><br><span class="line">psp的授权有两个比较大的问题，一个是除非被明确授予权限，否则默认是没有权限，啥都不能干，这就导致不能随意开启，初始时开启了就没法操作了，而到了线上再开启就很容易影响pod，导致有些pod没有了权限，所以只能初始不开启，然后配置好了，然后开启，然后部署到线上。</span><br><span class="line">另一个问题是psp的授权还依赖RBAC，而RBAC是很间接的，要找到某个service account，再找到相关的role，role中再定义对应的psp，psp中再详细的定义约束，同时如果能找到多个这样role，那么整个路线是这样的：</span><br><span class="line">create pod-&gt;user/sa-&gt;rolebinding1-&gt;role1-&gt;psp1-&gt;psp rules</span><br><span class="line">                   -&gt;rolebinding2-&gt;role2-&gt;psp2-&gt;psp rules</span><br><span class="line">这里我们可以看到找到pod对应的psp，这个路径是又长又冗余的，而pod最终只能选择一个psp，要么psp1要么psp2这就给找到psp规则带来了更大的复杂性。</span><br><span class="line"></span><br><span class="line">所以官方文档中提到的3点，第一点说容易意外的分配过广的权限，这本质是第二个问题的复杂性带来的；</span><br><span class="line">第二点说默认值配置好用，但是对于是否会应用到你的pod这点并不明显，这本质也是第二个问题的复杂性带来的；</span><br><span class="line">第三点说psp没法安全的在现有集群开启并且默认不能开启，这本质是第一个问题带来的。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<h1 id="如何使用psp"><a href="#如何使用psp" class="headerlink" title="如何使用psp"></a>如何使用psp</h1><p>psp用法需要(admission-control enable psp)+(clusterrole/role)+(clusterrolebinding/rolebinding).</p>
-<p>也就是psp需要开关进行使能，同时psp是基于RBAC绑定到user/sa的。</p>
+<h1 id="如何使用psp"><a href="#如何使用psp" class="headerlink" title="如何使用psp"></a>如何使用psp</h1><p>psp用法需要(admission-control enable psp)+(clusterrole&#x2F;role)+(clusterrolebinding&#x2F;rolebinding).</p>
+<p>也就是psp需要开关进行使能，同时psp是基于RBAC绑定到user&#x2F;sa的。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line">我们定义3个psp，一个是没权限，一个是部分受约束的权限，一个是全开的权限；然后创建对应的3个clusterrole；然后把受约束的clusterrole绑定给用户组system:authenticated和system:serviceaccounts，同时把全开的权限给kubelet用户；没权限的psp这里不去使用。</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">~$</span><span class="bash"> vi previleges-psp.yaml</span></span><br><span class="line">apiVersion: policy/v1beta1</span><br><span class="line">kind: PodSecurityPolicy</span><br><span class="line">metadata:</span><br><span class="line">  name: no-privilege</span><br><span class="line">spec:</span><br><span class="line">  privileged: false</span><br><span class="line">  seLinux:</span><br><span class="line">    rule: RunAsAny</span><br><span class="line">  supplementalGroups:</span><br><span class="line">    rule: RunAsAny</span><br><span class="line">  runAsUser:</span><br><span class="line">    rule: RunAsAny</span><br><span class="line">  fsGroup:</span><br><span class="line">    rule: RunAsAny</span><br><span class="line">  volumes:</span><br><span class="line">  - &#x27;*&#x27;</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: policy/v1beta1</span><br><span class="line">kind: PodSecurityPolicy</span><br><span class="line">metadata:</span><br><span class="line">  name: restrict-privileged</span><br><span class="line">spec:</span><br><span class="line">  privileged: false</span><br><span class="line"><span class="meta">  #</span><span class="bash"> Required to prevent escalations to root.</span></span><br><span class="line">  allowPrivilegeEscalation: false</span><br><span class="line">  requiredDropCapabilities:</span><br><span class="line">    - ALL</span><br><span class="line"><span class="meta">  #</span><span class="bash"> Allow core volume types.</span></span><br><span class="line">  volumes:</span><br><span class="line">    - &#x27;configMap&#x27;</span><br><span class="line">    - &#x27;emptyDir&#x27;</span><br><span class="line">    - &#x27;projected&#x27;</span><br><span class="line">    - &#x27;secret&#x27;</span><br><span class="line">    - &#x27;downwardAPI&#x27;</span><br><span class="line">    # Assume that ephemeral CSI drivers &amp; persistentVolumes set up by the cluster admin are safe to use.</span><br><span class="line">    - &#x27;csi&#x27;</span><br><span class="line">    - &#x27;persistentVolumeClaim&#x27;</span><br><span class="line">    - &#x27;ephemeral&#x27;</span><br><span class="line">  hostNetwork: false</span><br><span class="line">  hostIPC: false</span><br><span class="line">  hostPID: false</span><br><span class="line">  runAsUser:</span><br><span class="line">    # Require the container to run without root privileges.</span><br><span class="line">    rule: &#x27;MustRunAsNonRoot&#x27;</span><br><span class="line">  seLinux:</span><br><span class="line">    # This policy assumes the nodes are using AppArmor rather than SELinux.</span><br><span class="line">    rule: &#x27;RunAsAny&#x27;</span><br><span class="line">  supplementalGroups:</span><br><span class="line">    rule: &#x27;MustRunAs&#x27;</span><br><span class="line">    ranges:</span><br><span class="line">      # Forbid adding the root group.</span><br><span class="line">      - min: 1</span><br><span class="line">        max: 65535</span><br><span class="line">  fsGroup:</span><br><span class="line">    rule: &#x27;MustRunAs&#x27;</span><br><span class="line">    ranges:</span><br><span class="line">      # Forbid adding the root group.</span><br><span class="line">      - min: 1</span><br><span class="line">        max: 65535</span><br><span class="line">  readOnlyRootFilesystem: false</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: policy/v1beta1</span><br><span class="line">kind: PodSecurityPolicy</span><br><span class="line">metadata:</span><br><span class="line">  name: privileged</span><br><span class="line">spec:</span><br><span class="line">  privileged: true</span><br><span class="line">  allowPrivilegeEscalation: true</span><br><span class="line">  allowedCapabilities:</span><br><span class="line">  - &#x27;*&#x27;</span><br><span class="line">  volumes:</span><br><span class="line">  - &#x27;*&#x27;</span><br><span class="line">  hostNetwork: true</span><br><span class="line">  hostPorts:</span><br><span class="line">  - min: 0</span><br><span class="line">    max: 65535</span><br><span class="line">  hostIPC: true</span><br><span class="line">  hostPID: true</span><br><span class="line">  runAsUser:</span><br><span class="line">    rule: &#x27;RunAsAny&#x27;</span><br><span class="line">  seLinux:</span><br><span class="line">    rule: &#x27;RunAsAny&#x27;</span><br><span class="line">  supplementalGroups:</span><br><span class="line">    rule: &#x27;RunAsAny&#x27;</span><br><span class="line">  fsGroup:</span><br><span class="line">    rule: &#x27;RunAsAny&#x27;</span><br><span class="line">  allowedHostPaths:</span><br><span class="line">  - pathPrefix: &quot;/&quot;</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: no-previlege-psp-clusterrole</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&#x27;policy&#x27;]</span><br><span class="line">  resources: [&#x27;podsecuritypolicies&#x27;]</span><br><span class="line">  verbs:     [&#x27;use&#x27;]</span><br><span class="line">  resourceNames:</span><br><span class="line">  - no-privilege</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: restrict-previleged-psp-clusterrole</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&#x27;policy&#x27;]</span><br><span class="line">  resources: [&#x27;podsecuritypolicies&#x27;]</span><br><span class="line">  verbs:     [&#x27;use&#x27;]</span><br><span class="line">  resourceNames:</span><br><span class="line">  - restrict-privileged</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRole</span><br><span class="line">metadata:</span><br><span class="line">  name: previleged-psp-clusterrole</span><br><span class="line">rules:</span><br><span class="line">- apiGroups: [&#x27;policy&#x27;]</span><br><span class="line">  resources: [&#x27;podsecuritypolicies&#x27;]</span><br><span class="line">  verbs:     [&#x27;use&#x27;]</span><br><span class="line">  resourceNames:</span><br><span class="line">  - privileged</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: previleged-psp-binding</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: previleged-psp-clusterrole</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">subjects:</span><br><span class="line"><span class="meta">#</span><span class="bash"> Authorize all kubelet:</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> https://github.com/kubernetes/kubernetes/blob/a1513161b3056d4c5ef711ab1c5314e97e90811a/cluster/gce/addons/podsecuritypolicies/node-binding.yaml</span></span><br><span class="line">- kind: Group</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  name: system:nodes</span><br><span class="line">- kind: User</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line"><span class="meta">  #</span><span class="bash"> Legacy node ID</span></span><br><span class="line">  name: kubelet</span><br><span class="line"></span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: restrict-previleged-psp-binding</span><br><span class="line">roleRef:</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: restrict-previleged-psp-clusterrole</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">subjects:</span><br><span class="line"><span class="meta">#</span><span class="bash"> Authorize all service accounts:</span></span><br><span class="line">- kind: Group</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  name: system:serviceaccounts</span><br><span class="line"><span class="meta">#</span><span class="bash"> all authenticated users:</span></span><br><span class="line">- kind: Group</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  name: system:authenticated</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 然后apply</span></span><br><span class="line"><span class="meta">~$</span><span class="bash"> kl apply -f previleges-psp.yaml</span> </span><br><span class="line">Warning: policy/v1beta1 PodSecurityPolicy is deprecated in v1.21+, unavailable in v1.25+</span><br><span class="line">podsecuritypolicy.policy/no-privilege created</span><br><span class="line">podsecuritypolicy.policy/restrict-privileged created</span><br><span class="line">podsecuritypolicy.policy/privileged created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/no-previlege-psp-clusterrole created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/restrict-previleged-psp-clusterrole created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/previleged-psp-clusterrole created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/previleged-psp-binding created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/restrict-previleged-psp-binding created</span><br></pre></td></tr></table></figure>
 
 <p>接着我们编辑kube-apiserver.yaml来开启psp功能。</p>
@@ -323,7 +306,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -349,12 +332,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2022/02/06/dangerousprivileges/" rel="prev" title="k8s中的危险权限">
-                  <i class="fa fa-chevron-left"></i> k8s中的危险权限
+                  <i class="fa fa-angle-left"></i> k8s中的危险权限
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2022/02/08/hostpath/" rel="next" title="k8s中的hostPath的安全隐患">
-                  k8s中的hostPath的安全隐患 <i class="fa fa-chevron-right"></i>
+                  k8s中的hostPath的安全隐患 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -375,17 +358,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -411,12 +393,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -428,9 +428,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"a806217906118c9112598465663786d8"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"a806217906118c9112598465663786d8"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

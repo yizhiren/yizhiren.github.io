@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="线程扩展要考虑的问题简介如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从n">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="线程扩展要考虑的问题简介如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从n">
 <meta property="og:type" content="article">
 <meta property="og:title" content="线程扩展需要考虑的问题">
 <meta property="og:url" content="https://yizhi.ren/2017/02/08/multithread/index.html">
@@ -51,11 +50,15 @@
 <title>线程扩展需要考虑的问题 | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -68,8 +71,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -89,7 +92,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -98,13 +101,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -137,15 +134,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -166,13 +157,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -193,27 +184,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -231,11 +210,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="线程扩展需要考虑的问题 | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -278,20 +262,19 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h2 id="线程扩展要考虑的问题"><a href="#线程扩展要考虑的问题" class="headerlink" title="线程扩展要考虑的问题"></a>线程扩展要考虑的问题</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br>而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br>比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br>通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br>比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br>那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="线程扩展要考虑的问题"><a href="#线程扩展要考虑的问题" class="headerlink" title="线程扩展要考虑的问题"></a>线程扩展要考虑的问题</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br>而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br>比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br>通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br>比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br>那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
 <span id="more"></span>
 
 <h3 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h3><p>对于多线程的架构，采用什么线程模型是首要解决的问题。</p>
 <h4 id="netty的模型"><a href="#netty的模型" class="headerlink" title="netty的模型"></a>netty的模型</h4><p>我们直接拿大名鼎鼎的netty的模型来看：<br><img src="/linkimage/multithread/1.jpg" alt="netty thread model"></p>
-<p>可以看到，首先由单独的线程来做accept操作，这点没有什么疑问，为了响应迅速，单独拿线程来做accept是没有什么问题的。<br>另一个是工作线程组，也就是一个线程池，这个线程组会接收accept线程accept之后的socketchannel，也就是socket的fd，来负责这个fd的IO操作。<br>netty的这个线程组很特殊，这个线程组不光要负责IO操作，还要负责跑具体的业务，也就是说read-&gt;handle-&gt;write都在一个线程上完成。<br>所以这里有个问题是IO类操作(read/write)和业务操作(handle)会互相等待，由于IO相对业务较快，比较容易发生的是IO会被业务给阻塞。<br>netty解决这个问题的方法是，首先程序员要自己清楚这个线程不能跑轻量的任务，否则会阻塞IO以及其他socketchannel的业务。<br>其次，对于CPU密集型的非轻量的操作，要自己拆分，然后把拆分后的任务扔到这同一个线程组中执行。<br>为什么我说netty是这么建议的呢，因为首先netty并无其他线程池存在，并且这个线程组存在接口来注册非IO的任务。</p>
+<p>可以看到，首先由单独的线程来做accept操作，这点没有什么疑问，为了响应迅速，单独拿线程来做accept是没有什么问题的。<br>另一个是工作线程组，也就是一个线程池，这个线程组会接收accept线程accept之后的socketchannel，也就是socket的fd，来负责这个fd的IO操作。<br>netty的这个线程组很特殊，这个线程组不光要负责IO操作，还要负责跑具体的业务，也就是说read-&gt;handle-&gt;write都在一个线程上完成。<br>所以这里有个问题是IO类操作(read&#x2F;write)和业务操作(handle)会互相等待，由于IO相对业务较快，比较容易发生的是IO会被业务给阻塞。<br>netty解决这个问题的方法是，首先程序员要自己清楚这个线程不能跑轻量的任务，否则会阻塞IO以及其他socketchannel的业务。<br>其次，对于CPU密集型的非轻量的操作，要自己拆分，然后把拆分后的任务扔到这同一个线程组中执行。<br>为什么我说netty是这么建议的呢，因为首先netty并无其他线程池存在，并且这个线程组存在接口来注册非IO的任务。</p>
 <h4 id="IO分离"><a href="#IO分离" class="headerlink" title="IO分离"></a>IO分离</h4><p>但是如果你不是用的netty，你也不是非要像netty这么设计。<br>为了防止IO和业务互相阻塞，我们可以设计成两个线程组：<br><img src="/linkimage/multithread/2.jpg" alt="two pool thread model"></p>
-<p>可以看到，由一个线程来accept，accept之后，socket被放到network线程组。<br>network线程组的每个线程包含一个epoll/selector, network线程组触发的事件会被抛到work线程组，work线程组的IO写操作也会被抛回network线程组。<br>这样IO和业务是跑在不同的线程中的，不会发生互相阻塞的事情。</p>
+<p>可以看到，由一个线程来accept，accept之后，socket被放到network线程组。<br>network线程组的每个线程包含一个epoll&#x2F;selector, network线程组触发的事件会被抛到work线程组，work线程组的IO写操作也会被抛回network线程组。<br>这样IO和业务是跑在不同的线程中的，不会发生互相阻塞的事情。</p>
 <p>上面这两个线程模型基本可以涵盖大部分的服务器后端的线程架构。</p>
 <h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><p>多线程的架构避免不了要面对这个问题，我们也要面对，而且是优先要考虑这个问题，因为线程安全严重的会导致程序崩溃，轻的也会影响业务的准确性，最少他也能影响系统的性能。<br>我们处理线程安全的策略有3个。</p>
 <h4 id="暴力面对"><a href="#暴力面对" class="headerlink" title="暴力面对"></a>暴力面对</h4><p>正所谓真的勇士，敢于直面惨淡的人生，敢于正视淋漓的献血。<br>这种策略是为每一个非线程安全的地方加上锁保护，每一个STL容器的遍历，每一个数据库的访问，每一个计数器的增减，我们都加上锁，管你是多少个线程我都不怕，管你把这个任务扔到了哪个线程上运行也都没事。<br>这种方法其实挺好的，只不过我没有办法保证你这么做的时候不会出问题，比如死锁，或者锁加的不好，导致等待时间长，影响性能。<br>只要你合理的加锁，这种方式是可以的。</p>
 <h4 id="按功能拆分"><a href="#按功能拆分" class="headerlink" title="按功能拆分"></a>按功能拆分</h4><p>虽然线程池中有很多线程，但是我们可以给同一类功能的操作放到同一个线程中，比如专门取一个线程作为数据库线程，所以数据库访问的任务都会被定向到这个线程中，因此就是串行操作不会有线程安全的问题。<br>这个方案的思路就是把线程池中的线程拆分成几个部分，所有可能引起线程安全问题的都单独建立一个线程，把并行的场景转化成串行的场景。<br>如图：<br><img src="/linkimage/multithread/3.jpg" alt="split by function thread model"></p>
-<h4 id="按业务拆分"><a href="#按业务拆分" class="headerlink" title="按业务拆分"></a>按业务拆分</h4><p>有的服务器会把一些状态类信息放到数据库中（redis/Cassandra）保存，做到无状态。也有的会把一些状态信息放到内存中，这可能是出于效率的考虑，或者是出于系统整体的架构不引入第三方服务。<br>对于把会话等状态信息放在内存中的系统，我们可以按照足以避免竞争的业务单元来拆分系统，把一个业务单元的业务都跑到同一个线程上去。<br>比如确保同一个会话的所有业务运行到单个线程，而这个线程可以承担多个业务单元的运行。如图：<br><img src="/linkimage/multithread/4.jpg" alt="split by business thread model"></p>
+<h4 id="按业务拆分"><a href="#按业务拆分" class="headerlink" title="按业务拆分"></a>按业务拆分</h4><p>有的服务器会把一些状态类信息放到数据库中（redis&#x2F;Cassandra）保存，做到无状态。也有的会把一些状态信息放到内存中，这可能是出于效率的考虑，或者是出于系统整体的架构不引入第三方服务。<br>对于把会话等状态信息放在内存中的系统，我们可以按照足以避免竞争的业务单元来拆分系统，把一个业务单元的业务都跑到同一个线程上去。<br>比如确保同一个会话的所有业务运行到单个线程，而这个线程可以承担多个业务单元的运行。如图：<br><img src="/linkimage/multithread/4.jpg" alt="split by business thread model"></p>
 <h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><p>要很好地发挥出多个CPU的性能, 必须保证分配到各个CPU 上的任务有一个很好的负载平衡。否则一些CPU 在运行, 而另一些CPU 却处于空闲, 而实际的效率是以任务较重的CPU 为准, 从而造成性能的瓶颈, 无法发挥出多核CPU 的优势。<br>要实现一个好的负载平衡通常有两种方案,一种是静态负载平衡, 采用人工干预的方法预先将任务分割成多个可并行执行的部分, 尽量保证分割的各个部分可以均衡地运行在不同的核上;<br>另外一种是动态负载平衡, 在程序的运行过程中进行任务的分配达到负载平衡的目的。</p>
 <h4 id="动态拆分和静态拆分"><a href="#动态拆分和静态拆分" class="headerlink" title="动态拆分和静态拆分"></a>动态拆分和静态拆分</h4><p>负载均衡的方法还与线程安全的策略有很大关系，比如线程安全采用的是暴力面对，那么负载均衡很简单了，用动态分配的方式，把请求轮询得抛给线程池的线程就可以了。<br>如果采用的是按照功能拆分，那么就是采用的静态的分配方法，分配后如果发现某个线程特别的重，那么需要合理地拆分这个线程的任务，比如如果访问数据库的线程太重，那么可以把访问A业务和访问B业务的请求拆分到不同的线程，这样既不影响线程安全又可以负载均衡。<br>同样的如果某个线程空闲则可以进行线程的合并。</p>
 <p>如果采用的是按照业务来分，比如按照会话来拆分，由于会话之间的体量并不相同，因此不光不能静态分配，就连动态分配也有难度，比如轮询得分配，能确保分配的数量一致，但是每个会话的体量不同，实际的负荷也是不同的。<br>对于这种情况，需要采用动态计算的方式，比如最小CPU的方法：<br>每个线程定时计算自己的CPU，然后在会话初次创建时，选择一个最小CPU的线程来创建，随后该会话的业务都跑到该线程上去。并且保持CPU的定时更新。<br>或者采用最小连接数：<br>每个线程统计处于自身线程上的socket连接个数，然后在会话初次创建时，选择一个最少socket的线程来创建，随后该会话的业务都跑到该线程上去。</p>
@@ -310,7 +293,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -336,12 +319,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2017/02/02/distribute/" rel="prev" title="分布式架构的形式">
-                  <i class="fa fa-chevron-left"></i> 分布式架构的形式
+                  <i class="fa fa-angle-left"></i> 分布式架构的形式
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2017/04/09/epollleveltrigger/" rel="next" title="Epoll Level Trigger">
-                  Epoll Level Trigger <i class="fa fa-chevron-right"></i>
+                  Epoll Level Trigger <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -362,17 +345,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -398,12 +380,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -415,9 +415,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"fb064b5e473defcce78e903c8d0c35e7"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"fb064b5e473defcce78e903c8d0c35e7"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

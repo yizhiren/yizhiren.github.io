@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,16 +15,17 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多">
 <meta property="og:type" content="article">
 <meta property="og:title" content="k8s安全知识即CKS考试知识点总结">
 <meta property="og:url" content="https://yizhi.ren/2022/02/09/cksknowledge/index.html">
 <meta property="og:site_name" content="一支人">
-<meta property="og:description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到">
+<meta property="og:description" content="CKS知识总结简介CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。 一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。 第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/kube-bench-k8s-pdf.png">
 <meta property="og:image" content="https://yizhi.ren/linkimage/cksknowledge/rbac-link.png">
@@ -55,11 +54,15 @@
 <title>k8s安全知识即CKS考试知识点总结 | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -72,8 +75,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -93,7 +96,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -102,13 +105,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -141,15 +138,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -170,13 +161,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -197,27 +188,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -235,11 +214,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="k8s安全知识即CKS考试知识点总结 | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -282,12 +266,11 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="CKS知识总结"><a href="#CKS知识总结" class="headerlink" title="CKS知识总结"></a>CKS知识总结</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。</p>
-<p>一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC/secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="CKS知识总结"><a href="#CKS知识总结" class="headerlink" title="CKS知识总结"></a>CKS知识总结</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>CKS考试是kubernetes认证系列中中高级的一个证书，相比CKAD和CKA难度略大一些。</p>
+<p>一方面虽然CKS跟CKA和CKAD有部分交集，比如k8s的基本使用，RBAC&#x2F;secret的使用，集群升级等知识点，另一方面又是基于CKA的基础之上，考试也要求先通过CKA。</p>
 <p>第二个相对难考的地方在于CKA和CKAD的考点都在kubernetes官网可以找到，但是CKS的很多知识点跳到了外部，涉及到外部的工具，外部的插件等等。</p>
 <p>第三个点是CKS的部分知识点需要自己做一定的探索，换句话说不操作一遍的话都不知道他是什么，他涉及到什么知识。</p>
-<p>同时，CKAD、CKA、CKS相同的点是都有前人为我们列好了考试大纲，列好了知识点和链接：<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Kubernetes-Certified-Administrator">CKA</a>/<a target="_blank" rel="noopener" href="https://github.com/dgkanatsios/CKAD-exercises">CKAD</a>/<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Certified-Kubernetes-Security-Specialist">CKS</a></p>
+<p>同时，CKAD、CKA、CKS相同的点是都有前人为我们列好了考试大纲，列好了知识点和链接：<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Kubernetes-Certified-Administrator">CKA</a>&#x2F;<a target="_blank" rel="noopener" href="https://github.com/dgkanatsios/CKAD-exercises">CKAD</a>&#x2F;<a target="_blank" rel="noopener" href="https://github.com/walidshaari/Certified-Kubernetes-Security-Specialist">CKS</a></p>
 <p>这里主要基于第3个难点，对涉及到的操作做一个细致的记录，方便大家参考，减少学习者的探索时间。</p>
 <span id="more"></span>
 
@@ -356,7 +339,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://www.ibm.com/docs/zh/cloud-private/3.1.2?topic=upgrade-kubelet-container-fails-start</span><br><span class="line"></span><br><span class="line">kubelet的protectKernelDefaults可能导致kubelet启动失败，错误信息类似：</span><br><span class="line">hyperkube[804]: F1023 17:02:19.964867     804 kubelet.go:1333] Failed to start ContainerManager [Invalid kernel flag: vm/overcommit_memory, expected value: 1, actual value: 0, Invalid kernel flag: kernel/panic, expected value: 10, actual value: 0, Invalid kernel flag: kernel/panic_on_oops, expected value: 1, actual value: 0]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>在我的集群中如果开启了就会报错。</p>
-<h4 id="eventRecordQPS-eventBurst"><a href="#eventRecordQPS-eventBurst" class="headerlink" title="eventRecordQPS/eventBurst"></a>eventRecordQPS/eventBurst</h4><p>这两个参数是对kubelet产生的event进行流控的(event会上报给apiserver)，eventRecordQPS是控制qps，eventBurst是控制令牌桶的桶大小。设小了会丢event，设大了对apiserver可能产生潜在压力，对于我们个人搭建的小集群，设大一点就可以了。</p>
+<h4 id="eventRecordQPS-eventBurst"><a href="#eventRecordQPS-eventBurst" class="headerlink" title="eventRecordQPS&#x2F;eventBurst"></a>eventRecordQPS&#x2F;eventBurst</h4><p>这两个参数是对kubelet产生的event进行流控的(event会上报给apiserver)，eventRecordQPS是控制qps，eventBurst是控制令牌桶的桶大小。设小了会丢event，设大了对apiserver可能产生潜在压力，对于我们个人搭建的小集群，设大一点就可以了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/</span><br><span class="line"></span><br><span class="line">vi /var/lib/kubelet/config.yaml</span><br><span class="line"># add below two lines</span><br><span class="line">eventRecordQPS: 100</span><br><span class="line">eventBurst: 200</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
@@ -366,7 +349,7 @@
 
 
 
-<h4 id="kubelet-certificate-authority"><a href="#kubelet-certificate-authority" class="headerlink" title="kubelet-certificate-authority"></a>kubelet-certificate-authority</h4><p>在默认的时候，apiserver访问kubelet的时候，当然，会走ssl验证，但是只会做单向验证，也就是kubelet会验证apiserver，apiserver不会验证kubelet的身份。kubelet-certificate-authority被设置的时候，apiserver访问kubelet时，apiserver就会验证kubelet的身份，并使用kubelet-certificate-authority配置的CA文件来验证。这里我们使用与集群相同的ca文件（default at /etc/kubernetes/pki/ca.crt）来创建kubelet server的证书：</p>
+<h4 id="kubelet-certificate-authority"><a href="#kubelet-certificate-authority" class="headerlink" title="kubelet-certificate-authority"></a>kubelet-certificate-authority</h4><p>在默认的时候，apiserver访问kubelet的时候，当然，会走ssl验证，但是只会做单向验证，也就是kubelet会验证apiserver，apiserver不会验证kubelet的身份。kubelet-certificate-authority被设置的时候，apiserver访问kubelet时，apiserver就会验证kubelet的身份，并使用kubelet-certificate-authority配置的CA文件来验证。这里我们使用与集群相同的ca文件（default at &#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;ca.crt）来创建kubelet server的证书：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">首先给kubelet server2创建证书：</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 1. 创建csr配置文件</span><br><span class="line">vi kubelet-server2.conf</span><br><span class="line"></span><br><span class="line">[ req ]</span><br><span class="line">default_bits = 2048</span><br><span class="line">prompt = no</span><br><span class="line">default_md = sha256</span><br><span class="line">req_extensions = req_ext</span><br><span class="line">distinguished_name = dn</span><br><span class="line"></span><br><span class="line">[ dn ]</span><br><span class="line">O = system:nodes</span><br><span class="line">CN = system:node:server2</span><br><span class="line"></span><br><span class="line">[ req_ext ]</span><br><span class="line">subjectAltName = @alt_names</span><br><span class="line"></span><br><span class="line">[ alt_names ]</span><br><span class="line">DNS.1 = server2</span><br><span class="line">IP.1 = 192.168.3.152</span><br><span class="line"></span><br><span class="line">[ v3_ext ]</span><br><span class="line">authorityKeyIdentifier=keyid,issuer:always</span><br><span class="line">basicConstraints=CA:FALSE</span><br><span class="line">keyUsage=keyEncipherment,dataEncipherment</span><br><span class="line">extendedKeyUsage=serverAuth</span><br><span class="line">subjectAltName=@alt_names</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 2. 创建server证书</span><br><span class="line"># 创建key</span><br><span class="line">openssl genrsa -out kubelet-server2.key 2048</span><br><span class="line"># 创建csr</span><br><span class="line">openssl req -new -key kubelet-server2.key -out kubelet-server2.csr -config kubelet-server2.conf</span><br><span class="line"># 创建crt</span><br><span class="line">openssl x509 -req -in kubelet-server2.csr -CA /etc/kubernetes/pki/ca.crt -CAkey /etc/kubernetes/pki/ca.key -CAcreateserial -out kubelet-server2.crt -days 366 -extensions v3_ext -extfile kubelet-server2.conf</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 3. copy files to server2</span><br><span class="line">scp -P 22 kubelet-server2* root@192.168.3.152:/var/lib/kubelet/pki/</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 4. config kubelet config file</span><br><span class="line">vi /var/lib/kubelet/config.yaml # add below two</span><br><span class="line"># tlsCertFile: /var/lib/kubelet/pki/kubelet-server2.crt</span><br><span class="line"># tlsPrivateKeyFile: /var/lib/kubelet/pki/kubelet-server2.key</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; 5. config apiserver command line</span><br><span class="line">vi /etc/kubernetes/manifests/kube-apiserver.yaml # add below one</span><br><span class="line"># - --kubelet-certificate-authority=/etc/kubernetes/pki/ca.crt</span><br></pre></td></tr></table></figure>
 
 <p>注意上面的流程中既包含apiserver的参数kubelet-certificate-authority，也包含kubelet需要配置的参数tlsCertFile和tlsPrivateKeyFile。</p>
@@ -396,7 +379,7 @@
 
 
 
-<h4 id="profiling"><a href="#profiling" class="headerlink" title="profiling"></a>profiling</h4><p>–profiling=false</p>
+<h4 id="profiling"><a href="#profiling" class="headerlink" title="profiling"></a>profiling</h4><p>–profiling&#x3D;false</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">这个是关闭pprof页面. 如果需要这个页面就不要关闭,然后通过下面的步骤查看:</span><br><span class="line"></span><br><span class="line">:~# kubectl proxy</span><br><span class="line">Starting to serve on 127.0.0.1:8001</span><br><span class="line"></span><br><span class="line">:~# wget http://127.0.0.1:8001/debug/pprof</span><br><span class="line"></span><br><span class="line">apiserver scheduler controller-manager都可以关闭。</span><br></pre></td></tr></table></figure>
 
 
@@ -404,7 +387,7 @@
 <h4 id="audit-policy-file"><a href="#audit-policy-file" class="headerlink" title="audit-policy-file"></a>audit-policy-file</h4><p>审计功能就是给请求记录日志，不同的请求可以设置不同的日志级别，比如只记录metadata，只记录request，等等。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://kubernetes.io/docs/tasks/debug-application-cluster/audit/</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 1. 创建audit-policy.yaml</span></span><br><span class="line">vi /etc/kubernetes/audit-policy.yaml</span><br><span class="line"><span class="meta">#</span><span class="bash"> 简单版的policy</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> Log all requests at the Metadata level.</span></span><br><span class="line">apiVersion: audit.k8s.io/v1</span><br><span class="line">kind: Policy</span><br><span class="line">rules:</span><br><span class="line">- level: Metadata</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 2. 配置apiserver参数</span></span><br><span class="line">    - --audit-policy-file=/etc/kubernetes/audit-policy.yaml</span><br><span class="line">    - --audit-log-path=/var/log/kubernetes/audit/audit.log</span><br><span class="line">    - --audit-log-maxage=15</span><br><span class="line">    - --audit-log-maxbackup=10</span><br><span class="line">    - --audit-log-maxsize=10</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash">&gt;&gt; 3. 挂载相关文件和目录</span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="bash">volumeMounts:</span></span><br><span class="line">    - mountPath: /etc/kubernetes/audit-policy.yaml</span><br><span class="line">      name: audit-policy</span><br><span class="line">      readOnly: true</span><br><span class="line">    - mountPath: /var/log/kubernetes/audit</span><br><span class="line">      name: audit-log</span><br><span class="line">      readOnly: false</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"></span></span><br><span class="line"><span class="bash">volumes:</span></span><br><span class="line">  - hostPath:</span><br><span class="line">      path: /etc/kubernetes/audit-policy.yaml</span><br><span class="line">      type: File</span><br><span class="line">    name: audit-policy</span><br><span class="line">  - hostPath:</span><br><span class="line">      path: /var/log/kubernetes/audit</span><br><span class="line">      type: DirectoryOrCreate</span><br><span class="line">    name: audit-log</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>之后你在/var/log/kubernetes/audit/audit.log文件中就能看到apiserver的请求日志了。</p>
+<p>之后你在&#x2F;var&#x2F;log&#x2F;kubernetes&#x2F;audit&#x2F;audit.log文件中就能看到apiserver的请求日志了。</p>
 <h4 id="encryption-provider-config"><a href="#encryption-provider-config" class="headerlink" title="encryption-provider-config"></a>encryption-provider-config</h4><p>对写入etcd的数据进行编码，对读取的数据进行解码，这样用户直接读etcd的数据就会是乱码。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">参考：</span><br><span class="line">https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/</span><br><span class="line"></span><br><span class="line">因为我们在”admission-control EventRateLimit“小节已经挂载了/etc/kubernetes/admission目录，所以这里不再配置挂载/etc/kubernetes/admission的操作。</span><br><span class="line"></span><br><span class="line">编辑encrypt-config.yaml文件：</span><br><span class="line">vi /etc/kubernetes/admission/encrypt-config.yaml</span><br><span class="line">apiVersion: apiserver.config.k8s.io/v1</span><br><span class="line">kind: EncryptionConfiguration</span><br><span class="line">resources:</span><br><span class="line">  - resources:</span><br><span class="line">    - secrets</span><br><span class="line">    providers:</span><br><span class="line">    - aescbc:</span><br><span class="line">        keys:</span><br><span class="line">        - name: key1</span><br><span class="line">          secret: &lt;BASE 64 ENCODED SECRET&gt;</span><br><span class="line">    - identity: &#123;&#125;</span><br><span class="line"></span><br><span class="line">其中secret通过</span><br><span class="line">head -c 32 /dev/urandom | base64</span><br><span class="line">获取。集群内用来HA的多个apiserver要用同一个secret。</span><br><span class="line"></span><br><span class="line">然后通过--encryption-provider-config参数传给apiserver。</span><br><span class="line">--encryption-provider-config=/etc/kubernetes/admission/encrypt-config.yaml</span><br></pre></td></tr></table></figure>
 
@@ -429,7 +412,7 @@
 
 
 
-<h4 id="profiling-1"><a href="#profiling-1" class="headerlink" title="profiling"></a>profiling</h4><p>在apiserver中我们已经禁用了apiserver的profiling，那么相应的controller manager的profiling也应该被禁用掉。给controller manager配置命令行参数–profiling=false即可。</p>
+<h4 id="profiling-1"><a href="#profiling-1" class="headerlink" title="profiling"></a>profiling</h4><p>在apiserver中我们已经禁用了apiserver的profiling，那么相应的controller manager的profiling也应该被禁用掉。给controller manager配置命令行参数–profiling&#x3D;false即可。</p>
 <p>不过这里要补充一个知识，如何在controller manager的profiling打开的情况下，查看pprof页面。思路是在请求中带上TOKEN，并且给token对应的用户一个对应的权限。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># get default user token</span><br><span class="line">kubectl describe secret $(kubectl get secrets -n default | grep ^default | cut -f1 -d &#x27; &#x27;) -n default | grep -E &#x27;^token&#x27; | cut -f2 -d&#x27;:&#x27; | tr -d &quot; &quot;</span><br><span class="line"></span><br><span class="line"># set token var</span><br><span class="line">TOKEN=xxx  # 上一条命令的内容</span><br><span class="line"></span><br><span class="line"># apply clusterrolebinding</span><br><span class="line">kl apply -f role.yaml</span><br><span class="line"></span><br><span class="line"># 访问带上token</span><br><span class="line">curl https://127.0.0.1:10257/debug/pprof/goroutine?debug=2 -k --header &quot;Authorization: Bearer $TOKEN&quot;</span><br><span class="line">curl https://127.0.0.1:10259/debug/pprof/goroutine?debug=2 -k --header &quot;Authorization: Bearer $TOKEN&quot;</span><br></pre></td></tr></table></figure>
 
@@ -437,8 +420,8 @@
 
 
 
-<h3 id="scheduller配置参数"><a href="#scheduller配置参数" class="headerlink" title="scheduller配置参数"></a>scheduller配置参数</h3><h4 id="profiling-2"><a href="#profiling-2" class="headerlink" title="profiling"></a>profiling</h4><p>同apiserver和controll manager,配置命令行参数–profiling=false即可。</p>
-<h2 id="automountServiceAccountToken"><a href="#automountServiceAccountToken" class="headerlink" title="automountServiceAccountToken"></a>automountServiceAccountToken</h2><p>我们创建pod的时候会自动挂载一个user，默认就是default，这个用户的token会挂载在/var/run/secrets/kubernetes.io/serviceaccount/token下，但是出于安全考虑，我们希望不要被自动挂载。</p>
+<h3 id="scheduller配置参数"><a href="#scheduller配置参数" class="headerlink" title="scheduller配置参数"></a>scheduller配置参数</h3><h4 id="profiling-2"><a href="#profiling-2" class="headerlink" title="profiling"></a>profiling</h4><p>同apiserver和controll manager,配置命令行参数–profiling&#x3D;false即可。</p>
+<h2 id="automountServiceAccountToken"><a href="#automountServiceAccountToken" class="headerlink" title="automountServiceAccountToken"></a>automountServiceAccountToken</h2><p>我们创建pod的时候会自动挂载一个user，默认就是default，这个用户的token会挂载在&#x2F;var&#x2F;run&#x2F;secrets&#x2F;kubernetes.io&#x2F;serviceaccount&#x2F;token下，但是出于安全考虑，我们希望不要被自动挂载。</p>
 <p>pod和service account都可以设置automountServiceAccountToken这个字段，都设置了的话pod中的automountServiceAccountToken字段优先。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server</span><br><span class="line"></span><br><span class="line"># sa中配置</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: build-robot</span><br><span class="line">automountServiceAccountToken: false</span><br><span class="line"></span><br><span class="line"># pod中配置</span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: Pod</span><br><span class="line">metadata:</span><br><span class="line">  name: my-pod</span><br><span class="line">spec:</span><br><span class="line">  serviceAccountName: build-robot</span><br><span class="line">  automountServiceAccountToken: false</span><br></pre></td></tr></table></figure>
 
@@ -640,7 +623,7 @@
 <p>然后重启apiserver。我们再次执行创建pod，发现可以创建成功了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">~$ kl run ng1 --image nginx</span><br><span class="line">pod/ng1 created</span><br></pre></td></tr></table></figure>
 
-<h2 id="immutable-pod-stateless-pod"><a href="#immutable-pod-stateless-pod" class="headerlink" title="immutable pod / stateless pod"></a>immutable pod / stateless pod</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">immutable主要是指pod不能修改主机文件</span><br><span class="line">security context中的readOnlyRootFilesystem以及privileged都得是false。</span><br><span class="line"></span><br><span class="line">stateles主要是不能存数据在container中，emptyDir的volume也不行。</span><br></pre></td></tr></table></figure>
+<h2 id="immutable-pod-stateless-pod"><a href="#immutable-pod-stateless-pod" class="headerlink" title="immutable pod &#x2F; stateless pod"></a>immutable pod &#x2F; stateless pod</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">immutable主要是指pod不能修改主机文件</span><br><span class="line">security context中的readOnlyRootFilesystem以及privileged都得是false。</span><br><span class="line"></span><br><span class="line">stateles主要是不能存数据在container中，emptyDir的volume也不行。</span><br></pre></td></tr></table></figure>
 
 
 
@@ -656,17 +639,17 @@
 
 
 
-<h2 id="anchore-syft"><a href="#anchore-syft" class="headerlink" title="anchore/syft"></a>anchore/syft</h2><p>syft也是静态扫描工具，可以列出image中的软件清单</p>
+<h2 id="anchore-syft"><a href="#anchore-syft" class="headerlink" title="anchore&#x2F;syft"></a>anchore&#x2F;syft</h2><p>syft也是静态扫描工具，可以列出image中的软件清单</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/anchore/syft </span><br><span class="line"></span><br><span class="line"># install</span><br><span class="line">curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin</span><br><span class="line">如果网络问题，可以先把install.sh内容去保存下来，然后cat install.sh | sh -s -- -b /usr/local/bin latest</span><br><span class="line">如果还是有网络问题，立即换到网络通畅的机器上，这个反正是静态工具，不依赖集群的。</span><br><span class="line"></span><br><span class="line"># usage</span><br><span class="line">% syft yizhiren/opa:0.35.0-rootless</span><br><span class="line"></span><br><span class="line"> ✔ Pulled image            </span><br><span class="line"> ✔ Loaded image            </span><br><span class="line"> ✔ Parsed image            </span><br><span class="line"> ✔ Cataloged packages      [101 packages]</span><br><span class="line">NAME                 VERSION                             TYPE </span><br><span class="line">adduser              3.118ubuntu5                        deb   </span><br><span class="line">apt                  2.3.9                               deb   </span><br><span class="line">base-files           11.1ubuntu5                         deb   </span><br><span class="line">base-passwd          3.5.51                              deb   </span><br><span class="line">bash                 5.1-3ubuntu2                        deb   </span><br><span class="line">bsdutils             1:2.36.1-8ubuntu2                   deb   </span><br><span class="line">coreutils            8.32-4ubuntu2                       deb   </span><br><span class="line">dash                 0.5.11+git20210120+802ebd4-1build1  deb   </span><br><span class="line">debconf              1.5.77                              deb</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="anchore-grype"><a href="#anchore-grype" class="headerlink" title="anchore/grype"></a>anchore/grype</h2><p>grype也是安全检查用的，跟trivy是一样的作用。grype内部依赖syft的列清单功能。</p>
+<h2 id="anchore-grype"><a href="#anchore-grype" class="headerlink" title="anchore&#x2F;grype"></a>anchore&#x2F;grype</h2><p>grype也是安全检查用的，跟trivy是一样的作用。grype内部依赖syft的列清单功能。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/anchore/grype</span><br><span class="line"></span><br><span class="line"># install</span><br><span class="line">curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin</span><br><span class="line">如果网络问题，可以先把install.sh内容去保存下来，然后cat install.sh | sh -s -- -b /usr/local/bin latest</span><br><span class="line">如果还是有网络问题，立即换到网络通畅的机器上，这个反正是静态工具，不依赖集群的。</span><br><span class="line"></span><br><span class="line"># usage:</span><br><span class="line">% grype yizhiren/opa:0.35.0-rootless</span><br><span class="line"></span><br><span class="line"> ✔ Vulnerability DB        [updated]</span><br><span class="line"> ✔ Loaded image            </span><br><span class="line"> ✔ Parsed image            </span><br><span class="line"> ✔ Cataloged packages      [101 packages]</span><br><span class="line"> ✔ Scanned image           [21 vulnerabilities]</span><br><span class="line"></span><br><span class="line">NAME              INSTALLED              FIXED-IN  VULNERABILITY     SEVERITY   </span><br><span class="line">coreutils         8.32-4ubuntu2                    CVE-2016-2781     Low         </span><br><span class="line">libc-bin          2.34-0ubuntu3                    CVE-2016-10228    Negligible  </span><br><span class="line">libc-bin          2.34-0ubuntu3                    CVE-2021-38604    Medium      </span><br><span class="line">libc-bin          2.34-0ubuntu3                    CVE-2020-29562    Low         </span><br><span class="line">libc-bin          2.34-0ubuntu3                    CVE-2019-25013    Low         </span><br><span class="line">libc6             2.34-0ubuntu3                    CVE-2016-10228    Negligible  </span><br><span class="line">libc6             2.34-0ubuntu3                    CVE-2021-38604    Medium</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
 
 
 
-<h2 id="sysdig-falco"><a href="#sysdig-falco" class="headerlink" title="sysdig/falco"></a>sysdig/falco</h2><p>falco会安装内核驱动，然后收集系统的所有行为，然后在上层通过规则来过滤关注的事件并记录日志，是个很强悍的工具。</p>
+<h2 id="sysdig-falco"><a href="#sysdig-falco" class="headerlink" title="sysdig&#x2F;falco"></a>sysdig&#x2F;falco</h2><p>falco会安装内核驱动，然后收集系统的所有行为，然后在上层通过规则来过滤关注的事件并记录日志，是个很强悍的工具。</p>
 <p><img src="/linkimage/cksknowledge/falco_architecture.png" alt="rbac角色"></p>
 <p>图片来自<a target="_blank" rel="noopener" href="https://falco.org/docs/getting-started/">Getting Started</a></p>
 <p>安装falco有两种途径，一种是物理机直接安装，一种是通过docker安装，不过遗憾的是这个工具不支持arm。所以树莓派上跑不起来，还是得在外部机器安装一下，这个工具考试是必考的，大家一定要找个集群安装上尝试一下。</p>
@@ -702,7 +685,7 @@
 
 
 
-<h2 id="immutable-pod-stateless-pod-1"><a href="#immutable-pod-stateless-pod-1" class="headerlink" title="immutable pod / stateless pod"></a>immutable pod / stateless pod</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">immutable主要是指pod不能修改主机文件</span><br><span class="line">涉及security context中的readOnlyRootFilesystem以及privileged。</span><br><span class="line"></span><br><span class="line">stateles主要是不能存状态数据在container中，emptyDir的volume也不行。</span><br></pre></td></tr></table></figure>
+<h2 id="immutable-pod-stateless-pod-1"><a href="#immutable-pod-stateless-pod-1" class="headerlink" title="immutable pod &#x2F; stateless pod"></a>immutable pod &#x2F; stateless pod</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">immutable主要是指pod不能修改主机文件</span><br><span class="line">涉及security context中的readOnlyRootFilesystem以及privileged。</span><br><span class="line"></span><br><span class="line">stateles主要是不能存状态数据在container中，emptyDir的volume也不行。</span><br></pre></td></tr></table></figure>
 
 
 
@@ -716,7 +699,7 @@
 <p>这是因为，已经证明存在一些方法来绕过约束。比如我配置了hostPath不能访问A目录，但是我可以通过挂载B目录间接访问A目录；或者我配置了hostPath只能访问A目录，但是我可以通过A目录，间接访问到B目录。是不是很神奇。</p>
 <p>这部分内容比较独立，并且偏向于攻击，也没有考到，感兴趣的可以跳到<a href="https://yizhi.ren/2022/02/08/hostpath/">k8s中的hostPath的安全隐患</a>查看。</p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>最后祝大家考试顺利~</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://yizhi.ren/2022/02/06/dangerousprivileges/">k8s中的危险权限</a><br><a href="https://yizhi.ren/2022/01/25/setupk8s/">树莓派搭建k8s集群</a><br><a href="https://yizhi.ren/2022/02/08/hostpath/">k8s中的hostPath的安全隐患</a><br><a href="https://yizhi.ren/2022/02/07/podsecuritypolicy/">k8s中的PodSecurityPolicy</a><br><a target="_blank" rel="noopener" href="https://github.com/walidshaari/Kubernetes-Certified-Administrator">CKA prepare</a><br><a target="_blank" rel="noopener" href="https://github.com/dgkanatsios/CKAD-exercises">CKAD prepare</a><br><a target="_blank" rel="noopener" href="https://github.com/walidshaari/Certified-Kubernetes-Security-Specialist">CKS prepare</a><br><a target="_blank" rel="noopener" href="https://github.com/killer-sh/cks-challenge-series/tree/master/challenges/ImagePolicyWebhook">cks-challenge-series/ImagePolicyWebhook</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#imagepolicywebhook">kubernetes admission-controllers imagepolicywebhook</a><br><a target="_blank" rel="noopener" href="https://itnext.io/cks-exam-series-4-crash-that-apiserver-5f4d3d503028">CKS Exam Series #4 Crash that Apiserver !</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/">kubernetes Pod Lifecycle</a><br><a target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-practices-terminating-with-grace">Kubernetes best practices: terminating with grace</a><br><a target="_blank" rel="noopener" href="https://learnk8s.io/blog/smaller-docker-images">3 simple tricks for smaller Docker images</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/containers/runtime-class/">Kubernetes Runtime Class</a><br><a target="_blank" rel="noopener" href="https://gvisor.dev/docs/user_guide/install/">gvisor Installation</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">kubernetes volume hostpath</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/#authentication-flow">kubernetes authentication-flow</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">kubernetes Authenticating</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/apparmor/">Kubernetes Restrict a Container’s Access to Resources with AppArmor</a><br><a target="_blank" rel="noopener" href="https://github.com/open-policy-agent/gatekeeper/blob/release-3.7/deploy/gatekeeper.yaml">GateKeeperV3 deploy file</a><br><a target="_blank" rel="noopener" href="https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/">OPA Tutorial</a><br><a target="_blank" rel="noopener" href="https://www.cyberark.com/resources/threat-research-blog/securing-kubernetes-clusters-by-eliminating-risky-permissions">Securing Kubernetes Clusters by Eliminating Risky Permissions</a><br><a target="_blank" rel="noopener" href="https://dominik-tornow.medium.com/inside-kubernetes-rbac-9988b08a738a">Inside Kubernetes RBAC</a><br><a target="_blank" rel="noopener" href="https://rbac.dev/">advocacy site for Kubernetes RBAC</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG">kubernetes changelog</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/blob/36e967d848006dee386355c26f392f9045bc8f3d/docs/common/dashboard-arguments.md">kubernetes Dashboard arguments</a><br><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml">Dashboard deploy file</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">Dashboard Creating sample user</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui">kubernetes Deploying the Dashboard UI</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/">kubernetes Configure the Aggregation Layer</a><br><a target="_blank" rel="noopener" href="https://itnext.io/our-journey-in-building-a-kubernetes-aggregated-api-server-29a4f9c1de22">Building Kubernetes Aggregated API Server</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/">kubernetes Manage TLS Certificates in a Cluster</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets">kubernetes TLS secrets</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/ingress/#tls">kubernetes TLS ingress</a><br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/aks/ingress-own-tls?tabs=azure-cli">Create an HTTPS ingress controller and use your own TLS certificates on Azure Kubernetes Service</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#signers">kubernetes Signers</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user">kubernetes Normal user</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">kubernetes Pod Security Admission</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/seccomp/">kubernetes Restrict a Container’s Syscalls with seccomp</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">kubernetes Feature Gates</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/blog/2021/08/25/seccomp-default/">kubernetes Enable seccomp for all workloads with a new v1.22 alpha feature</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server">kubernetes Use the Default Service Account to access the API server</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-garbage-collection">kubernetes Garbage collection of failed Pods</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/">kube-apiserver command line parameter</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/">kubernetes Encrypting Secret Data at Rest</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/">kubernetes Auditing</a><br><a target="_blank" rel="noopener" href="https://trstringer.com/kubernetes-alwayspullimages/">Kubernetes’ AlwaysPullImages Admission Control - the Importance, Implementation, and Security Vulnerability in its Absence</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#alwayspullimages">kubernetes AlwaysPullImages</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/configure-pod-container/pull-image-private-registry/">kubernetes imagePullSecrets</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#eventratelimit">kubernetes admission-control eventratelimit</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#anonymous-requests">kubernetes Anonymous requests</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/">kubernetes Kubelet Configuration (v1beta)</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/webhook/">kubernetes Webhook Mode</a><br><a target="_blank" rel="noopener" href="https://downloads.cisecurity.org/">CIS下载网站</a><br><a target="_blank" rel="noopener" href="https://www.ibm.com/docs/zh/cloud-private/3.1.2?topic=upgrade-kubelet-container-fails-start">Kubelet 无法启动</a><br><a target="_blank" rel="noopener" href="https://github.com/aquasecurity/kube-bench/blob/main/docs/running.md">Running kube-bench</a><br><a target="_blank" rel="noopener" href="https://github.com/aquasecurity/kube-bench/blob/main/docs/installation.md">kube-bench Installation</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml">metrics server deploy file</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml">ingress-nginx deploy file</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-gce">github ingress-gce repo</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-nginx">github ingress-nginx repo</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/51076#issuecomment-412846482">anonymous-auth discuss in github kubernetes</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubeadm/issues/798#issuecomment-470579937">anonymous-auth discuss in github kubeadm</a><br><a target="_blank" rel="noopener" href="https://github.com/kinvolk/inspektor-gadget#the-gadgets">gadgets list</a><br><a target="_blank" rel="noopener" href="https://github.com/kinvolk/inspektor-gadget/blob/main/docs/install.md#installing-kubectl-gadget">installing-kubectl-gadget</a><br><a target="_blank" rel="noopener" href="https://krew.sigs.k8s.io/docs/user-guide/setup/install/">krew installing</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/sysdig">sysdig github</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/onprem-install-docs/blob/main/5.0.4/configuration_parameters.md">Sysdig Onprem Configuration Parameters</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/sysdigcloud-kubernetes/releases">sysdigcloud releases</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/onprem-install-docs/blob/main/5.0.4/values.yaml">Sysdig Onprem Configuration Values</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/rules/">Falco Rules</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/examples/">Falco Examples</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/getting-started/running/">Falco Running</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/getting-started/installation/">Falco Install</a><br><a target="_blank" rel="noopener" href="https://github.com/anchore/grype">anchore/grype</a><br><a target="_blank" rel="noopener" href="https://github.com/anchore/syft">anchore/syft</a><br><a target="_blank" rel="noopener" href="https://github.com/aquasecurity/trivy">aquasecurity/trivy</a><br><a target="_blank" rel="noopener" href="https://aquasecurity.github.io/trivy/v0.22.0/getting-started/installation/">trivy installation</a><br><a target="_blank" rel="noopener" href="https://github.com/controlplaneio/kubesec">controlplaneio/kubesec</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/338036211">一文看懂 Container Runtime</a></p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a href="https://yizhi.ren/2022/02/06/dangerousprivileges/">k8s中的危险权限</a><br><a href="https://yizhi.ren/2022/01/25/setupk8s/">树莓派搭建k8s集群</a><br><a href="https://yizhi.ren/2022/02/08/hostpath/">k8s中的hostPath的安全隐患</a><br><a href="https://yizhi.ren/2022/02/07/podsecuritypolicy/">k8s中的PodSecurityPolicy</a><br><a target="_blank" rel="noopener" href="https://github.com/walidshaari/Kubernetes-Certified-Administrator">CKA prepare</a><br><a target="_blank" rel="noopener" href="https://github.com/dgkanatsios/CKAD-exercises">CKAD prepare</a><br><a target="_blank" rel="noopener" href="https://github.com/walidshaari/Certified-Kubernetes-Security-Specialist">CKS prepare</a><br><a target="_blank" rel="noopener" href="https://github.com/killer-sh/cks-challenge-series/tree/master/challenges/ImagePolicyWebhook">cks-challenge-series&#x2F;ImagePolicyWebhook</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#imagepolicywebhook">kubernetes admission-controllers imagepolicywebhook</a><br><a target="_blank" rel="noopener" href="https://itnext.io/cks-exam-series-4-crash-that-apiserver-5f4d3d503028">CKS Exam Series #4 Crash that Apiserver !</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/">kubernetes Pod Lifecycle</a><br><a target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/containers-kubernetes/kubernetes-best-practices-terminating-with-grace">Kubernetes best practices: terminating with grace</a><br><a target="_blank" rel="noopener" href="https://learnk8s.io/blog/smaller-docker-images">3 simple tricks for smaller Docker images</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/containers/runtime-class/">Kubernetes Runtime Class</a><br><a target="_blank" rel="noopener" href="https://gvisor.dev/docs/user_guide/install/">gvisor Installation</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/storage/volumes/#hostpath">kubernetes volume hostpath</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/#authentication-flow">kubernetes authentication-flow</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/">kubernetes Authenticating</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/apparmor/">Kubernetes Restrict a Container’s Access to Resources with AppArmor</a><br><a target="_blank" rel="noopener" href="https://github.com/open-policy-agent/gatekeeper/blob/release-3.7/deploy/gatekeeper.yaml">GateKeeperV3 deploy file</a><br><a target="_blank" rel="noopener" href="https://www.openpolicyagent.org/docs/latest/kubernetes-tutorial/">OPA Tutorial</a><br><a target="_blank" rel="noopener" href="https://www.cyberark.com/resources/threat-research-blog/securing-kubernetes-clusters-by-eliminating-risky-permissions">Securing Kubernetes Clusters by Eliminating Risky Permissions</a><br><a target="_blank" rel="noopener" href="https://dominik-tornow.medium.com/inside-kubernetes-rbac-9988b08a738a">Inside Kubernetes RBAC</a><br><a target="_blank" rel="noopener" href="https://rbac.dev/">advocacy site for Kubernetes RBAC</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/tree/master/CHANGELOG">kubernetes changelog</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/blob/36e967d848006dee386355c26f392f9045bc8f3d/docs/common/dashboard-arguments.md">kubernetes Dashboard arguments</a><br><a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/dashboard/v2.4.0/aio/deploy/recommended.yaml">Dashboard deploy file</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md">Dashboard Creating sample user</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/#deploying-the-dashboard-ui">kubernetes Deploying the Dashboard UI</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/extend-kubernetes/configure-aggregation-layer/">kubernetes Configure the Aggregation Layer</a><br><a target="_blank" rel="noopener" href="https://itnext.io/our-journey-in-building-a-kubernetes-aggregated-api-server-29a4f9c1de22">Building Kubernetes Aggregated API Server</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/tls/managing-tls-in-a-cluster/">kubernetes Manage TLS Certificates in a Cluster</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/configuration/secret/#tls-secrets">kubernetes TLS secrets</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/ingress/#tls">kubernetes TLS ingress</a><br><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/azure/aks/ingress-own-tls?tabs=azure-cli">Create an HTTPS ingress controller and use your own TLS certificates on Azure Kubernetes Service</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#signers">kubernetes Signers</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/certificate-signing-requests/#normal-user">kubernetes Normal user</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/security/pod-security-admission/">kubernetes Pod Security Admission</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/seccomp/">kubernetes Restrict a Container’s Syscalls with seccomp</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/">kubernetes Feature Gates</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/blog/2021/08/25/seccomp-default/">kubernetes Enable seccomp for all workloads with a new v1.22 alpha feature</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#use-the-default-service-account-to-access-the-api-server">kubernetes Use the Default Service Account to access the API server</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-garbage-collection">kubernetes Garbage collection of failed Pods</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/">kube-apiserver command line parameter</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/administer-cluster/encrypt-data/">kubernetes Encrypting Secret Data at Rest</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/debug-application-cluster/audit/">kubernetes Auditing</a><br><a target="_blank" rel="noopener" href="https://trstringer.com/kubernetes-alwayspullimages/">Kubernetes’ AlwaysPullImages Admission Control - the Importance, Implementation, and Security Vulnerability in its Absence</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#alwayspullimages">kubernetes AlwaysPullImages</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/zh/docs/tasks/configure-pod-container/pull-image-private-registry/">kubernetes imagePullSecrets</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#eventratelimit">kubernetes admission-control eventratelimit</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#anonymous-requests">kubernetes Anonymous requests</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/config-api/kubelet-config.v1beta1/">kubernetes Kubelet Configuration (v1beta)</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/access-authn-authz/webhook/">kubernetes Webhook Mode</a><br><a target="_blank" rel="noopener" href="https://downloads.cisecurity.org/">CIS下载网站</a><br><a target="_blank" rel="noopener" href="https://www.ibm.com/docs/zh/cloud-private/3.1.2?topic=upgrade-kubelet-container-fails-start">Kubelet 无法启动</a><br><a target="_blank" rel="noopener" href="https://github.com/aquasecurity/kube-bench/blob/main/docs/running.md">Running kube-bench</a><br><a target="_blank" rel="noopener" href="https://github.com/aquasecurity/kube-bench/blob/main/docs/installation.md">kube-bench Installation</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml">metrics server deploy file</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-nginx/blob/main/deploy/static/provider/baremetal/deploy.yaml">ingress-nginx deploy file</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-gce">github ingress-gce repo</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/ingress-nginx">github ingress-nginx repo</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubernetes/issues/51076#issuecomment-412846482">anonymous-auth discuss in github kubernetes</a><br><a target="_blank" rel="noopener" href="https://github.com/kubernetes/kubeadm/issues/798#issuecomment-470579937">anonymous-auth discuss in github kubeadm</a><br><a target="_blank" rel="noopener" href="https://github.com/kinvolk/inspektor-gadget#the-gadgets">gadgets list</a><br><a target="_blank" rel="noopener" href="https://github.com/kinvolk/inspektor-gadget/blob/main/docs/install.md#installing-kubectl-gadget">installing-kubectl-gadget</a><br><a target="_blank" rel="noopener" href="https://krew.sigs.k8s.io/docs/user-guide/setup/install/">krew installing</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/sysdig">sysdig github</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/onprem-install-docs/blob/main/5.0.4/configuration_parameters.md">Sysdig Onprem Configuration Parameters</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/sysdigcloud-kubernetes/releases">sysdigcloud releases</a><br><a target="_blank" rel="noopener" href="https://github.com/draios/onprem-install-docs/blob/main/5.0.4/values.yaml">Sysdig Onprem Configuration Values</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/rules/">Falco Rules</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/examples/">Falco Examples</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/getting-started/running/">Falco Running</a><br><a target="_blank" rel="noopener" href="https://falco.org/docs/getting-started/installation/">Falco Install</a><br><a target="_blank" rel="noopener" href="https://github.com/anchore/grype">anchore&#x2F;grype</a><br><a target="_blank" rel="noopener" href="https://github.com/anchore/syft">anchore&#x2F;syft</a><br><a target="_blank" rel="noopener" href="https://github.com/aquasecurity/trivy">aquasecurity&#x2F;trivy</a><br><a target="_blank" rel="noopener" href="https://aquasecurity.github.io/trivy/v0.22.0/getting-started/installation/">trivy installation</a><br><a target="_blank" rel="noopener" href="https://github.com/controlplaneio/kubesec">controlplaneio&#x2F;kubesec</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/338036211">一文看懂 Container Runtime</a></p>
 
     </div>
 
@@ -726,7 +709,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -752,12 +735,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2022/02/08/hostpath/" rel="prev" title="k8s中的hostPath的安全隐患">
-                  <i class="fa fa-chevron-left"></i> k8s中的hostPath的安全隐患
+                  <i class="fa fa-angle-left"></i> k8s中的hostPath的安全隐患
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2022/06/15/namespace/" rel="next" title="linux namespace">
-                  linux namespace <i class="fa fa-chevron-right"></i>
+                  linux namespace <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -778,17 +761,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -814,12 +796,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -831,9 +831,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"bc9c229c312c8410d843df392c0ce55a"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"bc9c229c312c8410d843df392c0ce55a"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>

@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 6.0.0">
-
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
@@ -17,11 +15,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.9.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
-<meta name="description" content="Go调度器我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。 为什么要有Runtime开销上我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。POSIX线程(POSIX是线程标准，定义">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Go调度器我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。 为什么要有Runtime开销上我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。POSIX线程(POSIX是线程标准，定义">
 <meta property="og:type" content="article">
 <meta property="og:title" content="golang scheduler">
 <meta property="og:url" content="https://yizhi.ren/2019/06/03/goscheduler/index.html">
@@ -49,11 +48,15 @@
 <title>golang scheduler | 一支人</title>
   
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
-  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false}</script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
   <script src="/js/third-party/analytics/google-analytics.js"></script>
 
   <script src="/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
 
 
 
@@ -66,8 +69,8 @@
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切换导航栏" role="button">
         <span class="toggle-line"></span>
@@ -87,7 +90,7 @@
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
         <i class="fa fa-search fa-fw fa-lg"></i>
     </div>
   </div>
@@ -96,13 +99,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-        <li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li>
-        <li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -135,15 +132,9 @@
     </div>
   </div>
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -164,13 +155,13 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="yizhiren"
       src="https://avatars0.githubusercontent.com/u/15405596">
   <p class="site-author-name" itemprop="name">yizhiren</p>
   <div class="site-description" itemprop="description">[&](){}</div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
@@ -191,27 +182,15 @@
   </nav>
 </div>
 
-
-
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -229,11 +208,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
       <meta itemprop="name" content="yizhiren">
-      <meta itemprop="description" content="[&](){}">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="golang scheduler | 一支人">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -276,8 +260,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody">
-        <h1 id="Go调度器"><a href="#Go调度器" class="headerlink" title="Go调度器"></a>Go调度器</h1><p>我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。</p>
+    <div class="post-body" itemprop="articleBody"><h1 id="Go调度器"><a href="#Go调度器" class="headerlink" title="Go调度器"></a>Go调度器</h1><p>我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。</p>
 <h2 id="为什么要有Runtime"><a href="#为什么要有Runtime" class="headerlink" title="为什么要有Runtime"></a>为什么要有Runtime</h2><h3 id="开销上"><a href="#开销上" class="headerlink" title="开销上"></a>开销上</h3><p>我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。<br>POSIX线程(POSIX是线程标准，定义了创建和操纵线程的一套API)通常是在已有的进程模型中增加的逻辑扩展，所以线程控制和进程控制很相似。线程也有自己的信号掩码(signal mask)， 线程也可以设置CPU亲和性(CPU affinity)，也可以放进cgroups中进行资源管理。假如goroutines(go的执行单元)对应线程的话，使用这些特性对线程进行控制管理就增加了开销，因为go程序运行goroutines(go的执行单元)不需要这些特性。这类消耗在goroutine达到比如10,0000个的时候就会很大。所以go需要有个运行时在调度goroutines而不是只是让操作系统调度线程。</p>
 <h3 id="垃圾回收上"><a href="#垃圾回收上" class="headerlink" title="垃圾回收上"></a>垃圾回收上</h3><p>go包含垃圾回收(GC)的特性，在垃圾回收的时候所有goroutines必须处于暂停的状态，这样go的内存才会处于一种一致的状态. 所以我们必须等待所有线程处于内存一致的状态才能进行垃圾回收。</p>
 <p>在没有调度器的时候，线程调度是随操作系统的意的，你不得不试图去等待所有的已经暂停和还没暂停的线程，而且不知道等多久, 暂停后如何让他们保持暂停直到gc结束，也是一个难题。</p>
@@ -317,7 +300,7 @@
 <p>第一个问题是全局锁，无论是修改M还是G的队列还是其他SCHED结构的相关字段，都需要获取这个全局锁，当遇到高吞吐高并发的程序的时候，这个设计会导致调度器的性能问题。</p>
 <p>第二个是当前有很多M之间传递G的情况，比如新建的G会被被放到全局队列，而不是在M本地执行，这导致了不必要的开销和延迟，应该优先在创建G的M上执行就可以了。</p>
 <p>第三个问题是每一个M现在都持有一个内存，包括了阻塞状态的M也是持有的。Active状态的M跟总的M个数之比可以达到1:100。这就导致了过多的内存消耗，以及较差的数据局部性。数据局部性怎么理解呢？数据局部性这里是指G当前在M运行后对M的内存进行了预热，后面如果再次调度到同一个M那么可以加速访问，可想而知，因为现在G调度到同一个M的概率不高，所以数据局部性不好。</p>
-<p>第四个是M持续的阻塞和唤醒带来的开销。比如M找不到G（目的是一有runable的G就执行），此时M就会进入频繁阻塞/唤醒来进行检查的逻辑，以便及时发现新的G来执行。</p>
+<p>第四个是M持续的阻塞和唤醒带来的开销。比如M找不到G（目的是一有runable的G就执行），此时M就会进入频繁阻塞&#x2F;唤醒来进行检查的逻辑，以便及时发现新的G来执行。</p>
 <h2 id="新调度器"><a href="#新调度器" class="headerlink" title="新调度器"></a>新调度器</h2><h3 id="调度器细节"><a href="#调度器细节" class="headerlink" title="调度器细节"></a>调度器细节</h3><p>Dmitry Vyukov的方案是引入一个结构P，用来模拟处理器，M依旧表示操作系统线程，G依旧表示一个goroutine。</p>
 <p>GOMAXPROCS用来控制P的个数，同时P作为M执行G代码时的必需资源。</p>
 <p>新的P结构会带走原来的M和SCHED结构中的一些属性，比如MCache从M移到了P，而G队列也被分成两类，SCHED结构保留全局G队列，同时每个P中都会有一个本地的G队列。</p>
@@ -328,7 +311,7 @@
 <p>当一个新的G被创建的时候，G被放到当前M所关联的P的本地队列结尾，这样G虽然不是立即执行，但最终会得到执行。</p>
 <p>当P执行系统调用即将阻塞时，M会释放P，并进入阻塞，直到系统调用返回时，M会尝试获取空闲的P，有的话继续执行，没有就把G会放到全局G，而M会进入空闲的M队列。</p>
 <p>由于每个P都有G队列，那么当一个P的G队列执行完了的时候，另一个P却可能堆积了很多G，所以新的调度器有个G的调度算法，一般都叫做窃取算法（stealing algorithm）。</p>
-<p>当一个P执行完本地所有的G之后，会尝试随机挑选一个受害者P，从它的G队列中窃取一半的G。当尝试若干次窃取都失败之后，会从全局G队列中获取G。那么一次从全局队列取多少个呢，取 [当前个数/GOMAXPROCS]个(忽略其他一些限值检查)。所以可以看到这个全局队列使用的频率很低，虽然也是全局锁但是不至于影响性能。当然光窃取失败时获取是不够的可能会导致全局队列饥饿。P的算法中还会每个N轮调度之后就去全局队列拿一个G。那么全局队列的G又是谁放进去的呢？是在新建G时P的本地G队列放不下的时候会放半数G到全局队列去,阻塞的系统调用返回时找不到空闲P也会放到全局队列。<br>完整的过程其实比较繁琐,取g的完整顺序为: local-&gt;global-&gt;netpoll-&gt;steal-&gt;global-&gt;netpoll</p>
+<p>当一个P执行完本地所有的G之后，会尝试随机挑选一个受害者P，从它的G队列中窃取一半的G。当尝试若干次窃取都失败之后，会从全局G队列中获取G。那么一次从全局队列取多少个呢，取 [当前个数&#x2F;GOMAXPROCS]个(忽略其他一些限值检查)。所以可以看到这个全局队列使用的频率很低，虽然也是全局锁但是不至于影响性能。当然光窃取失败时获取是不够的可能会导致全局队列饥饿。P的算法中还会每个N轮调度之后就去全局队列拿一个G。那么全局队列的G又是谁放进去的呢？是在新建G时P的本地G队列放不下的时候会放半数G到全局队列去,阻塞的系统调用返回时找不到空闲P也会放到全局队列。<br>完整的过程其实比较繁琐,取g的完整顺序为: local-&gt;global-&gt;netpoll-&gt;steal-&gt;global-&gt;netpoll</p>
 <p>在窃取到的G中，有一些G是标记了它绑定的M的，遇到这类G的话，当前M就会检查这个绑定的M是否是空闲状态，如果是空闲的话（不空闲就有问题了，这个M是专门执行这个G的不会执行别的G）就会把这个M唤醒，然后把P和G交给它去执行，自己则进入阻塞状态。这部分逻辑是实现协程和线程一一绑定的关系，参见<a target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/LockOSThread">LockOSThread</a>。</p>
 <p>同时新调度器中引入了线程自旋，自旋有好处有坏处，好处是避免线程被阻塞陷入内核，坏处是自旋属于空转，浪费CPU。只能说适度使用自旋是可以带来好处的。新方案在两个地方引入自旋：</p>
 <p><code>1，M找不到P（目的是一有P释放就结合）</code></p>
@@ -398,9 +381,9 @@
 <h3 id="CSP和Actors的区别"><a href="#CSP和Actors的区别" class="headerlink" title="CSP和Actors的区别"></a>CSP和Actors的区别</h3><h4 id="同步异步"><a href="#同步异步" class="headerlink" title="同步异步"></a>同步异步</h4><p>CSP的通信机制通常是同步的，任务被推进channel后立即被对端收到并执行，如果对端正忙，则发送者就阻塞无法推送该任务，golang对channel进行了修改，支持缓存任务，可以缓存多个任务等待执行，避免发送者阻塞。</p>
 <p>Actors的通信机制通常是异步的，消息发送时发送者不会阻塞，接收者也不一定马上收到，收到也不一定马上执行。erlang中的actor角色非常广泛，可以是同个runtime下的，也可以是runtime间的，甚至可以是机器间的。</p>
 <h4 id="匿名性"><a href="#匿名性" class="headerlink" title="匿名性"></a>匿名性</h4><p>CSP中的channel通常是匿名的，任务放进channel后你并不知道对端是谁在接收。</p>
-<p>Actors中的message通常有确定目标，你需要确切的知道对方的地址(ID/NAME/PORT等)才能将信息发送出去。</p>
+<p>Actors中的message通常有确定目标，你需要确切的知道对方的地址(ID&#x2F;NAME&#x2F;PORT等)才能将信息发送出去。</p>
 <h3 id="耦合性"><a href="#耦合性" class="headerlink" title="耦合性"></a>耦合性</h3><p>CSP中channel是共享的，可以多个生产者可多个消费者公用，生产者消费者之间不强关联。</p>
-<p>Actors中你必须知道对方的地址(ID/NAME/PORT等)，这导致生产者和消费者之间发生耦合，对方actor是不可替换的。</p>
+<p>Actors中你必须知道对方的地址(ID&#x2F;NAME&#x2F;PORT等)，这导致生产者和消费者之间发生耦合，对方actor是不可替换的。</p>
 <h3 id="容错"><a href="#容错" class="headerlink" title="容错"></a>容错</h3><p>CSP没有定义容错方面的内容，所以开发者需要自己处理channel接收和发送的错误，这些错误处理逻辑可能会到处都是。</p>
 <p>Actors支持容错，你可以定义错误的类型，错误处理方式，错误的级别等。</p>
 <h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://morsmachine.dk/go-scheduler">go-scheduler</a></p>
@@ -419,7 +402,7 @@
 
     <footer class="post-footer">
           <div class="reward-container">
-  <div></div>
+  <div>请我一杯咖啡吧！</div>
   <button>
     赞赏
   </button>
@@ -445,12 +428,12 @@
           <div class="post-nav">
             <div class="post-nav-item">
                 <a href="/2019/05/23/receiver/" rel="prev" title="strange golang receiver">
-                  <i class="fa fa-chevron-left"></i> strange golang receiver
+                  <i class="fa fa-angle-left"></i> strange golang receiver
                 </a>
             </div>
             <div class="post-nav-item">
                 <a href="/2019/06/08/gonetpoller/" rel="next" title="golang netpoller">
-                  golang netpoller <i class="fa fa-chevron-right"></i>
+                  golang netpoller <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
@@ -471,17 +454,16 @@
     <div class="footer-inner">
 
   <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
-      <img src="https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175" alt=""><a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+      <img src="/favicon/beian_icon.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
   </div>
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2024</span>
-  <span class="with-love">
-    <i class="fa fa-user"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">yizhiren</span>
-</div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
 <div class="busuanzi-count">
     <span class="post-meta-item" id="busuanzi_container_site_uv">
       <span class="post-meta-item-icon">
@@ -507,12 +489,30 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
-<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
+
+
 
 
 
@@ -524,9 +524,9 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
 
-<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdn.jsdelivr.net/npm/gitalk@1.7.2/dist/gitalk.min.js","integrity":"sha256-Pmj85ojLaPOWwRtlMJwmezB/Qg8BzvJp5eTzvXaYAfA="},"path_md5":"4017ded9ebee107f8d4038629fe107b9"}</script>
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"4017ded9ebee107f8d4038629fe107b9"}</script>
 <script src="/js/third-party/comments/gitalk.js"></script>
 
 </body>
