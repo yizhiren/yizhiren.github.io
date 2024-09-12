@@ -227,7 +227,7 @@ footer:
     # The full num of gongan beian.
     gongan_num: 浙公网安备 33011002016624号
     # The icon for gongan beian. See: http://www.beian.gov.cn/portal/download
-    gongan_icon_url: https://www.beian.gov.cn/portal/download?token=0da1dcae-2cde-47d3-8023-37978f5de175
+    gongan_icon_url: /favicon/beian_icon.png
 
 
 # ---------------------------------------------------------------
@@ -887,7 +887,7 @@ vendors:
   # The default CDN provider of third-party plugins.
   # Available values: local | jsdelivr | unpkg | cdnjs | custom
   # Dependencies for `plugins: local`: https://github.com/next-theme/plugins
-  plugins: jsdelivr
+  plugins: cdnjs
   # Custom CDN URL
   # For example:
   # custom_cdn_url: https://cdn.jsdelivr.net/npm/${npm_name}@${version}/${minified}
