@@ -246,8 +246,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="SOA框架iceoryx原理解析"><a href="#SOA框架iceoryx原理解析" class="headerlink" title="SOA框架iceoryx原理解析"></a>SOA框架iceoryx原理解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在我之前的一篇<a href="https://yizhi.ren/2019/06/25/microservice/">微服务</a>的文章中曾经总结了微服务跟SOA的差异点和相同点，总结的结论如下：</p>
+          <h2 id="SOA框架iceoryx原理解析"><a href="#SOA框架iceoryx原理解析" class="headerlink" title="SOA框架iceoryx原理解析"></a>SOA框架iceoryx原理解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>这篇文章，会介绍一个SOA框架，框架提供高效的通信能力。这个是他的logo，很漂亮，会让你忍不住想，这大概是个很酷的框架。</p>
+<p><img src="/linkimage/iceoryx/iceoryx_logo.jpg" alt="iceoryx logo"></p>
+<p>在我之前的一篇<a href="https://yizhi.ren/2019/06/25/microservice/">微服务</a>的文章中曾经总结了微服务跟SOA的差异点和相同点，总结的结论如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">差异可以归纳为：</span><br><span class="line">SOA面向企业范围，微服务面向应用范围。</span><br><span class="line">SOA带有异构集成的语义，微服务没有这个语义。</span><br><span class="line">SOA服务内部支持组件分离的架构，微服务则是更彻底的组件分离架构-组件在网络上隔离。</span><br></pre></td></tr></table></figure>
+
 <p>基于这个总结，如果我们现在要写一套SOA服务框架，我们可以推导出这个框架的哪些特性呢？</p>
 <blockquote>
 <p>从第一条中我们可以看出这套框架将是一个企业级别的框架，他不像微服务那样可以给每个服务灵活和独立的特性，SOA框架一旦推广使用，他就是企业级别的。</p>
