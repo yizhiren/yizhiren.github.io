@@ -653,4 +653,84 @@ struct ChunkManagement
 (右键-在新标签页中打开图片，可以看得更清晰)
 
 
+
 ## Runtime
+
+### 初始化 initRuntime
+#### 实例化 PoshRuntimeImpl
+首先初始化Runtime的代码是：`iox::runtime::PoshRuntime::initRuntime(APP_NAME);`.
+跟踪到内部后可以看到他就是实例化PoshRuntimeImpl并调用其构造函数， 但是他实例化的代码相对复杂，这里稍微展开一下。
+实例化的核心代码：
+~~~ c++
+PoshRuntime& PoshRuntime::defaultRuntimeFactory(optional<const RuntimeName_t*> name) noexcept
+{
+    static typename std::aligned_storage<sizeof(PoshRuntimeImpl), alignof(PoshRuntimeImpl)>::type buf;
+    static ScopeGuard staticLifetimeParticipant = [](auto name) {
+        new (&buf) PoshRuntimeImpl(name);
+        poshRuntimeNeedsManualDestruction() = true;
+        return getLifetimeParticipant();
+    }(name);
+    return reinterpret_cast<PoshRuntimeImpl&>(buf);
+}
+~~~
+这段代码里面创建了两个静态变量，一个是buf， 一个是staticLifetimeParticipant。其中buf就是一段内存对齐的buffer，他跟`char buf[sizeof(PoshRuntimeImpl)]`是差不多的。这个buf就是被创建来做为PoshRuntimeImpl的载体的，并在`new (&buf) PoshRuntimeImpl(name);`中被执行实例化。staticLifetimeParticipant则是为了管理PoshRuntimeImpl的析构时机， staticLifetimeParticipant在被析构的时候会检查这是不是最后一个ScopeGuard（staticLifetimeParticipan的类型）， 如果是就析构PoshRuntimeImpl。
+~~~ c++
+
+ScopeGuard PoshRuntime::getLifetimeParticipant() noexcept
+{
+    return ScopeGuard([]() { ++poshRuntimeStaticRefCount(); },
+                      []() {
+                          if (0 == --poshRuntimeStaticRefCount() && poshRuntimeNeedsManualDestruction())
+                          {
+                              getInstance().~PoshRuntime();
+                          }
+                      });
+}
+~~~
+也就是说Runtime的实例PoshRuntimeImpl在第一次调用initRuntime的时候被实例化，实例化的对象存放在一段static的buf中；而PoshRuntimeImpl的析构则是在全部ScopeGuard被析构之后才被析构，所有在其生命周期中需要确保PoshRuntimeImpl存在的模块，都应该人为调用`static ScopeGuard staticLifetimeParticipant=getLifetimeParticipant()`在他的cpp中，以确保PoshRuntimeImpl能覆盖该模块的生命周期。
+这种方式比较精确的控制了全局变量的构造和析构时机， 比简单的`static PoshRuntimeImpl impl;`要灵活和安全。这种方式有一个专门名字叫`nifty counter`. 可以参考[c++ 全局变量初始化及惯用方法之 Nifty Counter](https://yukwan.cn/2024/02/07/3fcdefc8c29b/).
+
+#### PoshRuntimeImpl构造函数
+
+PoshRuntimeImpl的构造函数中主要做两个事情，一个是`IpcRuntimeInterface::create`，一个是`SharedMemoryUser::create`.
+
+`IpcRuntimeInterface::create`中做的事情依次为：
+
+1.  尝试建立与RouDi的Ipc连接， 在linux中， 其通过UnixDomainSocket来连接到RouDi的。
+
+```c++
+#if defined(_WIN32)
+using IoxIpcChannelType = iox::NamedPipe;
+#elif defined(__FREERTOS__)
+using IoxIpcChannelType = iox::NamedPipe;
+#else
+using IoxIpcChannelType = iox::UnixDomainSocket;
+#endif
+```
+
+尝试的意思是，连接，但是先容许错误， 因为RouDi可能此时还没有启动。
+
+2. 建立一个属于自己的DomianSocket，如果创建失败，会立即返回错误。成功后，会创建以runtimeName为文件名的DomianSocket。
+3. 如果1中连接连接失败， 就持续重试，直到超时返回错误，或者连接成功。
+
+4. 通过1中建立的连接，向RouDi发送一条REGISTER请求。请求中携带了runtimeName，因此， RouDi收到后，能够拼出此runtime的DomianSocket路径。
+5. 在2中创建的socket中等待RouDi对REGISTER的响应，直到超时返回，或者成功收到响应。收到响应后检查响应内容， 如果符合预期，拿到了相关的信息， 表示注册成功。 否则表示注册失败。成功之后完成`IpcRuntimeInterface::create`过程， 失败的话，就从第3步循环， 直到整个过程超时。
+
+所以如果`IpcRuntimeInterface::create`返回成功， 那就表示runtime已经成功与RouDi建立连接， 并且经过一轮交互，注册成功了。
+
+接着`SharedMemoryUser::create`做的事情则是
+
+
+
+### 借内存 loan
+
+### 发数据 publish
+
+
+
+
+
+
+
+
+
