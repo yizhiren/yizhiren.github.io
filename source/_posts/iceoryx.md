@@ -621,15 +621,15 @@ class MemPool
 
 ~~~
 
-那么这些类定义里面，有两个重要的信息，一个是MePooSegment::m_sharedMemoryObject，这是一个非常重要的成员。我们已经知道MePooSegment代表一个内存段，他可能会很大，大到几个G。iceoryx中一个内存段对应一个MePooSegment对象，而一个MePooSegment对应一个m_sharedMemoryObject对象，因此实际上一个内存段会对应一个m_sharedMemoryObject对象，也就是会对应一个共享内存文件，通过这个共享内存的创建完成内存池的创建。
+那么这些类定义里面，有两个重要的信息，一个是`MePooSegment::m_sharedMemoryObject`，这是一个非常重要的成员。我们已经知道`MePooSegment`代表一个内存段，他可能会很大，大到几个G。iceoryx中一个内存段对应一个`MePooSegment`对象，而一个`MePooSegment`对应一个`m_sharedMemoryObject`对象，因此实际上一个内存段会对应一个`m_sharedMemoryObjec`t对象，也就是会对应一个共享内存文件，通过这个共享内存的创建完成内存池的创建。
 
-iceoryx没有把m_sharedMemoryObject整合到前面统一创建的整个内存段中，而是设计为一个独立的内存段，我个人理解是他要把管理和数据两类内存分开，前面统一创建的一片内存都是用于管理的目的，对应的共享内存文件名叫iceoryx_mgmt，可以看出是用于管理作用的。 而现在这里的内存是单纯作为内存池供用户存放业务数据的，作用上比较独立，所以就适合分开。
+iceoryx没有把`m_sharedMemoryObject`整合到前面统一创建的整个内存段中，而是设计为一个独立的内存段，我个人理解是他要把管理和数据两类内存分开，前面统一创建的一片内存都是用于管理的目的，对应的共享内存文件名叫`iceoryx_mgmt`(后面master分支名字有变化)，可以看出是用于管理作用的。 而现在这里的内存是单纯作为内存池供用户存放业务数据的，作用上比较独立，所以就适合分开。
 
-m_sharedMemoryObject对应的共享内存文件名是你当前的用户名，比如你是root用户，那么对应的文件在linux系统中就是/dev/shm/root。那么如果多个MePooSegment对象对应的文件名又分别是什么呢？事实上当前的iceoryx并没有在事实上支持多个MePooSegment对象！
+`m_sharedMemoryObject`对应的共享内存文件名是你当前的用户名，比如你是root用户，那么对应的文件在linux系统中就是`/dev/shm/root`(后面master分支名字有变化)。那么如果多个`MePooSegment`对象对应的文件名又分别是什么呢？事实上当前的iceoryx并没有在事实上支持多个`MePooSegment`对象！
 
 **虽然不论从数据结构层面和配置文件层面都是支持多个内存段的，但是实际使用上我发现并不支持，如果我配置了多个[[segment]]，那么创建的共享内存文件只包含最后一个内存段的空间大小，并且功能上也不再正常。**
 
-上面类图中另一个重要信息是MemoryManager中有m_memPoolVector和m_chunkManagementPool，其中m_memPoolVector可以理解是对应了内存池。m_chunkManagementPool又是什么呢？
+上面类图中另一个重要信息是`MemoryManager`中有`m_memPoolVector`和`m_chunkManagementPool`，其中`m_memPoolVector`可以理解是对应了内存池。`m_chunkManagementPool`又是什么呢？
 
 我们知道内存池都是固定大小的内存块，内存的块数也是确定的。每一块内存被申请使用时，需要通过引用计数确保内存被正确的释放，那么就需要有个memory wrapper这样的角色对内存地址进行封装，把内存地址和引用计数封装在一起。比如下面来自源码的类定义：
 
@@ -643,11 +643,11 @@ struct ChunkManagement
 };
 ~~~
 
-每一个内存块都需要一个memory wrapper进行管理，因此iceoryx最多需要N个memory wrapper进行管理，N是每一个pool的内存块个数的总和。上面类定义中m_chunkManagementPool就是指向一个分配ChunkManagement的内存池，这个内存池追加在上面无锁队列的后面，跟m_memPoolVector的内存池指向独立的共享内存文件不同，这点在后面的内存分配图中可以看出。
+每一个内存块都需要一个memory wrapper进行管理，因此iceoryx最多需要N个memory wrapper进行管理，N是每一个pool的内存块个数的总和。上面类定义中`m_chunkManagementPool`就是指向一个分配`ChunkManagement`的内存池，这个内存池追加在上面无锁队列的后面，跟`m_memPoolVector`的内存池指向独立的共享内存文件不同，这点在后面的内存分配图中可以看出。
 
 ### 完整的内存分配图
 
-下图是对上面内存分配的完整总结，大片的内存总共是两片，一个是文件名为iceoryx_mgmt的用于管理的内存，内存切分成多个不同的区域分给不同的对象管理；一个是文件名为用户名的用作内存池的内存，其大小受到配置文件的影响。
+下图是对上面内存分配的完整总结，大片的内存总共是两片，一个是文件名为`iceoryx_mgmt`的用于管理的内存，内存切分成多个不同的区域分给不同的对象管理；一个是文件名为用户名的用作内存池的内存，其大小受到配置文件的影响。
 
 ![iceoryx_memory_allocate](/linkimage/iceoryx/iceoryx_memory_allocate.png)
 (右键-在新标签页中打开图片，可以看得更清晰)
@@ -661,6 +661,7 @@ struct ChunkManagement
 首先初始化Runtime的代码是：`iox::runtime::PoshRuntime::initRuntime(APP_NAME);`.
 跟踪到内部后可以看到他就是实例化PoshRuntimeImpl并调用其构造函数， 但是他实例化的代码相对复杂，这里稍微展开一下。
 实例化的核心代码：
+
 ~~~ c++
 PoshRuntime& PoshRuntime::defaultRuntimeFactory(optional<const RuntimeName_t*> name) noexcept
 {
@@ -710,7 +711,7 @@ using IoxIpcChannelType = iox::UnixDomainSocket;
 
 尝试的意思是，连接，但是先容许错误， 因为RouDi可能此时还没有启动。
 
-2. 建立一个属于自己的DomianSocket，如果创建失败，会立即返回错误。成功后，会创建以runtimeName为文件名的DomianSocket。
+2. 建立一个属于自己的DomianSocket，如果创建失败，会立即返回错误。成功后，会创建以runtimeName为文件名的DomianSocket, runtimeName就是initRuntime()函数中用户传入的参数。
 3. 如果1中连接连接失败， 就持续重试，直到超时返回错误，或者连接成功。
 
 4. 通过1中建立的连接，向RouDi发送一条REGISTER请求。请求中携带了runtimeName，因此， RouDi收到后，能够拼出此runtime的DomianSocket路径。
@@ -718,15 +719,168 @@ using IoxIpcChannelType = iox::UnixDomainSocket;
 
 所以如果`IpcRuntimeInterface::create`返回成功， 那就表示runtime已经成功与RouDi建立连接， 并且经过一轮交互，注册成功了。
 
-接着`SharedMemoryUser::create`做的事情则是
+注册成功后,接着就是执行`SharedMemoryUser::create`.
 
+`SharedMemoryUser::create`做的事本质上是把RouDi打开过的共享内存文件, 同样打开一遍. 前面我们梳理内存管理对象的时候有过这个关系: [总内存]->[内存段]->[内存池], 其中总内存和内存段是内存管理的对象, 他们位于叫`xxx_management`的以management为后缀的内存文件中, 而内存池, 则是实际用于分配的内存片段, 位于单独的`xxx_username`以你的实际用户名为后缀的内存文件中.
 
+```shell
+# 这是基于2025年初master分支编译的linux版本RouDi,运行后生成的两个对应的共享内存文件.
+# 较早的版本文件名中前缀并不一样, 但是后缀_management和_qiming是一样的.
+$ ls /dev/shm -lh
+total 176M
+-rw-rw----  1 qiming qiming  34M  1月 28 18:05 iox1_0_i_management
+-rw-rw----+ 1 qiming qiming 143M  1月 28 18:05 iox1_0_u_qiming
+
+```
+
+打开的过程是这样的:
+
+1. 打开_management为后缀的共享内存文件. 文件名是RouDi和Runtime用一致的规则拼接的,所以是一致的.
+
+2. 接着用打开的文件的基地址加上RouDi在response中响应回来的offset值,来定位到[总内存]这个管理对象的地址,并把地址强转成mepoo::SegmentManager*类型,来完成mepoo::SegmentManager对象的构造.
+
+3. 接着从SegmentManager中拿到[内存段]列表, 每个[内存段]对应一个共享内存文件, 于是打开对应的这个内存文件. 也就是以用户名为后缀的这个文件.通常[内存段]只用到一个, 所以上面我们ls出来只有一个用户名后缀的文件, 这一个内存文件包含了全部的内存池.
+
+4. 打开的这些内存文件,他的地址是怎么管理的呢, 他是把这个文件的地址跟一个segmentId进行关联,保存在全局的容器里面, 后续涉及获取这个内存地址的,都采用传入segmentId的方式进行获取.
+
+   
 
 ### 借内存 loan
 
+loan内存经过的步骤:
+
+1. 向RouDi申请创建Publisher, RouDi回复成功或者失败, 如果成功,就返回一个内存offset,对应了PublisherPortData对象的内存地址.
+
+   ```c++
+   PublisherPortUserType::MemberType_t*
+   PoshRuntimeImpl::getMiddlewarePublisher(const capro::ServiceDescription& service,
+                                           const popo::PublisherOptions& publisherOptions,
+                                           const PortConfigInfo& portConfigInfo) noexcept
+   {
+   ...
+   auto maybePublisher = requestPublisherFromRoudi(sendBuffer);
+   ...
+   return maybePublisher.value();
+   }
+   
+   expected<PublisherPortUserType::MemberType_t*, IpcMessageErrorType>
+   PoshRuntimeImpl::requestPublisherFromRoudi(const IpcMessage& sendBuffer) noexcept
+   {
+       
+       IpcMessage receiveBuffer;
+       if (sendRequestToRouDi(sendBuffer, receiveBuffer) == false)
+       {
+   		...
+       }
+       else if (receiveBuffer.getNumberOfElements() == 3U)
+       {
+   		...
+           if (stringToIpcMessageType(IpcMessage.c_str()) == IpcMessageType::CREATE_PUBLISHER_ACK)
+           {
+               ...
+               // using MemberType_t = PublisherPortData;
+               // RouDi返回的是PublisherPortData类型
+               return ok(reinterpret_cast<PublisherPortUserType::MemberType_t*>(ptr));
+           }
+       }
+       
+   }
+   ```
+
+2. 基于1中创建的PublisherPortData对象, 我们调用`PublisherPortData::m_chunkSenderData::m_memoryMgr::getChunk(xxx)`来获取一块满足大小的chunk也就是一块内存. 这里m_memoryMgr对象负责管理一个共享内存文件, 里面的对象被分成多个不同chunk size的pool, 也就是上面讲到过的内存管理方案([总内存]->[内存段]->[内存池])中内存段的管理对象,这个函数会遍历每一个不同chunk大小的pool, 遇到满足size的pool,就从pool中申请一块, 这个pool中没有空闲了,就返回不错, 不向更大的pool申请.
+
+   ```c++
+   expected<SharedChunk, MemoryManager::Error> MemoryManager::getChunk(const ChunkSettings& chunkSettings) noexcept
+   {
+       ......
+   
+       for (auto& memPool : m_memPoolVector)
+       {
+           uint64_t chunkSizeOfMemPool = memPool.getChunkSize();
+           if (chunkSizeOfMemPool >= requiredChunkSize)
+           {
+               chunk = memPool.getChunk();
+               memPoolPointer = &memPool;
+               aquiredChunkSize = chunkSizeOfMemPool;
+               break;
+           }
+       }
+   
+   	....
+   }
+   ```
+
+可以看出第一步只要做一次, 第二步则是loan一次执行一次. 第一步在publisher的构造函数中的得到执行, 第二步在每次调用loan函数时候得到执行.
+
+
+
 ### 发数据 publish
 
+发数据的过程, 核心还是在上面创造的`PublisherPortData`对象, 在`PublisherPortData::m_chunkSenderData::m_queues`中保存了数据发送的目标队列,也就是`subscriber`队列.我们遍历这个队列,然后把我们要发送的chunk塞进队列中, 如果存在对应的`condition_variable`, 就同时触发一次唤醒.
 
+```c++
+template <typename ChunkDistributorDataType>
+inline uint64_t ChunkDistributor<ChunkDistributorDataType>::deliverToAllStoredQueues(mepoo::SharedChunk chunk) noexcept
+{
+    ......
+            // send to all the queues
+        for (auto& queue : getMembers()->m_queues)
+        {
+            ...
+
+            if (pushToQueue(queue.get(), chunk))
+            {
+                ++numberOfQueuesTheChunkWasDeliveredTo;
+            }
+            else
+            {
+              ...   
+            }
+            
+            ...
+        }
+    ......
+}
+
+template <typename ChunkDistributorDataType>
+inline bool ChunkDistributor<ChunkDistributorDataType>::pushToQueue(not_null<ChunkQueueData_t* const> queue,
+                                                                    mepoo::SharedChunk chunk) noexcept
+{
+    return ChunkQueuePusher_t(queue).push(chunk);
+}
+
+
+template <typename ChunkQueueDataType>
+inline bool ChunkQueuePusher<ChunkQueueDataType>::push(mepoo::SharedChunk chunk) noexcept
+{
+    auto pushRet = getMembers()->m_queue.push(chunk);
+	......
+
+    {
+        typename MemberType_t::LockGuard_t lock(*getMembers());
+        if (getMembers()->m_conditionVariableDataPtr)
+        {
+            ConditionNotifier(*getMembers()->m_conditionVariableDataPtr.get(),
+                              *getMembers()->m_conditionVariableNotificationIndex)
+                .notify();
+        }
+    }
+
+    ......
+}
+```
+
+对于理解逻辑, 代码只要看其中的大意, 他代码用了大量的模板, 要全部理清楚,要费很多时间.
+
+`publish`这部分逻辑上面`CREATE_CONDITION_VARIABLE 命令`小节中已经梳理过一遍, 包括`subscriber`的逻辑也已经被包含在一起了. 如果感兴趣可以往回回看那小节.
+
+
+
+## 下一步
+
+iceoryx目前比较成熟, 零拷贝的设计也很好, 但是他存在中心节点这一点比较有争议, 也一定程度上影响他的应用.
+
+iceoryx目前社区已经在开发iceoryx2, 他重构了设计, 移除了中心节点这一设计. 值得关注.
 
 
 
