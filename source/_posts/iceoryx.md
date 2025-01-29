@@ -457,7 +457,7 @@ IceOryxRouDiMemoryManager::createAndAnnounceMemory()
 		└> MemoryProvider::create()
 ```
 
-`MemoryProvider::create` 内部做了两件事，一个是计算出他下面挂的 `vector<MemoryBlock*>`中全部block所需的内存之和，并向系统申请一整块的内存，由于我们在 `PosixShmMemoryProvider`类中，因此他申请内存的方式就是使用共享内存，在linux中就会在/dev/shm/下面创建一个共享内存文件，叫iceoryx_mgmt。另一个事是从这一大片内存中切切切，切一段给这个MemoryBlock，切一段给那个MemoryBlock，切的时候都是字节对齐的，也是一段接一段连续地切的。当前，申请内存的时候已经计算上字节对齐所需要的额外的字节数的。
+`MemoryProvider::create` 内部做了两件事，一个是计算出他下面挂的 `vector<MemoryBlock*>`中全部block所需的内存之和，并向系统申请一整块的内存，由于我们在 `PosixShmMemoryProvider`类中，因此他申请内存的方式就是使用共享内存，在linux中就会在`/dev/shm/`下面创建一个共享内存文件，叫`iceoryx_mgmt`。另一个事是从这一大片内存中切切切，切一段给这个`MemoryBlock`，切一段给那个`MemoryBlock`，切的时候都是字节对齐的，也是一段接一段连续地切的。当前，申请内存的时候已经计算上字节对齐所需要的额外的字节数的。
 
 ```c++
 expected<void, MemoryProviderError> MemoryProvider::create() noexcept
@@ -623,9 +623,9 @@ class MemPool
 
 那么这些类定义里面，有两个重要的信息，一个是`MePooSegment::m_sharedMemoryObject`，这是一个非常重要的成员。我们已经知道`MePooSegment`代表一个内存段，他可能会很大，大到几个G。iceoryx中一个内存段对应一个`MePooSegment`对象，而一个`MePooSegment`对应一个`m_sharedMemoryObject`对象，因此实际上一个内存段会对应一个`m_sharedMemoryObjec`t对象，也就是会对应一个共享内存文件，通过这个共享内存的创建完成内存池的创建。
 
-iceoryx没有把`m_sharedMemoryObject`整合到前面统一创建的整个内存段中，而是设计为一个独立的内存段，我个人理解是他要把管理和数据两类内存分开，前面统一创建的一片内存都是用于管理的目的，对应的共享内存文件名叫`iceoryx_mgmt`(后面master分支名字有变化)，可以看出是用于管理作用的。 而现在这里的内存是单纯作为内存池供用户存放业务数据的，作用上比较独立，所以就适合分开。
+iceoryx没有把`m_sharedMemoryObject`整合到前面统一创建的整个内存段中，而是设计为一个独立的内存段，我个人理解是他要把管理和数据两类内存分开，前面统一创建的一片内存都是用于管理的目的，对应的共享内存文件名叫`iceoryx_mgmt`，可以看出是用于管理作用的。 而现在这里的内存是单纯作为内存池供用户存放业务数据的，作用上比较独立，所以就适合分开。
 
-`m_sharedMemoryObject`对应的共享内存文件名是你当前的用户名，比如你是root用户，那么对应的文件在linux系统中就是`/dev/shm/root`(后面master分支名字有变化)。那么如果多个`MePooSegment`对象对应的文件名又分别是什么呢？事实上当前的iceoryx并没有在事实上支持多个`MePooSegment`对象！
+`m_sharedMemoryObject`对应的共享内存文件名是你当前的用户名，比如你是root用户，那么对应的文件在linux系统中就是`/dev/shm/root`。那么如果多个`MePooSegment`对象对应的文件名又分别是什么呢？事实上当前的iceoryx并没有在事实上支持多个`MePooSegment`对象！
 
 **虽然不论从数据结构层面和配置文件层面都是支持多个内存段的，但是实际使用上我发现并不支持，如果我配置了多个[[segment]]，那么创建的共享内存文件只包含最后一个内存段的空间大小，并且功能上也不再正常。**
 
@@ -725,11 +725,17 @@ using IoxIpcChannelType = iox::UnixDomainSocket;
 
 ```shell
 # 这是基于2025年初master分支编译的linux版本RouDi,运行后生成的两个对应的共享内存文件.
-# 较早的版本文件名中前缀并不一样, 但是后缀_management和_qiming是一样的.
 $ ls /dev/shm -lh
 total 176M
 -rw-rw----  1 qiming qiming  34M  1月 28 18:05 iox1_0_i_management
 -rw-rw----+ 1 qiming qiming 143M  1月 28 18:05 iox1_0_u_qiming
+
+
+# 较早的版本文件名并不相同, 这是基于release_2.0分支的内存文件
+$ ls /dev/shm/ -lh
+total 207M
+-rw-rw----  1 qiming qiming  64M  1月 29 17:18 iceoryx_mgmt
+-rw-rw----+ 1 qiming qiming 143M  1月 29 17:18 qiming
 
 ```
 
