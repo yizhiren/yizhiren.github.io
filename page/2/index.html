@@ -158,18 +158,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -186,6 +186,101 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2020/12/19/raft/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 一支人">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2020/12/19/raft/" class="post-title-link" itemprop="url">raft 协议解析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-20 00:04:00" itemprop="dateCreated datePublished" datetime="2020-12-20T00:04:00+08:00">2020-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="raft-协议解析"><a class="markdownIt-Anchor" href="#raft-协议解析"></a> raft 协议解析</h1>
+<h2 id="高可用的实现方案总结"><a class="markdownIt-Anchor" href="#高可用的实现方案总结"></a> 高可用的实现方案总结</h2>
+<p>在工程实践中，高可用的方案有很多，例举几个，大家一定知道大部分的名词：主备，双备，HAProxy, F5, VRRP，Sentinel， gossip， paxos等。</p>
+<p>这一系列的技术方案，可以简化和归纳成两类：一类可以叫哨兵， 如图以haproxy为例：</p>
+<p><img src="/linkimage/raft/haproxy.png" alt="haproxy" /></p>
+<p>图片来自 <a target="_blank" rel="noopener" href="https://www.haproxy.com/fr/blog/using-haproxy-with-the-proxy-protocol-to-better-secure-your-database/">Using HAProxy with the Proxy Protocol to Better Secure Your Database</a></p>
+<p>这一类方案，有个共同点，都有一个类似哨兵的角色，细化的讲，有的叫proxy，有的叫gateway，有的叫monitor，有的叫sentinel，有的叫router，他们的作用都是类似的，就是感知并屏蔽内部不健康的主机，并对外提供一个始终可用的服务。完成高可用的目的。</p>
+<p>另一类技术方案，可以叫一致性协议，如图基于gossip的redis cluster为例：</p>
+<p><img src="/linkimage/raft/rediscluster.jpg" alt="rediscluster" /></p>
+<p>图片来自 <a href="https://yizhi.ren/2019/06/25/microservice/">微服务</a></p>
+<p>这一类方案，也有一个共同点，就是都实现了一种内部节点之间的通信协议，协议能够发现异常节点，并且在内部通过某种机制来容错，不需要依赖外部的角色。 一致性协议的实现高可用的机制，最重要的一点就是半数同意的机制，因此能容忍半数-1的节点宕机。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/19/raft/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -246,8 +341,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="不同形式的锁"><a href="#不同形式的锁" class="headerlink" title="不同形式的锁"></a>不同形式的锁</h1><p>最近发现锁的类型真是多种多样，好多还是第一次见，我就在这里记录一下。</p>
-<h2 id="RCU"><a href="#RCU" class="headerlink" title="RCU"></a>RCU</h2><p>RCU即read-copy-update.一种不阻塞读线程，只阻塞写线程的同步方式。</p>
+          <h1 id="不同形式的锁"><a class="markdownIt-Anchor" href="#不同形式的锁"></a> 不同形式的锁</h1>
+<p>最近发现锁的类型真是多种多样，好多还是第一次见，我就在这里记录一下。</p>
+<h2 id="rcu"><a class="markdownIt-Anchor" href="#rcu"></a> RCU</h2>
+<p>RCU即read-copy-update.一种不阻塞读线程，只阻塞写线程的同步方式。</p>
 <p>写线程如果有多个要自己做好互斥，一个时间只能有一个写线程。写线程严格执行R-C-U三步操作，但在第三步操作完的时候，因为把原来的值给更新掉了，原来旧的值就需要释放，那么持有了原来旧的值的读线程必须全部操作完成才行。这里所说的操作的旧值新值都是指针，只有指针才可以直接的确保原子性。</p>
 <p>所以这里有个关键步骤是synchronize_rcu()，位于U之后和释放旧指针之前。synchronize_rcu的底层实现我不懂，它的原理大概是说等待所有cpu都调度一遍，就可以确保旧的读线程都操作完成了。为什么都调度一遍就可以确保都操作完了呢？因为所有的读操作都要求添加以下语句：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rcu_read_lock(); <span class="comment">// 禁止抢占</span></span><br><span class="line">p = rcu_dereference(gp); <span class="comment">// rcu_dereference主要是加内存屏障</span></span><br><span class="line"><span class="keyword">if</span> (p != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    do_something_with(p-&gt;a, p-&gt;b, p-&gt;c);</span><br><span class="line">&#125;</span><br><span class="line">rcu_read_unlock(); <span class="comment">// 允许抢占</span></span><br></pre></td></tr></table></figure>
@@ -335,12 +432,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="微服务架构"><a href="#微服务架构" class="headerlink" title="微服务架构"></a>微服务架构</h1><p>注意：本文涉及面大而广，预计完整阅读时间在1个小时，可以挑章节选择性阅读。</p>
-<h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>什么是微服务，以下定义来自维基百科</p>
+          <h1 id="微服务架构"><a class="markdownIt-Anchor" href="#微服务架构"></a> 微服务架构</h1>
+<p>注意：本文涉及面大而广，预计完整阅读时间在1个小时，可以挑章节选择性阅读。</p>
+<h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p>什么是微服务，以下定义来自维基百科</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">微服务 (Microservices) 是一种软件架构风格，它是以专注于单一责任与功能的小型功能区块 (Small Building Blocks) 为基础，</span><br><span class="line">利用模块化的方式组合出复杂的大型应用程序，各功能区块使用与语言无关 (Language-Independent/Language agnostic) 的 API 集相互通信。</span><br></pre></td></tr></table></figure>
-
 <p>所以微服务是一种架构层面的概念，它是一种通过一套小型服务来开发单个应用的方法，每个服务运行在自己的进程中，并通过轻量级的机制进行通讯, 通常是通过HTTP。</p>
-<h2 id="微服务历史"><a href="#微服务历史" class="headerlink" title="微服务历史"></a>微服务历史</h2><p>微服务这个概念在2012年开始出现，作为加快应用程序开发进程的一种方法。</p>
+<h2 id="微服务历史"><a class="markdownIt-Anchor" href="#微服务历史"></a> 微服务历史</h2>
+<p>微服务这个概念在2012年开始出现，作为加快应用程序开发进程的一种方法。</p>
 <p>随后微服务架构实践开始在各大软件大会上被分享。2014年Martin Fowler发表文章《Microservices》,这是第一篇详细介绍微服务的文章。对微服务进行了定义，并与传统架构进行了对比，阐述了微服务的优势。</p>
 <p>到了2015年，微服务已经很流行，凡是新建的项目，不论是初创公司还是老牌大厂，微服务都会是首选的架构。互联网企业是这样，就算是嵌入式环境下，微服务也被引入并且推广。</p>
           <!--noindex-->
@@ -427,8 +526,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Golang-Test-Coverage"><a href="#Golang-Test-Coverage" class="headerlink" title="Golang Test Coverage"></a>Golang Test Coverage</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>本文主要是通过一个详细的例子来讲解golang中集成单元测试和系统测试覆盖率的一般方案。</p>
-<p>想当初接手一个毛坯房一般的golang项目，几个go文件，一个build.sh，一个makefile，别的没有了。</p>
+          <h1 id="golang-test-coverage"><a class="markdownIt-Anchor" href="#golang-test-coverage"></a> Golang Test Coverage</h1>
+<h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p>本文主要是通过一个详细的例子来讲解golang中集成单元测试和系统测试覆盖率的一般方案。</p>
+<p>想当初接手一个毛坯房一般的golang项目，几个go文件，<a target="_blank" rel="noopener" href="http://xn--build-fg1hyj.sh">一个build.sh</a>，一个makefile，别的没有了。</p>
 <p>写完怎么验证对没对？build通过，然后得部署到环境中，自己构造请求来检查返回值。但是请求是pb格式的，根本无法手工构造，要是json格式的还好弄点。于是我得写个专门的测试程序，写完通过命令行把参数传给这个测试程序，让它构造pb格式的请求并发起请求。随后发现问题，修改问题，再部署上去，这简直是低效到令人发指。</p>
 <p>我是个懒人，我不光不想写专门的测试程序，我连部署到环境中都不想部署，毕竟部署到机器上并发送详细测试请求这项工作已经由QA来覆盖了，即使很多团队没有QA，这项工作也应该是要集成到持续集成+持续部署的系统中，不需要每开发一个feature就部署到环境中来进行调试。</p>
 <p>所以首先我实现了单元测试的集成，从此无需部署无需专门的测试程序就可以测试功能的正确性。随着测试代码量的增加，我希望有个地方可以统计我哪些代码测到了，哪些没测到，于是我集成了单元测试的覆盖率。为了查看单元测试+系统测试的总体的测试覆盖情况，随后我们又集成了系统测试的覆盖率。为了查看每次提交新代码的覆盖率，随后又集成了增量覆盖率。</p>
@@ -517,8 +618,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Golang-netpoller"><a href="#Golang-netpoller" class="headerlink" title="Golang netpoller"></a>Golang netpoller</h1><p>本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。</p>
-<h2 id="网络阻塞"><a href="#网络阻塞" class="headerlink" title="网络阻塞"></a>网络阻塞</h2><p>在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要future，要的仅仅是step by step。这对于代码的可读性是很有帮助的。</p>
+          <h1 id="golang-netpoller"><a class="markdownIt-Anchor" href="#golang-netpoller"></a> Golang netpoller</h1>
+<p>本文主要记录go是如何处理网络IO的，以及这么做的目的和原理，穿插一部分源码跟踪。同时对比go的线程模型与别的通用线程模型的差别。</p>
+<h2 id="网络阻塞"><a class="markdownIt-Anchor" href="#网络阻塞"></a> 网络阻塞</h2>
+<p>在Go的实现中，所有IO都是阻塞调用的，Go的设计思想是程序员使用阻塞式的接口来编写程序，然后通过goroutine+channel来处理并发。因此所有的IO逻辑都是直来直去的，先xx，再xx,  你不再需要回调，不再需要future，要的仅仅是step by step。这对于代码的可读性是很有帮助的。</p>
 <p>在<a href="https://yizhi.ren/2019/06/03/goscheduler/">go scheduler</a>一文中我们讲述了go如何处理阻塞的系统调用，当goroutine调用阻塞的系统调用时，这个goroutine和物理线程都会一直处于阻塞状态，不能处理别的任务；而当goroutine调用channel阻塞时，goroutine会阻塞而物理线程不会阻塞，会继续执行别的任务。所以如果我们基于操作系统提供的阻塞的IO接口来构建golang的应用，我们就必须为每个处于阻塞读写状态的客户端建立一个线程。当面对高并发的包含大量处于阻塞IO状态的客户端时，将浪费大量的资源。而如果能够像channel那样处理，就可以避免资源浪费。</p>
 <p>Go的解决方案是如channel一般在用户层面(程序员层面)保留阻塞的接口，但是在Runtime内部采用非阻塞的异步接口来与操作系统交互。</p>
 <p>这里面关键的角色就是netpoller。</p>
@@ -606,9 +709,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Go调度器"><a href="#Go调度器" class="headerlink" title="Go调度器"></a>Go调度器</h1><p>我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。</p>
-<h2 id="为什么要有Runtime"><a href="#为什么要有Runtime" class="headerlink" title="为什么要有Runtime"></a>为什么要有Runtime</h2><h3 id="开销上"><a href="#开销上" class="headerlink" title="开销上"></a>开销上</h3><p>我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。<br>POSIX线程(POSIX是线程标准，定义了创建和操纵线程的一套API)通常是在已有的进程模型中增加的逻辑扩展，所以线程控制和进程控制很相似。线程也有自己的信号掩码(signal mask)， 线程也可以设置CPU亲和性(CPU affinity)，也可以放进cgroups中进行资源管理。假如goroutines(go的执行单元)对应线程的话，使用这些特性对线程进行控制管理就增加了开销，因为go程序运行goroutines(go的执行单元)不需要这些特性。这类消耗在goroutine达到比如10,0000个的时候就会很大。所以go需要有个运行时在调度goroutines而不是只是让操作系统调度线程。</p>
-<h3 id="垃圾回收上"><a href="#垃圾回收上" class="headerlink" title="垃圾回收上"></a>垃圾回收上</h3><p>go包含垃圾回收(GC)的特性，在垃圾回收的时候所有goroutines必须处于暂停的状态，这样go的内存才会处于一种一致的状态. 所以我们必须等待所有线程处于内存一致的状态才能进行垃圾回收。</p>
+          <h1 id="go调度器"><a class="markdownIt-Anchor" href="#go调度器"></a> Go调度器</h1>
+<p>我们知道Go里面有成千上万coroutine需要调度执行，而这里面起关键作用的就是Go的调度器，那么Go的调度器在哪里呢？因为我们写Go代码的时候从未显式创建过调度器实例。为了了解调度器，我们先来了解下Go的运行时（Runtime)。</p>
+<h2 id="为什么要有runtime"><a class="markdownIt-Anchor" href="#为什么要有runtime"></a> 为什么要有Runtime</h2>
+<h3 id="开销上"><a class="markdownIt-Anchor" href="#开销上"></a> 开销上</h3>
+<p>我们知道操作系统是可以调度线程的，那么我们可不可以直接让操作系统调用go的线程呢。<br />
+POSIX线程(POSIX是线程标准，定义了创建和操纵线程的一套API)通常是在已有的进程模型中增加的逻辑扩展，所以线程控制和进程控制很相似。线程也有自己的信号掩码(signal mask)， 线程也可以设置CPU亲和性(CPU affinity)，也可以放进cgroups中进行资源管理。假如goroutines(go的执行单元)对应线程的话，使用这些特性对线程进行控制管理就增加了开销，因为go程序运行goroutines(go的执行单元)不需要这些特性。这类消耗在goroutine达到比如10,0000个的时候就会很大。所以go需要有个运行时在调度goroutines而不是只是让操作系统调度线程。</p>
+<h3 id="垃圾回收上"><a class="markdownIt-Anchor" href="#垃圾回收上"></a> 垃圾回收上</h3>
+<p>go包含垃圾回收(GC)的特性，在垃圾回收的时候所有goroutines必须处于暂停的状态，这样go的内存才会处于一种一致的状态. 所以我们必须等待所有线程处于内存一致的状态才能进行垃圾回收。</p>
 <p>在没有调度器的时候，线程调度是随操作系统的意的，你不得不试图去等待所有的已经暂停和还没暂停的线程，而且不知道等多久, 暂停后如何让他们保持暂停直到gc结束，也是一个难题。</p>
 <p>在有调度器的时候，调度器可以决定只在内存一致的时候才发起调度（即只要有活跃的线程就不执行新的任务），因此当需要执行gc的时候，调度器便决定只在内存一致的时候才发起调度，所以所有线程都无法再次活跃，调度器只需要等待当前活跃的线程暂停即可。后面还会讲到调度器还想办法避免一个活跃的线程长时间不停下来。</p>
 <p>需要调度器自然就需要运行调度器的运行时。</p>
@@ -698,14 +806,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="strange-golang-receiver"><a href="#strange-golang-receiver" class="headerlink" title="strange golang receiver"></a>strange golang receiver</h1><h2 id="对象receiver"><a href="#对象receiver" class="headerlink" title="对象receiver"></a>对象receiver</h2><p>receiver是什么呢，一句话来解释的话约等于this指针。<br>用过c++的同学我们可以来这么来理解。</p>
-<h3 id="理解c-中的this指针"><a href="#理解c-中的this指针" class="headerlink" title="理解c++中的this指针"></a>理解c++中的this指针</h3><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Meta</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function">string <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;name;</span><br><span class="line">	&#125;</span><br><span class="line">	string name;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
+          <h1 id="strange-golang-receiver"><a class="markdownIt-Anchor" href="#strange-golang-receiver"></a> strange golang receiver</h1>
+<h2 id="对象receiver"><a class="markdownIt-Anchor" href="#对象receiver"></a> 对象receiver</h2>
+<p>receiver是什么呢，一句话来解释的话约等于this指针。<br />
+用过c++的同学我们可以来这么来理解。</p>
+<h3 id="理解c中的this指针"><a class="markdownIt-Anchor" href="#理解c中的this指针"></a> 理解c++中的this指针</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Meta</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">	<span class="function">string <span class="title">getName</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">this</span>-&gt;name;</span><br><span class="line">	&#125;</span><br><span class="line">	string name;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>这个类的成员函数getName中调用了this指针，可是this指针没有定义过呢，哪来的呢？</p>
 <p>答案是编译器加的，由于可执行文件中并不存在对象这种概念，但是存在函数的概念，所以编译器就必须把对象的调用转成函数的调用。</p>
 <p>编译器是这么做的，他把string getName();这个成员函数转换成string getName(Meta* this);</p>
 <p>看到了吧，编译器通过增加一个this参数来吧对象传递到成员函数中去，this指针就这么来了。</p>
-<h3 id="golang的’this’指针"><a href="#golang的’this’指针" class="headerlink" title="golang的’this’指针"></a>golang的’this’指针</h3><p>我们看到c++中this是隐式提供的，golang则选择了显式的提供this指针，提供的形式就是receiver。</p>
+<h3 id="golang的this指针"><a class="markdownIt-Anchor" href="#golang的this指针"></a> golang的’this’指针</h3>
+<p>我们看到c++中this是隐式提供的，golang则选择了显式的提供this指针，提供的形式就是receiver。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">func (receiver) funcName(inputParameters...) (outputParameters...)&#123;</span><br><span class="line">	//</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
@@ -791,16 +903,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="LVS简介"><a href="#LVS简介" class="headerlink" title="LVS简介"></a>LVS简介</h2><h3 id="什么是LVS"><a href="#什么是LVS" class="headerlink" title="什么是LVS:"></a>什么是LVS:</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LVS是Linux Virtual Server的简写，意即Linux虚拟服务器，是一个虚拟的服务器集群系统。本项目在1998年5月由章文嵩博士成立，是中国国内最早出现的自由软件项目之一.</span><br></pre></td></tr></table></figure>
-
-<h3 id="LVS的作用："><a href="#LVS的作用：" class="headerlink" title="LVS的作用："></a>LVS的作用：</h3><p>LVS的原理很简单，当用户的请求过来时，会直接分发到LVS机器（director server）上，然后它把用户的请求根据设置好的调度算法，智能均衡地分发到后端真正服务器(real server)上。<br>简单的讲，LVS就是一种负载均衡服务器。</p>
-<h3 id="LVS的角色："><a href="#LVS的角色：" class="headerlink" title="LVS的角色："></a>LVS的角色：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DS：director server，即负载均衡器，根据一定的负载均衡算法将流量分发到后端的真实服务器上.</span><br><span class="line">RS：real server 真实的提供服务的server，可被DS划分到一个或多个负载均衡组.</span><br><span class="line">BDS：backup director server，为了保证负载均衡器的高可用衍生出的备份.</span><br><span class="line">VS：vitual server，负载均衡集群对外提供的IP+Port.</span><br><span class="line">VIP：VS的IP，client请求服务的DIP（destination IP address），定义在DS上，client或其网关需要有其路由</span><br></pre></td></tr></table></figure>
-
-<h3 id="LVS组成："><a href="#LVS组成：" class="headerlink" title="LVS组成："></a>LVS组成：</h3><p>LVS 由2部分程序组成，包括ipvs和ipvsadm。<br>ipvs工作在内核空间，是真正生效实现调度的代码.</p>
+          <h2 id="lvs简介"><a class="markdownIt-Anchor" href="#lvs简介"></a> LVS简介</h2>
+<h3 id="什么是lvs"><a class="markdownIt-Anchor" href="#什么是lvs"></a> 什么是LVS:</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LVS是Linux Virtual Server的简写，意即Linux虚拟服务器，是一个虚拟的服务器集群系统。本项目在1998年5月由章文嵩博士成立，是中国国内最早出现的自由软件项目之一.</span><br></pre></td></tr></table></figure>
+<h3 id="lvs的作用"><a class="markdownIt-Anchor" href="#lvs的作用"></a> LVS的作用：</h3>
+<p>LVS的原理很简单，当用户的请求过来时，会直接分发到LVS机器（director server）上，然后它把用户的请求根据设置好的调度算法，智能均衡地分发到后端真正服务器(real server)上。<br />
+简单的讲，LVS就是一种负载均衡服务器。</p>
+<h3 id="lvs的角色"><a class="markdownIt-Anchor" href="#lvs的角色"></a> LVS的角色：</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DS：director server，即负载均衡器，根据一定的负载均衡算法将流量分发到后端的真实服务器上.</span><br><span class="line">RS：real server 真实的提供服务的server，可被DS划分到一个或多个负载均衡组.</span><br><span class="line">BDS：backup director server，为了保证负载均衡器的高可用衍生出的备份.</span><br><span class="line">VS：vitual server，负载均衡集群对外提供的IP+Port.</span><br><span class="line">VIP：VS的IP，client请求服务的DIP（destination IP address），定义在DS上，client或其网关需要有其路由</span><br></pre></td></tr></table></figure>
+<h3 id="lvs组成"><a class="markdownIt-Anchor" href="#lvs组成"></a> LVS组成：</h3>
+<p>LVS 由2部分程序组成，包括ipvs和ipvsadm。<br />
+ipvs工作在内核空间，是真正生效实现调度的代码.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ipvs基于netfilter框架，netfilter的架构就是在整个网络流程的若干位置放置一些检测点（HOOK）.</span><br><span class="line">在每个检测点上登记一些处理函数进行处理（如包过滤，NAT等，甚至可以是用户自定义的功能）。</span><br><span class="line">IPVS就是定义了一系列的“钩子函数”，在INPUT链和Forward上放置一些HOOK点.</span><br><span class="line">如匹配了ipvs的规则，就会通过函数来对数据包进行操作，比如修改目的IP为realserver的接口IP（NAT），对MAC进行修改（DR）等等。</span><br></pre></td></tr></table></figure>
 <p>ipvsadm工作在用户空间，负责为ipvs内核框架编写规则, 它是一个工具，通过调用ipvs的接口去定义调度规则，定义虚拟服务（VS）。</p>
-<h3 id="LVS请求的流程"><a href="#LVS请求的流程" class="headerlink" title="LVS请求的流程"></a>LVS请求的流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、客户端（Client）访问请求发送到调度器（Director Server）。</span><br><span class="line">2、调度器的PREROUTING链会接收到用户请求，判断目标IP确定是本机IP，将数据包发往INPUT链。</span><br><span class="line">3、INPUT链的IPVS会根据ipvsadm定义的规则（调度模式和调度算法等等）进行对比判断。</span><br><span class="line">4、如果用户请求就是所定义的虚拟服务（vitual server），那么IPVS会修改请求包的ip、mac、端口号等信息，并将请求发送到FORWARD链，再经由POSTROUTING链发送到后端的真实提供服务的主机（Real Server）</span><br></pre></td></tr></table></figure>
-
+<h3 id="lvs请求的流程"><a class="markdownIt-Anchor" href="#lvs请求的流程"></a> LVS请求的流程</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、客户端（Client）访问请求发送到调度器（Director Server）。</span><br><span class="line">2、调度器的PREROUTING链会接收到用户请求，判断目标IP确定是本机IP，将数据包发往INPUT链。</span><br><span class="line">3、INPUT链的IPVS会根据ipvsadm定义的规则（调度模式和调度算法等等）进行对比判断。</span><br><span class="line">4、如果用户请求就是所定义的虚拟服务（vitual server），那么IPVS会修改请求包的ip、mac、端口号等信息，并将请求发送到FORWARD链，再经由POSTROUTING链发送到后端的真实提供服务的主机（Real Server）</span><br></pre></td></tr></table></figure>
 <p>下面我主要记录一下LVS调度的方式和原理。</p>
           <!--noindex-->
             <div class="post-button">
@@ -886,10 +1003,13 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Lock-Free"><a href="#Lock-Free" class="headerlink" title="Lock-Free"></a>Lock-Free</h1><h2 id="什么是Lock-Free"><a href="#什么是Lock-Free" class="headerlink" title="什么是Lock-Free"></a>什么是Lock-Free</h2><p>Lock-Free也叫LockLess也就是无锁编程，它是一种在多线程之间安全的共享数据的一种方式，并且不需要有获取和释放锁的开销。但是不使用锁来进行编程却只是无锁编程的一部分。我们先用一个图来看看如何判断是不是无锁编程：<br><img src="/linkimage/reorder/its-lock-free.png" alt="如何确认是lockfree"><br>从这个图上可以看出，无锁编程中的锁并不是直接指向lock或者说mutex，而是指一种把整个程序锁住的可能性，无论是死锁还是活锁，甚至是因为你做了你能想到的最差的线程调度决策。如此一来，即使是共享锁也被排除在外。因为当你用<code>std::shared_lock&lt;std::shared_mutex&gt; lock(mutex_);</code> 拿到锁之后，你可以简单地再也不调度这个线程，来导致 <code>std::unique_lock&lt;std::shared_mutex&gt; lock(mutex_);</code>永远得不到锁。</p>
+          <h1 id="lock-free"><a class="markdownIt-Anchor" href="#lock-free"></a> Lock-Free</h1>
+<h2 id="什么是lock-free"><a class="markdownIt-Anchor" href="#什么是lock-free"></a> 什么是Lock-Free</h2>
+<p>Lock-Free也叫LockLess也就是无锁编程，它是一种在多线程之间安全的共享数据的一种方式，并且不需要有获取和释放锁的开销。但是不使用锁来进行编程却只是无锁编程的一部分。我们先用一个图来看看如何判断是不是无锁编程：<br />
+<img src="/linkimage/reorder/its-lock-free.png" alt="如何确认是lockfree" /><br />
+从这个图上可以看出，无锁编程中的锁并不是直接指向lock或者说mutex，而是指一种把整个程序锁住的可能性，无论是死锁还是活锁，甚至是因为你做了你能想到的最差的线程调度决策。如此一来，即使是共享锁也被排除在外。因为当你用<code>std::shared_lock&lt;std::shared_mutex&gt; lock(mutex_);</code> 拿到锁之后，你可以简单地再也不调度这个线程，来导致 <code>std::unique_lock&lt;std::shared_mutex&gt; lock(mutex_);</code>永远得不到锁。</p>
 <p>下面这个例子中我们不使用mutex和lock，但是它依然不是Lock-Free，因为你可以调度执行这个函数的两个线程使得它俩都不退出循环。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">while (X == 0)</span><br><span class="line">&#123;</span><br><span class="line">    X = 1 - X;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>我们并不会期望整个大程序都是Lock-Free，通常我们会指明其中某些操作是Lock-Free的，比如一个队列的实现中，我们会存在少数的Lock-Free操作，比如<code>push</code>,<code>pop </code>等等。</p>
 <p>Lock-Free的一个重要的结论是，当你暂停一个线程的运行，它并不会阻止其他线程继续执行，其他线程就像一个整体，继续他们的Lock-Free操作。这也是Lock-Free编程的价值，特别是当你编写中断处理程序、实时系统时，他们必须在规定的时间内完成任务，无论程序的其他部分怎么执行。</p>
           <!--noindex-->
@@ -976,98 +1096,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="epoll-中level-trigger的检验"><a href="#epoll-中level-trigger的检验" class="headerlink" title="epoll 中level trigger的检验"></a>epoll 中level trigger的检验</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在我们通过网络搜索的时候，关于epoll的水平触发的解释通常是这样的：</p>
+          <h2 id="epoll-中level-trigger的检验"><a class="markdownIt-Anchor" href="#epoll-中level-trigger的检验"></a> epoll 中level trigger的检验</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>在我们通过网络搜索的时候，关于epoll的水平触发的解释通常是这样的：</p>
 <p>水平触发：只要缓冲区还有数据，内核就还会通知用户。用户如果第一次读取数据没读完，即使没有任何新的操作触发，还是可以继续通过epoll_wait来获取事件。</p>
 <p>这段解释水平触发的话应该来说是没有错的，然而这段话并不总是如你所想的，说这句话的人不会告诉你什么场景满足什么场景是不满足的。我就是要说一个你一定以为满足，实际上却不满足的场景。</p>
 <p>我们先来看成立的情况：</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/04/09/epollleveltrigger/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2017/02/08/multithread/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
-      <meta itemprop="name" content="yizhiren">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="一支人">
-      <meta itemprop="description" content="[&](){}">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 一支人">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/02/08/multithread/" class="post-title-link" itemprop="url">线程扩展需要考虑的问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-02-08 17:34:46" itemprop="dateCreated datePublished" datetime="2017-02-08T17:34:46+08:00">2017-02-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="线程扩展要考虑的问题"><a href="#线程扩展要考虑的问题" class="headerlink" title="线程扩展要考虑的问题"></a>线程扩展要考虑的问题</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br>而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br>比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br>通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br>比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br>那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/02/08/multithread/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -1169,6 +1206,13 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr+QR0SQDNfgglgtcM=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">

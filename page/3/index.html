@@ -158,18 +158,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -186,6 +186,98 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2017/02/08/multithread/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 一支人">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/02/08/multithread/" class="post-title-link" itemprop="url">线程扩展需要考虑的问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-02-08 17:34:46" itemprop="dateCreated datePublished" datetime="2017-02-08T17:34:46+08:00">2017-02-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="线程扩展要考虑的问题"><a class="markdownIt-Anchor" href="#线程扩展要考虑的问题"></a> 线程扩展要考虑的问题</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>如今越来越多的后台系统采用了单线程的设计，原因多是因为单线程的设计简单轻量，而且更安全（无多线程竞争）。<br />
+而其性能保证则通过多进程的方式来完成，多进程由于互相隔离，也是稳定性的保证。<br />
+比如nginx默认工作方式就是单线程多进程；其他的案例比如node.js的集群;比如redis的集群。<br />
+通常这种方式能很好的工作，然而有些时候你还是会面临项目向多线程转变的时候，比如项目的技术栈从node.js转向Go，Go又是天生为并发而生的；<br />
+比如项目在演进过程中出现了CPU密集型的业务，单线程会严重影响性能；比如多进程架构扩展时遇到了IP等资源不足（比如业务需要为每个进程绑定一个公网IP）的限制。<br />
+那么当你在处理这种架构转变的时候，需要考虑哪些问题呢？</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2017/02/08/multithread/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -246,7 +338,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="分布式架构形式"><a href="#分布式架构形式" class="headerlink" title="分布式架构形式"></a>分布式架构形式</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？<br>有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。<br>两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。</p>
+          <h2 id="分布式架构形式"><a class="markdownIt-Anchor" href="#分布式架构形式"></a> 分布式架构形式</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？<br />
+有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。<br />
+两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2017/02/02/distribute/#more" rel="contents">
@@ -331,10 +427,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="C-中-auto-ptr-特性和源码解析"><a href="#C-中-auto-ptr-特性和源码解析" class="headerlink" title="C++ 中 auto-ptr 特性和源码解析"></a>C++ 中 auto-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如：</p>
+          <h2 id="c-中-auto-ptr-特性和源码解析"><a class="markdownIt-Anchor" href="#c-中-auto-ptr-特性和源码解析"></a> C++ 中 auto-ptr 特性和源码解析</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">      <span class="function">auto_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">ap</span><span class="params">(p)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
 <p>这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其包含的p会被自动释放。这几乎已经是auto_ptr的全部作用了，但是还有一些小秘密，下面结合它的代码看看他的实现，挖挖它的内涵。</p>
           <!--noindex-->
             <div class="post-button">
@@ -420,7 +516,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="位域的字节序"><a href="#位域的字节序" class="headerlink" title="位域的字节序"></a>位域的字节序</h2><h3 id="问题的起源"><a href="#问题的起源" class="headerlink" title="问题的起源"></a>问题的起源</h3><p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大&#x2F;小字节序）情况下的顺序是不同的。<br>于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
+          <h2 id="位域的字节序"><a class="markdownIt-Anchor" href="#位域的字节序"></a> 位域的字节序</h2>
+<h3 id="问题的起源"><a class="markdownIt-Anchor" href="#问题的起源"></a> 问题的起源</h3>
+<p>今天阅读到ip头结构体，看到前面两个字段用到了宏，可以看到这两个字段在大小端（大/小字节序）情况下的顺序是不同的。<br />
+于是有一个疑问，为什么其他字段可以不管大小端，唯独这两个字段要关注大小端。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">//IP头部，总长度20字节   </span><br><span class="line">typedef struct _ip_hdr  </span><br><span class="line">&#123;  </span><br><span class="line">    #if LITTLE_ENDIAN   </span><br><span class="line">    unsigned char ihl:4;     //首部长度   </span><br><span class="line">    unsigned char version:4, //版本    </span><br><span class="line">    #else   </span><br><span class="line">    unsigned char version:4, //版本   </span><br><span class="line">    unsigned char ihl:4;     //首部长度   </span><br><span class="line">    #endif   </span><br><span class="line">    unsigned char tos;       //服务类型   </span><br><span class="line">    unsigned short tot_len;  //总长度   </span><br><span class="line">    unsigned short id;       //标志   </span><br><span class="line">    unsigned short frag_off; //分片偏移   </span><br><span class="line">    unsigned char ttl;       //生存时间   </span><br><span class="line">    unsigned char protocol;  //协议   </span><br><span class="line">    unsigned short chk_sum;  //检验和   </span><br><span class="line">    struct in_addr srcaddr;  //源IP地址   </span><br><span class="line">    struct in_addr dstaddr;  //目的IP地址   </span><br><span class="line">&#125;ip_hdr;</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
@@ -506,9 +605,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="condition-variable"><a href="#condition-variable" class="headerlink" title="condition_variable"></a>condition_variable</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>在头文件&lt; condition_variable &gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。</p>
+          <h2 id="condition_variable"><a class="markdownIt-Anchor" href="#condition_variable"></a> condition_variable</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>在头文件&lt; condition_variable &gt;中，顾名思义是一个条件变量，主要功能是阻塞线程直到另一个线程把你唤醒。</p>
 <p>条件两个字看起来似乎是指，在另一个线程中满足了条件，才把你唤醒；然而如果仅仅如此的话信号量就能满足要求了。</p>
-<p>所以条件二字更体现在你需要满足更具体的”条件”才能被唤醒。</p>
+<p>所以条件二字更体现在你需要满足更具体的&quot;条件&quot;才能被唤醒。</p>
 <p>来看一个简单的例子：</p>
           <!--noindex-->
             <div class="post-button">
@@ -594,10 +695,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="ODR-One-Definition-Rule-下的奇淫异技"><a href="#ODR-One-Definition-Rule-下的奇淫异技" class="headerlink" title="ODR-(One Definition Rule) 下的奇淫异技"></a>ODR-(One Definition Rule) 下的奇淫异技</h2><h3 id="一行输出引起的-故事"><a href="#一行输出引起的-故事" class="headerlink" title="一行输出引起的..故事"></a>一行输出引起的..故事</h3><p>首先看这个终端的输出结果：</p>
+          <h2 id="odr-one-definition-rule-下的奇淫异技"><a class="markdownIt-Anchor" href="#odr-one-definition-rule-下的奇淫异技"></a> ODR-(One Definition Rule) 下的奇淫异技</h2>
+<h3 id="一行输出引起的故事"><a class="markdownIt-Anchor" href="#一行输出引起的故事"></a> 一行输出引起的…故事</h3>
+<p>首先看这个终端的输出结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost xxxx]# g++ -o binary binary.cpp libb.a liba.a</span><br><span class="line">[root@localhost xxxx]# ./binary </span><br><span class="line">1</span><br><span class="line">1</span><br><span class="line">[root@localhost xxxx]# g++ -o binary binary.cpp liba.a libb.a</span><br><span class="line">[root@localhost xxxx]# ./binary </span><br><span class="line">2</span><br><span class="line">2</span><br><span class="line">[root@localhost xxxx]# cat binary.cpp</span><br><span class="line">#include &lt;iostream&gt;</span><br><span class="line"></span><br><span class="line">extern int fna();</span><br><span class="line">extern int fnb();</span><br><span class="line"></span><br><span class="line">int main()&#123;</span><br><span class="line">    std::cout &lt;&lt; fna() &lt;&lt; std::endl;</span><br><span class="line">    std::cout &lt;&lt; fnb() &lt;&lt; std::endl;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>可以看到我们通过改变两个库的链接顺序，改变了两个函数的返回值。how?<br>如果你对这个结果并没什么兴趣，你也许对下面的内容也不感兴趣。但是如果你挺有兴趣的话我们就来一起看看。</p>
+<p>可以看到我们通过改变两个库的链接顺序，改变了两个函数的返回值。how?<br />
+如果你对这个结果并没什么兴趣，你也许对下面的内容也不感兴趣。但是如果你挺有兴趣的话我们就来一起看看。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2016/11/14/odr/#more" rel="contents">
@@ -682,10 +785,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="shared-ptr-之shared-from-this"><a href="#shared-ptr-之shared-from-this" class="headerlink" title="shared_ptr 之shared_from_this"></a>shared_ptr 之shared_from_this</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br>怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
+          <h1 id="shared_ptr-之shared_from_this"><a class="markdownIt-Anchor" href="#shared_ptr-之shared_from_this"></a> shared_ptr 之shared_from_this</h1>
+<h2 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h2>
+<p>shared_ptr包含在头文件&lt; memory &gt;中，它被用于共享某个指针的场景下智能管理指针的生命周期。<br />
+怎么个智能法：当没人再用这个指针的时候释放指针，看起来很像GC对不对，不过比GC及时，shared_ptr是一旦没人用了立即释放，而GC是会等等看，看情况再来释放。</p>
 <p>首先来看一个典型的用法：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">simple</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="function">std::shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">sp</span><span class="params">(<span class="keyword">new</span> <span class="keyword">int</span>(<span class="number">0</span>))</span></span>;</span><br><span class="line">	std::shared_ptr&lt;<span class="keyword">int</span>&gt; sp2 = sp;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
 <p>可以看出两点，一个是shared_ptr是可以赋值给别的变量的，不需要像unique_ptr那样通过move来赋值，因为shared_ptr不是独占指针而是共享，所以赋值是很平常的操作。 二是你不需要去手动释放该指针，new出来的变量会在最后一个相关联的shared_ptr消失时被释放，也就是在simple函数退出时，sp和sp2相继被销毁，于是new出来的变量也紧接着被释放，没有后顾之忧。</p>
 <p>再来看一个错误的用法：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fail</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> * p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">	<span class="function">std::shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">sp</span><span class="params">(p)</span></span>;</span><br><span class="line">	<span class="function">std::shared_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">sp2</span><span class="params">(p)</span></span>;	</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -773,10 +878,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="C-中-unique-ptr-特性和源码解析"><a href="#C-中-unique-ptr-特性和源码解析" class="headerlink" title="C++ 中 unique-ptr 特性和源码解析"></a>C++ 中 unique-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::unique_ptr 包含在头文件&lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。</p>
+          <h2 id="c-中-unique-ptr-特性和源码解析"><a class="markdownIt-Anchor" href="#c-中-unique-ptr-特性和源码解析"></a> C++ 中 unique-ptr 特性和源码解析</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>std::unique_ptr 包含在头文件&lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。</p>
 <p>这是一个在auto_ptr基础上发展并取代auto_ptr的类，所以它具有auto_ptr的自动释放特性以及独占控制权的特性，可以参考我之前关于auto_ptr的文章。最简单的用法如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">      <span class="function">unique_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">ap</span><span class="params">(p)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
 <p>那么为什么unique_ptr要诞生来取代auto_ptr呢，首先为什么不是修改auto_ptr而要另起炉灶呢，这主要是不希望用一种静默的方式来修改它，从而使得你忽略了auto_ptr已经不是当初的auto_ptr了，以此来避免隐含bug而你却没意识到。</p>
 <p>另一个方面是unique_ptr比auto_ptr好在哪里， unique_ptr的出现是为了解决auto_ptr的两个问题，一个是静默的控制权转移问题，一个是不支持数组问题。</p>
           <!--noindex-->
@@ -883,6 +989,13 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr+QR0SQDNfgglgtcM=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">

@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="分布式架构形式简介如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。">
+    <meta name="description" content="分布式架构形式  简介 如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？ 有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。 两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="分布式架构的形式">
 <meta property="og:url" content="https://yizhi.ren/2017/02/02/distribute/index.html">
 <meta property="og:site_name" content="一支人">
-<meta property="og:description" content="分布式架构形式简介如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。">
+<meta property="og:description" content="分布式架构形式  简介 如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？ 有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。 两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://yizhi.ren/linkimage/distribute/3.png">
 <meta property="og:image" content="https://yizhi.ren/linkimage/distribute/1.png">
@@ -150,7 +150,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">分布式架构形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">集群类型的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text">集群类型的案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.4.</span> <span class="nav-text">服务类型的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="nav-number">1.5.</span> <span class="nav-text">服务类型的案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%B1%BB%E5%9E%8B%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.6.</span> <span class="nav-text">集群类型和服务类型的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">分布式服务的优点</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84%E5%BD%A2%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text"> 分布式架构形式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text"> 集群类型的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="nav-number">1.3.</span> <span class="nav-text"> 集群类型的案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.4.</span> <span class="nav-text"> 服务类型的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%A1%88%E4%BE%8B"><span class="nav-number">1.5.</span> <span class="nav-text"> 服务类型的案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%B1%BB%E5%9E%8B%E5%92%8C%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.6.</span> <span class="nav-text"> 集群类型和服务类型的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text"> 分布式服务的优点</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -165,18 +165,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -260,17 +260,50 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="分布式架构形式"><a href="#分布式架构形式" class="headerlink" title="分布式架构形式"></a>分布式架构形式</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？<br>有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。<br>两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="分布式架构形式"><a class="markdownIt-Anchor" href="#分布式架构形式"></a> 分布式架构形式</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>如今服务端的架构，开口必提分布式，那么分布式的架构是否有通用的模型或者有一般的规律？<br />
+有。分布式系统是有几个通用的模型的，一个是集群类型，一个是服务类型。<br />
+两个都叫分布式，基本也涵盖了绝大多数的分布式架构。我们可以深入了解他们的特点。</p>
 <span id="more"></span>
-
-<h3 id="集群类型的组成"><a href="#集群类型的组成" class="headerlink" title="集群类型的组成"></a>集群类型的组成</h3><p>为什么叫做集群类型，因为这种类型的分布式系统中，每个节点都是相同的，他们拥有相同的功能，提供相同的服务。<br>服务节点：整个分布式体系就是多个功能节点的聚集，可以叫这些节点为服务节点。<br>控制节点：顺势而为得，你可以想到，这些节点是需要一个管理者，就像一个班级的学生，需要一个老师来管理。这个老师节点可以叫做控制节点。<br>然而单个控制节点是不可靠的。没错，控制节点通常都是以主备的形式出现的。</p>
-<p>切换节点：有时候（并不是全部）这种架构下还会有一个不太被注意到的角色，这个角色位于集群之外，通常是一个100%可用的（绝对可靠的）设备或者服务。<br>为什么需要这么个设备呢？ 假想，主控制器crash，于是备用控制器生效，这个时候有两种方式可以完成备用控制器的生效，<br>一种是client事先缓存了主备控制节点的列表，在主控失效后，client就直接连接备控；<br>另一种方案是，借助公司内部一个绝对可用的设备或者服务，该设备感知到主控失效，就把地址切换到备控。<br>这里第二种方案种，就会存在一个这样的角色，可以叫他为切换节点。采用这种方案好处是不用把主备控制节点都暴露给客户端。</p>
-<p>所以一个集群的组成包括成千上万的服务节点+两个控制节点+可能一个切换节点<br><img src="/linkimage/distribute/3.png" alt="system composition"></p>
-<h3 id="集群类型的案例"><a href="#集群类型的案例" class="headerlink" title="集群类型的案例"></a>集群类型的案例</h3><p>集群类型的典型案例是HDFS，这是个分布式文件系统，服务节点是提供文件存储服务，控制节点管理服务节点，并且对外提供目录服务，而主备的切换需要自己增加切换节点，比如利用zookeeper。<br>这个图是hdfs写文件时的流程图，client首先访问控制节点（图中NN），随后根据返回信息再去访问某个或某几个服务节点（图中DN）。这也是所有集群类型的分布式架构运作的基本流程。而图中Switch起切换NN的功能。<br><img src="/linkimage/distribute/1.png" alt="HDFS write flow"><br>（图片来自网络，如果作者希望删除请告知）</p>
-<h3 id="服务类型的组成"><a href="#服务类型的组成" class="headerlink" title="服务类型的组成"></a>服务类型的组成</h3><p>服务类型的架构比较常见的是SOA和微服务，简单点说就是重型服务和轻型服务，两者的差别是，SOA定义了一些规范，包括基于XML以及通过WSDL来描述服务接口。<br>微服务则强调轻量，小而简单，不限定你的服务调用方式，restful,rpc,只要你喜欢就好，而服务也是比较推荐拆成独立而简单的小服务。<br>这样的系统中，每个角色都是一个服务，一个对外提供某种调用方式的服务。就像一个优秀的班级，没有班主任，只有学生，每个学生承担班级运营的一部分责任。<br>所以服务类型的系统组成是N个独立的服务（提供服务注册和发布功能的本身也可以看做是一个服务）。</p>
-<h3 id="服务类型的案例"><a href="#服务类型的案例" class="headerlink" title="服务类型的案例"></a>服务类型的案例</h3><p>下面这个是一个打车系统的微服务架构，整个系统包含8个服务，服务通过restful形式发布，<br><img src="/linkimage/distribute/2.png" alt="dache micro service"><br>（图片来自网络，如果作者希望删除请告知）</p>
-<h3 id="集群类型和服务类型的关系"><a href="#集群类型和服务类型的关系" class="headerlink" title="集群类型和服务类型的关系"></a>集群类型和服务类型的关系</h3><p>集群类型和服务类型是两种架构形式，两个有很大差别，但是他们却是可以共存的，共存的形式是嵌套。<br>比如一个集群类型的架构中，每个节点内部的功能通过微服务的架构来实现。<br>比如一个微服务架构的系统中，某个微服务背后隐藏的一个集群，可是一个集群还叫微服务吗，这样确实比较少见，不过这样子未尝不可，毕竟这也是一个无法拆分下去的功能了。</p>
-<h3 id="分布式服务的优点"><a href="#分布式服务的优点" class="headerlink" title="分布式服务的优点"></a>分布式服务的优点</h3><p>集群类型架构<br>    扩展性，通过加服务节点就可以大量的增加服务能力。<br>    可靠性，由于服务节点有互为备份的关系，整个系统的服务可靠性是非常强的。<br>服务类型架构<br>    扩展性，可以灵活增减服务到这个系统中，灵活给服务分配不同的资源。<br>    可靠性，单个服务的异常被隔离在该服务本身。<br>    独立性，单个服务可以独立部署和测试。</p>
+<h3 id="集群类型的组成"><a class="markdownIt-Anchor" href="#集群类型的组成"></a> 集群类型的组成</h3>
+<p>为什么叫做集群类型，因为这种类型的分布式系统中，每个节点都是相同的，他们拥有相同的功能，提供相同的服务。<br />
+服务节点：整个分布式体系就是多个功能节点的聚集，可以叫这些节点为服务节点。<br />
+控制节点：顺势而为得，你可以想到，这些节点是需要一个管理者，就像一个班级的学生，需要一个老师来管理。这个老师节点可以叫做控制节点。<br />
+然而单个控制节点是不可靠的。没错，控制节点通常都是以主备的形式出现的。</p>
+<p>切换节点：有时候（并不是全部）这种架构下还会有一个不太被注意到的角色，这个角色位于集群之外，通常是一个100%可用的（绝对可靠的）设备或者服务。<br />
+为什么需要这么个设备呢？ 假想，主控制器crash，于是备用控制器生效，这个时候有两种方式可以完成备用控制器的生效，<br />
+一种是client事先缓存了主备控制节点的列表，在主控失效后，client就直接连接备控；<br />
+另一种方案是，借助公司内部一个绝对可用的设备或者服务，该设备感知到主控失效，就把地址切换到备控。<br />
+这里第二种方案种，就会存在一个这样的角色，可以叫他为切换节点。采用这种方案好处是不用把主备控制节点都暴露给客户端。</p>
+<p>所以一个集群的组成包括成千上万的服务节点+两个控制节点+可能一个切换节点<br />
+<img src="/linkimage/distribute/3.png" alt="system composition" /></p>
+<h3 id="集群类型的案例"><a class="markdownIt-Anchor" href="#集群类型的案例"></a> 集群类型的案例</h3>
+<p>集群类型的典型案例是HDFS，这是个分布式文件系统，服务节点是提供文件存储服务，控制节点管理服务节点，并且对外提供目录服务，而主备的切换需要自己增加切换节点，比如利用zookeeper。<br />
+这个图是hdfs写文件时的流程图，client首先访问控制节点（图中NN），随后根据返回信息再去访问某个或某几个服务节点（图中DN）。这也是所有集群类型的分布式架构运作的基本流程。而图中Switch起切换NN的功能。<br />
+<img src="/linkimage/distribute/1.png" alt="HDFS write flow" /><br />
+（图片来自网络，如果作者希望删除请告知）</p>
+<h3 id="服务类型的组成"><a class="markdownIt-Anchor" href="#服务类型的组成"></a> 服务类型的组成</h3>
+<p>服务类型的架构比较常见的是SOA和微服务，简单点说就是重型服务和轻型服务，两者的差别是，SOA定义了一些规范，包括基于XML以及通过WSDL来描述服务接口。<br />
+微服务则强调轻量，小而简单，不限定你的服务调用方式，restful,rpc,只要你喜欢就好，而服务也是比较推荐拆成独立而简单的小服务。<br />
+这样的系统中，每个角色都是一个服务，一个对外提供某种调用方式的服务。就像一个优秀的班级，没有班主任，只有学生，每个学生承担班级运营的一部分责任。<br />
+所以服务类型的系统组成是N个独立的服务（提供服务注册和发布功能的本身也可以看做是一个服务）。</p>
+<h3 id="服务类型的案例"><a class="markdownIt-Anchor" href="#服务类型的案例"></a> 服务类型的案例</h3>
+<p>下面这个是一个打车系统的微服务架构，整个系统包含8个服务，服务通过restful形式发布，<br />
+<img src="/linkimage/distribute/2.png" alt="dache micro service" /><br />
+（图片来自网络，如果作者希望删除请告知）</p>
+<h3 id="集群类型和服务类型的关系"><a class="markdownIt-Anchor" href="#集群类型和服务类型的关系"></a> 集群类型和服务类型的关系</h3>
+<p>集群类型和服务类型是两种架构形式，两个有很大差别，但是他们却是可以共存的，共存的形式是嵌套。<br />
+比如一个集群类型的架构中，每个节点内部的功能通过微服务的架构来实现。<br />
+比如一个微服务架构的系统中，某个微服务背后隐藏的一个集群，可是一个集群还叫微服务吗，这样确实比较少见，不过这样子未尝不可，毕竟这也是一个无法拆分下去的功能了。</p>
+<h3 id="分布式服务的优点"><a class="markdownIt-Anchor" href="#分布式服务的优点"></a> 分布式服务的优点</h3>
+<p>集群类型架构<br />
+扩展性，通过加服务节点就可以大量的增加服务能力。<br />
+可靠性，由于服务节点有互为备份的关系，整个系统的服务可靠性是非常强的。<br />
+服务类型架构<br />
+扩展性，可以灵活增减服务到这个系统中，灵活给服务分配不同的资源。<br />
+可靠性，单个服务的异常被隔离在该服务本身。<br />
+独立性，单个服务可以独立部署和测试。</p>
 
     </div>
 
@@ -400,6 +433,13 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr+QR0SQDNfgglgtcM=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">

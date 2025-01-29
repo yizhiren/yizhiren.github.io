@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="C++ 中 auto-ptr 特性和源码解析简介std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如： 1234void test()&#123;      int*p&#x3D;new int(0);      auto_ptr&lt;int&gt; ap(p);&#125;   这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时">
+    <meta name="description" content="C++ 中 auto-ptr 特性和源码解析  简介 std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如： 1234void test()&#123;      int*p&#x3D;new int(0);      auto_ptr&lt;int&gt; ap(p);&#125; 这段代码不会造成内存泄漏，因为在ap这个对象结束生命周">
 <meta property="og:type" content="article">
 <meta property="og:title" content="auto_ptr 特性和源码解析">
 <meta property="og:url" content="https://yizhi.ren/2016/11/14/autoptr/index.html">
 <meta property="og:site_name" content="一支人">
-<meta property="og:description" content="C++ 中 auto-ptr 特性和源码解析简介std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如： 1234void test()&#123;      int*p&#x3D;new int(0);      auto_ptr&lt;int&gt; ap(p);&#125;   这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时">
+<meta property="og:description" content="C++ 中 auto-ptr 特性和源码解析  简介 std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如： 1234void test()&#123;      int*p&#x3D;new int(0);      auto_ptr&lt;int&gt; ap(p);&#125; 这段代码不会造成内存泄漏，因为在ap这个对象结束生命周">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2016-11-14T09:34:46.000Z">
 <meta property="article:modified_time" content="2016-11-14T09:34:46.000Z">
@@ -146,7 +146,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#C-%E4%B8%AD-auto-ptr-%E7%89%B9%E6%80%A7%E5%92%8C%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">C++ 中 auto-ptr 特性和源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E9%87%8A%E6%94%BE%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">重复释放问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%8C%87%E9%92%88%E7%9A%84%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.3.</span> <span class="nav-text">与指针的隐式转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%92%8C%E5%8F%96%E5%80%BC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text">指针和取值操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E7%9A%84%E7%89%B9%E6%AE%8A%E6%84%8F%E4%B9%89"><span class="nav-number">1.5.</span> <span class="nav-text">特殊构造函数的特殊意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#auto-ptr-ref%E7%B1%BB"><span class="nav-number">1.6.</span> <span class="nav-text">auto_ptr_ref类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%8C%87%E9%92%88%E5%AE%9E%E4%BE%8B%E9%97%B4%E7%9A%84%E8%B5%8B%E5%80%BC"><span class="nav-number">1.7.</span> <span class="nav-text">不同指针实例间的赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E8%BF%90"><span class="nav-number">1.8.</span> <span class="nav-text">命运</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#c-%E4%B8%AD-auto-ptr-%E7%89%B9%E6%80%A7%E5%92%8C%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text"> C++ 中 auto-ptr 特性和源码解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%A4%8D%E9%87%8A%E6%94%BE%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text"> 重复释放问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E%E6%8C%87%E9%92%88%E7%9A%84%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.3.</span> <span class="nav-text"> 与指针的隐式转换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E5%92%8C%E5%8F%96%E5%80%BC%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.</span> <span class="nav-text"> 指针和取值操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E6%9E%84%E9%80%A0%E5%87%BD%E6%95%B0%E7%9A%84%E7%89%B9%E6%AE%8A%E6%84%8F%E4%B9%89"><span class="nav-number">1.5.</span> <span class="nav-text"> 特殊构造函数的特殊意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#auto_ptr_ref%E7%B1%BB"><span class="nav-number">1.6.</span> <span class="nav-text"> auto_ptr_ref类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%8C%87%E9%92%88%E5%AE%9E%E4%BE%8B%E9%97%B4%E7%9A%84%E8%B5%8B%E5%80%BC"><span class="nav-number">1.7.</span> <span class="nav-text"> 不同指针实例间的赋值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E8%BF%90"><span class="nav-number">1.8.</span> <span class="nav-text"> 命运</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -161,18 +161,18 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -256,68 +256,59 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="C-中-auto-ptr-特性和源码解析"><a href="#C-中-auto-ptr-特性和源码解析" class="headerlink" title="C++ 中 auto-ptr 特性和源码解析"></a>C++ 中 auto-ptr 特性和源码解析</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如：</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="c-中-auto-ptr-特性和源码解析"><a class="markdownIt-Anchor" href="#c-中-auto-ptr-特性和源码解析"></a> C++ 中 auto-ptr 特性和源码解析</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>std::auto_ptr 包含在头文件 &lt; memory &gt; 中，它被用来实现对动态分配对象的自动释放。如：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span>&#123;</span><br><span class="line">      <span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">      <span class="function">auto_ptr&lt;<span class="keyword">int</span>&gt; <span class="title">ap</span><span class="params">(p)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
 <p>这段代码不会造成内存泄漏，因为在ap这个对象结束生命周期时，其包含的p会被自动释放。这几乎已经是auto_ptr的全部作用了，但是还有一些小秘密，下面结合它的代码看看他的实现，挖挖它的内涵。</p>
 <span id="more"></span>
-
-<h3 id="重复释放问题"><a href="#重复释放问题" class="headerlink" title="重复释放问题"></a>重复释放问题</h3><p>由于auto_ptr在不同实例间没有关联，因此多个实例得到同一份指针将引起重复释放问题。</p>
+<h3 id="重复释放问题"><a class="markdownIt-Anchor" href="#重复释放问题"></a> 重复释放问题</h3>
+<p>由于auto_ptr在不同实例间没有关联，因此多个实例得到同一份指针将引起重复释放问题。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap1</span>(p);</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap2</span>(p);</span><br></pre></td></tr></table></figure>
-
-<h3 id="与指针的隐式转换"><a href="#与指针的隐式转换" class="headerlink" title="与指针的隐式转换"></a>与指针的隐式转换</h3><p>auto_ptr&lt; Type &gt;与 Type*指针间的隐式转换是不存在的。<br>首先指针转到auto_ptr是通过这个接口：</p>
+<h3 id="与指针的隐式转换"><a class="markdownIt-Anchor" href="#与指针的隐式转换"></a> 与指针的隐式转换</h3>
+<p>auto_ptr&lt; Type &gt;与 Type*指针间的隐式转换是不存在的。<br />
+首先指针转到auto_ptr是通过这个接口：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> _Tp element_type;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">explicit</span></span></span><br><span class="line"><span class="function"><span class="title">auto_ptr</span><span class="params">(element_type* __p = <span class="number">0</span>)</span> <span class="title">throw</span><span class="params">()</span> : _M_ptr(__p) &#123;</span> &#125;</span><br></pre></td></tr></table></figure>
-
 <p>注意到explicit这个关键字，有了这个关键字于是下面的代码是通不过的，因为他没有显式的调用构造函数，与explicit违背。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;ap1 = p;</span><br></pre></td></tr></table></figure>
-
 <p>而必须通过</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;ap1 = auto_ptr&lt;<span class="keyword">int</span>&gt;(p);</span><br><span class="line">或者</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap1</span>(p);</span><br></pre></td></tr></table></figure>
-
 <p>这么做的目的只可能是为了防止误用，防止在这个变量是auto_ptr还是指针上傻傻分不清。</p>
 <p>再一个从auto_ptr&lt; Type &gt;转到Type*的时候使用的是get()接口，而无法隐式转过去。</p>
-<h3 id="指针和取值操作"><a href="#指针和取值操作" class="headerlink" title="指针和取值操作"></a>指针和取值操作</h3><p>下面这个例子，如果我们对ap进行(*ap)和ap-&gt;f()操作，结果与(*p)和p-&gt;f()是否一样呢？</p>
+<h3 id="指针和取值操作"><a class="markdownIt-Anchor" href="#指针和取值操作"></a> 指针和取值操作</h3>
+<p>下面这个例子，如果我们对ap进行(*ap)和ap-&gt;f()操作，结果与(*p)和p-&gt;f()是否一样呢？</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ClassABC *p=<span class="keyword">new</span> <span class="built_in">ClassABC</span>();</span><br><span class="line">auto_ptr&lt;ClassABC&gt;<span class="built_in">ap</span>(p);</span><br></pre></td></tr></table></figure>
-
 <p>我们可以通过auto_ptr的源码来知道答案， 她重载了这两个操作符，使得其操作效果和直接指针的效果是一样的：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">operator</span>*() <span class="function"><span class="keyword">const</span> <span class="title">throw</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> *_M_ptr; </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">element_type*</span><br><span class="line"><span class="keyword">operator</span>-&gt;() <span class="function"><span class="keyword">const</span> <span class="title">throw</span><span class="params">()</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">return</span> _M_ptr; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="特殊构造函数的特殊意义"><a href="#特殊构造函数的特殊意义" class="headerlink" title="特殊构造函数的特殊意义"></a>特殊构造函数的特殊意义</h3><p>我们知道拷贝构造和赋值构造函数的定义一般是：</p>
+<h3 id="特殊构造函数的特殊意义"><a class="markdownIt-Anchor" href="#特殊构造函数的特殊意义"></a> 特殊构造函数的特殊意义</h3>
+<p>我们知道拷贝构造和赋值构造函数的定义一般是：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ClassABC</span>(<span class="keyword">const</span> ClassABC&amp; c);</span><br><span class="line">ClassABC&amp;</span><br><span class="line"><span class="keyword">operator</span>=(<span class="keyword">const</span> ClassABC&amp; c);</span><br></pre></td></tr></table></figure>
-
 <p>他们的参数都是const类型的，但是auto_ptr却不是const类型的，原因是什么呢？</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">auto_ptr</span>(auto_ptr&amp; __a) <span class="keyword">throw</span>() : _M_ptr(__a.<span class="built_in">release</span>()) &#123; &#125;</span><br><span class="line">auto_ptr&amp;</span><br><span class="line"><span class="keyword">operator</span>=(auto_ptr&amp; __a) <span class="built_in"><span class="keyword">throw</span></span>()</span><br><span class="line">&#123;</span><br><span class="line"><span class="built_in">reset</span>(__a.<span class="built_in">release</span>());</span><br><span class="line"><span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p> 涉及到一个控制权的问题，auto_ptr假设只有一个实例是持有这个指针的，否则必然导致重复释放，所以当把一个auto_ptr实例赋值给另一个auto_ptr实例时：</p>
+<p>涉及到一个控制权的问题，auto_ptr假设只有一个实例是持有这个指针的，否则必然导致重复释放，所以当把一个auto_ptr实例赋值给另一个auto_ptr实例时：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>*p=<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>);</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap1</span>(p);</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap2</span>(ap1);</span><br></pre></td></tr></table></figure>
-
 <p>前者（ap1）的实例必须放弃这个指针(p)而把它交给后者(ap2)。而这个放弃的操作必然会修改该实例(ap1)内部数据，于是它不能是const类型，只能是非const类型的。而非const的参数类型不能接收的有，一个是const类型的，还有一个是临时变量。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是接收临时变量的两个例子</span></span><br><span class="line">   auto_ptr&lt;<span class="keyword">int</span>&gt;ap1=auto_ptr&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>));</span><br><span class="line">   auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap2</span>(auto_ptr&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>)));</span><br></pre></td></tr></table></figure>
-
 <p>要接收const类型没办法实现。但是接收临时变量还是有办法的，看下面：</p>
-<h3 id="auto-ptr-ref类"><a href="#auto-ptr-ref类" class="headerlink" title="auto_ptr_ref类"></a>auto_ptr_ref类</h3><p>于是牛人想出了一个方案来支持临时变量的赋值。Bill Gibbons和Greg Colvin创造性地提出了auto_ptr_ref类，解决了无法传递临时变量的问题。</p>
+<h3 id="auto_ptr_ref类"><a class="markdownIt-Anchor" href="#auto_ptr_ref类"></a> auto_ptr_ref类</h3>
+<p>于是牛人想出了一个方案来支持临时变量的赋值。Bill Gibbons和Greg Colvin创造性地提出了auto_ptr_ref类，解决了无法传递临时变量的问题。</p>
 <p>思路是这样的，注意推导过程：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">为了接收 auto_ptr&lt;TYPE&gt;类型的临时变量，我可以选择的形参有const auto_ptr&lt;TYPE&gt;&amp;或者auto_ptr&lt;TYPE&gt;&amp; 或者auto_ptr&lt;TYPE&gt; 3种参数类型。</span><br><span class="line">1. const auto_ptr&lt;TYPE&gt;&amp;因为不支持修改而排除； </span><br><span class="line">2. auto_ptr&lt;TYPE&gt;&amp;支持修改，但是对临时变量只能const引用，不能直接引用，而const引用刚才已经排除了，所以这也不行；</span><br><span class="line">3. auto_ptr&lt;TYPE&gt;呢，编译器说这么定义不行，你可以试试。这会导致逻辑上的死循环，假如你要使用临时变量A0来构造B，由于形参不是引用类型，所以你必须从A0拷贝一份A1传入B，于是你又陷入如何从临时变量A0生成临时的变量A1，从A0到A1和从A0到B的问题依然是同一个。</span><br></pre></td></tr></table></figure>
-
 <p>于是我们只能新创建一个类叫做auto_ptr_ref&lt; TYPE &gt;。 然后给auto_ptr增加新的构造函数：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">auto_ptr</span>(auto_ptr_ref&lt;TYPE&gt; __ref)</span><br></pre></td></tr></table></figure>
-
 <p>然后你应该猜到了，我们再给auto_ptr增加新的类型转换函数，支持转换到auto_ptr_ref&lt; TYPE &gt;。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp1&gt;</span><br><span class="line">    <span class="keyword">operator</span> auto_ptr_ref&lt;_Tp1&gt;()</span><br></pre></td></tr></table></figure>
-
 <p>好了大功告成，临时变量auto_ptr&lt; TYPE &gt;先转成auto_ptr_ref&lt; TYPE &gt;，auto_ptr_ref&lt; TYPE &gt;再传到构造函数中，有了这个auto_ptr_ref类，下面的代码已经可以编过了，如果刚才前面小节中，你去试了发现明明能编过我却说不行，请不要奇怪。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;ap1=auto_ptr&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>));</span><br><span class="line">auto_ptr&lt;<span class="keyword">int</span>&gt;<span class="built_in">ap1</span>(auto_ptr&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="built_in"><span class="keyword">int</span></span>(<span class="number">0</span>)));</span><br></pre></td></tr></table></figure>
-
 <p>但是对于const类型的实参还是没法运作的，因为operator auto_ptr_ref&lt; _Tp1 &gt;()是非const的，const对象调不到这个成员函数。</p>
-<h3 id="不同指针实例间的赋值"><a href="#不同指针实例间的赋值" class="headerlink" title="不同指针实例间的赋值"></a>不同指针实例间的赋值</h3><p>假如我们有两个实例，这两个实例的对应指针是不同的，那么我们能对他们进行赋值吗？</p>
+<h3 id="不同指针实例间的赋值"><a class="markdownIt-Anchor" href="#不同指针实例间的赋值"></a> 不同指针实例间的赋值</h3>
+<p>假如我们有两个实例，这两个实例的对应指针是不同的，那么我们能对他们进行赋值吗？</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">//关键代码就是对_M_ptr这个变量进行了赋值。</span></span><br><span class="line">    <span class="comment">//template&lt;typename _Tp&gt;</span></span><br><span class="line">    <span class="comment">//_Tp* _M_ptr;</span></span><br><span class="line">    <span class="comment">//所以_M_ptr就是指针类型的变量。</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp1&gt;</span></span><br><span class="line"><span class="function">      <span class="title">auto_ptr</span><span class="params">(auto_ptr&lt;_Tp1&gt;&amp; __a)</span> <span class="title">throw</span><span class="params">()</span> : _M_ptr(__a.release()) &#123;</span> &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> _Tp1&gt;</span><br><span class="line">      auto_ptr&amp;</span><br><span class="line">      <span class="keyword">operator</span>=(auto_ptr&lt;_Tp1&gt;&amp; __a) <span class="built_in"><span class="keyword">throw</span></span>()</span><br><span class="line">      &#123;</span><br><span class="line">      <span class="built_in">reset</span>(__a.<span class="built_in">release</span>()); <span class="comment">//</span></span><br><span class="line">      <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">    <span class="comment">//其中reset的实现如下</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span></span></span><br><span class="line"><span class="function">    <span class="title">reset</span><span class="params">(element_type* __p = <span class="number">0</span>)</span> <span class="title">throw</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (__p != _M_ptr)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">delete</span> _M_ptr;</span><br><span class="line">      _M_ptr = __p;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>可以看出A&#x3D;B这样的表达式中，只要B对应的指针类型能够赋值给A对应的指针类型，那么这个赋值就是可行的。比如父子类之间。</p>
+<p>可以看出A=B这样的表达式中，只要B对应的指针类型能够赋值给A对应的指针类型，那么这个赋值就是可行的。比如父子类之间。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SON *pson = <span class="literal">NULL</span>;</span><br><span class="line">   <span class="function">auto_ptr&lt;SON&gt; <span class="title">ap1</span><span class="params">(pson)</span></span>;</span><br><span class="line">   <span class="function">auto_ptr&lt;FATHER&gt; <span class="title">ap2</span><span class="params">(ap1)</span></span>;</span><br></pre></td></tr></table></figure>
-
 <p>而反过来把FATHER赋给SON就会报错了。</p>
-<h3 id="命运"><a href="#命运" class="headerlink" title="命运"></a>命运</h3><p>说了这么多，好像很高级的样子，但是std::auto_ptr在最新的c++11标准草案中被std::unique_ptr取代。主要原因是auto_ptr在进行赋值时默默进行着控制权转移，而这个动作容易导致对失去控制权的实例的错误使用。一个特别的例子是把auto_ptr放到容器中时。下偏讲unique_ptr时讲。</p>
+<h3 id="命运"><a class="markdownIt-Anchor" href="#命运"></a> 命运</h3>
+<p>说了这么多，好像很高级的样子，但是std::auto_ptr在最新的c++11标准草案中被std::unique_ptr取代。主要原因是auto_ptr在进行赋值时默默进行着控制权转移，而这个动作容易导致对失去控制权的实例的错误使用。一个特别的例子是把auto_ptr放到容器中时。下偏讲unique_ptr时讲。</p>
 
     </div>
 
@@ -447,6 +438,13 @@
   <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr+QR0SQDNfgglgtcM=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
 
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
