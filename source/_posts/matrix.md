@@ -266,3 +266,51 @@ $\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bma
 ![vec_projection](/linkimage/matrix/vec_projection.png)
 
 图中$\vec{i}$长度是1, $\vec{u}$长度也是1,他的向量值是$\begin{bmatrix} a0 \\ b0 \end{bmatrix}$.因此$\vec{i}$在$\vec{u}$上的投影长度应该是等于$\vec{u}$在$\vec{i}$上的投影长度. 而$\vec{u}$在$\vec{i}$上的长度等于`a0`, 因此$\vec{i}$投影到$\vec{u}$上也是`a0`, 同理$\vec{j}$投影到$\vec{u}$上是`b0`, 由此我们可以得出任意向量到$\vec{u}$的投影变换就是$\begin{bmatrix} a0 & b0 \end{bmatrix}$. 因此$\begin{bmatrix} a0 & b0 \end{bmatrix} \begin{bmatrix} d \\ e  \end{bmatrix}$ 就是$\begin{bmatrix} d \\ e  \end{bmatrix}$在$\begin{bmatrix} a0 & b0 \end{bmatrix}$上的投影长度. 拓展到3维, 也就证明了$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix}$等于是$\begin{bmatrix} d \\ e \\ f \end{bmatrix}$在$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix}$上的投影长度.
+
+### 叉积
+如果我们给出两个向量$\vec{v}$和$\vec{w}$, 定义$\vec{v}$ X $\vec{w}$结果为与$\vec{v}$和$\vec{w}$的平面垂直, 而长度为$\vec{v}$和$\vec{w}$组成的矩形面积,这样的一个向量.
+垂直的向量有两个方向, 满足右手定律的方向的这个定为叉积的方向.
+
+![cross_multi_right_hand_rule](/linkimage/matrix/cross_multi_right_hand_rule.png)
+
+(来自[叉积的标准介绍](https://www.bilibili.com/video/BV1ys411472E?p=11),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+
+另外$\vec{v}$和$\vec{w}$组成的矩形面积,正是前面提过的行列式的值.
+
+![cross_multi_right_hand_rule](/linkimage/matrix/det_xy.png)
+
+(来自[叉积的标准介绍](https://www.bilibili.com/video/BV1ys411472E?p=11),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+
+叉积的计算公式可以如此来推导:
+
+假设$\vec{v}=\begin{bmatrix} v1 \\ v2 \\ v3 \end{bmatrix}$, $\vec{w}=\begin{bmatrix} w1 \\ w2 \\ w3 \end{bmatrix}$, 那么我们可以定义这样一个计算行列式的方程:
+$$
+f(\begin{bmatrix} x \\ y \\ x \end{bmatrix}) = det(\begin{bmatrix} x & v1 & w1 \\ y & v2 & w2 \\ z & v3 & w3 \end{bmatrix})
+$$
+这个函数的参数是一个任意向量$\begin{bmatrix} x \\ y \\ x \end{bmatrix}$, 函数值则是该任意向量与$\vec{v}$和$\vec{w}$组成的立方体体积,也就是行列式值.
+因为函数结果是一个值, 所以我们可以想象, 存在这样一个线性变换$\begin{bmatrix} p1 & p2 & p3 \end{bmatrix}$的函数解, 满足:
+$$
+\begin{bmatrix} p1 & p2 & p3 \end{bmatrix} \begin{bmatrix} x \\ y \\ x \end{bmatrix} = det(\begin{bmatrix} x & v1 & w1 \\ y & v2 & w2 \\ z & v3 & w3 \end{bmatrix})
+$$
+而因对偶性:
+$$
+\begin{bmatrix} p1 & p2 & p3 \end{bmatrix} \begin{bmatrix} x \\ y \\ x \end{bmatrix} = \begin{bmatrix} p1 \\ p2 \\ p3 \end{bmatrix} . \begin{bmatrix} x \\ y \\ x \end{bmatrix}
+$$
+同时$\begin{bmatrix} p1 \\ p2 \\ p3 \end{bmatrix} . \begin{bmatrix} x \\ y \\ x \end{bmatrix}$又有一个几何意义就是一个向量在另一个向量上的投影乘以后者这个向量的长度.所以这就意味着, 这个函数的右侧是3个向量构成的立方体的体积, 左侧是一个向量在另一个上的投影乘以后者的长度. 我们来画个示意图:
+![volume_on_calc_cross](/linkimage/matrix/volume_on_calc_cross.png)
+(来自[以线性变换的眼光看叉积](https://www.bilibili.com/video/BV1ys411472E?p=12),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+上图中灰色箭头就是矩形的高, 那么我们可以容易想到,$\begin{bmatrix} p1 \\ p2 \\ p3 \end{bmatrix}$向量就是一个方向与灰色箭头一致,长度是底下矩形面积的这样一个向量. 这个向量正好就是我们要求的叉积!
+
+我们回头看刚才的等式, 
+$$
+\begin{bmatrix} p1 \\ p2 \\ p3 \end{bmatrix} . \begin{bmatrix} x \\ y \\ x \end{bmatrix} = det(\begin{bmatrix} x & v1 & w1 \\ y & v2 & w2 \\ z & v3 & w3 \end{bmatrix})
+$$
+我们通过展开公式可以得出p1,p2,p3的值, 这也就是叉积的计算公式:
+```
+p1 = v2w3-v3w2
+p2 = v3w1-v1w3
+p3 = v1w2-v2w1
+```
+![cross_calc_value](/linkimage/matrix/cross_calc_value.png)
+实际计算的时候会施加一个小技巧, 会把x替换成$\vec{i}$,把y替换成$\vec{j}$, 把z替换成$\vec{k}$, 这时候直接展开det公式就直接得到了叉积$\vec{i}(v2w3-v3w2) + \vec{j}(v3w1-v1w3) + \vec{k}(v1w2-v2w1)$, 这个技巧不好说明确的意义, 但是是有效的.
+![cross_calc_value](/linkimage/matrix/cross_with_base.png)
