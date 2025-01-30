@@ -51,7 +51,7 @@ $$
 
 向量运算满足的基本规律如下:
 $$
-\begin{bmatrix} a \\ c \end{bmatrix} + \begin{bmatrix} b \\ d \end{bmatrix} = \begin{bmatrix} a+c \\ b+d \end{bmatrix}
+\begin{bmatrix} a \\ c \end{bmatrix} + \begin{bmatrix} b \\ d \end{bmatrix} = \begin{bmatrix} a+b \\ c+d \end{bmatrix}
 $$
 
 $$
@@ -205,9 +205,64 @@ $$
 $$
 通常逆矩阵可以由计算机来计算得到,不需要去手工计算逆矩阵.
 
-但是逆矩阵不一定存在,当A的行列式为0的时候, 意味着经过A转换之后, 空间维度降低了, 如果有逆矩阵, 那就意味着要把一个点扩展成一条线, 或者要把一条线扩展成一个面, 这是做不到的, 函数是不具有从1个输入到多个输出的功能的, 因此当行列式为0的时候,逆矩阵是不存在的(解还是可以存在的).
+但是逆矩阵不一定存在,当A的行列式为0的时候, 意味着经过A转换之后, 空间维度降低了, 如果有逆矩阵, 那就意味着要把一个点扩展成一条线, 或者要把一条线扩展成一个面, 这是做不到的, 函数是不具有从1个输入到多个输出的功能的, 因此当行列式为0的时候,逆矩阵是不存在的.
+不过,即使行列式为0, 逆矩阵不存在, 方程的解还是可以存在的.比如这个就无解:
+```
+2x + 2y = 2
+3x + 3y = 4
+```
+比如这个就有任意多解:
+```
+2x + 2y = 2
+3x + 3y = 3
+```
+从几何角度来说, 某个线性变换把二维空间压缩到一根线, 那么当等号右侧的目标向量正好在这根线上, 我们就可以有任意多解都可以达成这一个压缩效果. 但是当等号右侧的目标向量不在这根压缩后的线上的时候, 我们入论如何都达不到这个压缩效果, 因此无解.
+
+![func_solution](/linkimage/matrix/func_solution.png)
+
+
 
 我们这里有一个专门的名词叫`秩`来形容转换后的空间的维度, 秩为1表示一条线, 秩为2代表平面, 秩为3代表3维空间.
 一个矩阵的所有可能的转换结果称为列空间, 包括空间压缩为0的情况. 如果转换后的秩与矩阵的维度相同,就称为满秩. 为什么叫列空间, 可以这么记忆,  矩阵的每一列都表示基向量, 基向量变换形成的空间就是所有可能的变换结果.
 
 
+
+### 非立方矩阵
+如果是线性独立的基向量, 显然matrix应该是NxN的行数列数相等. 那么对于那些行数和列数不相同的矩阵,他们又有什么几何上的意义呢?
+如果行数大于列数:
+$$
+\begin{bmatrix} a & b \\ c & d \\ e & f \end{bmatrix}
+$$
+这样的矩阵可以理解成3维空间中的一个2维平面上的一组基向量, 其列空间就是一个3维空间上的2维平面.他的几何意义是二维空间在三维平面上的映射.
+
+如果行数小于列数:
+$$
+\begin{bmatrix} a & b & c \\ d & e & f \end{bmatrix}
+$$
+
+这样的矩阵可以理解成原3维空间中的一组基向量投影在一个2维平面上, 其列空间也是2维平面.他的几何意义是三维空间在二维平面上的映射. 这样的一组基向量,显然彼此是会存在线性相关的.
+
+### 点积
+两个向量的点积, 计算公式如下:
+$$
+\begin{bmatrix} a \\ b \\ c \end{bmatrix} . \begin{bmatrix} d \\ e \\ f \end{bmatrix} = ad + be + cf
+$$
+碰巧等于
+$$
+\begin{bmatrix} a & b & c \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix} =  ad + be + cf
+$$
+也就是说两个向量的点积, 正好等于把其中一个向量看成是线性变换, 变换到一维的直线上.因为点积是满足交换率的,所以说可以把其中任意一个看成是线性变换.
+由于线性变换是变换到一条直线上,$\begin{bmatrix} a & b & c \end{bmatrix}$ 就相当于空间中这条直线上的一个向量.我们再把$\begin{bmatrix} a & b & c \end{bmatrix}$变换成 $len * \begin{bmatrix} a0 & b0 & c0 \end{bmatrix}$, 也就是变成长度乘以单位向量的形式.
+$$
+\begin{bmatrix} a & b & c \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix} = len*\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix}
+$$
+同时$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix}$又等于是$\begin{bmatrix} d \\ e \\ f \end{bmatrix}$在$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix}$上的投影长度.
+因此$\begin{bmatrix} a & b & c \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix}$等于是$\begin{bmatrix} a & b & c \end{bmatrix}$的长度乘以$\begin{bmatrix} d \\ e \\ f \end{bmatrix}$在$\begin{bmatrix} a & b & c \end{bmatrix}$上的长度.
+向量点积的这种巧合性,即向量点积等于一维矩阵和向量的乘积,称为对偶性,其概念比较接近巧合性.当然对偶性不止于此, 这只是对偶性的一个体现之处.
+
+$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix}$等于是$\begin{bmatrix} d \\ e \\ f \end{bmatrix}$在$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix}$上的投影长度, 这一点单独证明:
+假设我们有一个二维空间中的单位向量$\vec{u}$, 我们试图找到一个线性变换, 变换的结果是得到任意向量在$\vec{u}$上的投影. 由我们的一些前置经验知道,我们本质上只要知道基向量的投影变换,也就知道了任意向量的投影变换.  我们作一个辅助图:
+
+![vec_projection](/linkimage/matrix/vec_projection.png)
+
+图中$\vec{i}$长度是1, $\vec{u}$长度也是1,他的向量值是$\begin{bmatrix} a0 \\ b0 \end{bmatrix}$.因此$\vec{i}$在$\vec{u}$上的投影长度应该是等于$\vec{u}$在$\vec{i}$上的投影长度. 而$\vec{u}$在$\vec{i}$上的长度等于`a0`, 因此$\vec{i}$投影到$\vec{u}$上也是`a0`, 同理$\vec{j}$投影到$\vec{u}$上是`b0`, 由此我们可以得出任意向量到$\vec{u}$的投影变换就是$\begin{bmatrix} a0 & b0 \end{bmatrix}$. 因此$\begin{bmatrix} a0 & b0 \end{bmatrix} \begin{bmatrix} d \\ e  \end{bmatrix}$ 就是$\begin{bmatrix} d \\ e  \end{bmatrix}$在$\begin{bmatrix} a0 & b0 \end{bmatrix}$上的投影长度. 拓展到3维, 也就证明了$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bmatrix}$等于是$\begin{bmatrix} d \\ e \\ f \end{bmatrix}$在$\begin{bmatrix} a0 & b0 & c0 \end{bmatrix}$上的投影长度.
