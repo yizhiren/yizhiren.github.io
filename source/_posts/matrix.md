@@ -314,3 +314,99 @@ p3 = v1w2-v2w1
 ![cross_calc_value](/linkimage/matrix/cross_calc_value.png)
 实际计算的时候会施加一个小技巧, 会把x替换成$\vec{i}$,把y替换成$\vec{j}$, 把z替换成$\vec{k}$, 这时候直接展开det公式就直接得到了叉积$\vec{i}(v2w3-v3w2) + \vec{j}(v3w1-v1w3) + \vec{k}(v1w2-v2w1)$, 这个技巧不好说明确的意义, 但是是有效的.
 ![cross_calc_value](/linkimage/matrix/cross_with_base.png)
+
+### 基变换
+前面我们讲到一个矩阵乘以一个向量, 其几何意义是把这个向量做一个线性变换, 再进一步说, 是因为基向量做了一个线性变换, 所以其空间中的每一个向量都应该做一个相同比例的变换.
+现在我们换一个思路, 以坐标系的角度来思考这个线性变换的问题.我们左乘一个矩阵, 等价于坐标系发生了拉伸变换, 拉伸变换后的新坐标系就是矩阵中的列.
+![base_change](/linkimage/matrix/base_change.png)
+比如上图左乘一个矩阵$\begin{bmatrix} 2 & -1 \\ 1 & 1 \end{bmatrix}$, 可以理解成坐标系拉伸变换, 新的坐标系的基向量是$\begin{bmatrix} 2 \\ 1 \end{bmatrix}$和$\begin{bmatrix}  -1 \\ 1 \end{bmatrix}$.这时候拉伸变换前的坐标系中的向量也跟着一起发生了等比例的拉伸变换. 又因为我们知道新坐标系的基向量在旧坐标系下是$\begin{bmatrix} 2 & -1 \\ 1 & 1 \end{bmatrix}$, 所以等比例地,新坐标系下的任意变量在旧坐标系下就是$\begin{bmatrix} 2 & -1 \\ 1 & 1 \end{bmatrix}$乘以该向量.
+也就是说矩阵乘以向量, 有另一个几何意义,就是把`以矩阵的列作为基向量的坐标系`下的向量转成默认坐标系下的向量. 是对同一向量的不同视角的改变.
+
+![transform_meaning](/linkimage/matrix/transform_meaning.png)
+
+(来自[基变换](https://www.bilibili.com/video/BV1ys411472E?p=13),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+
+总结来说,左乘一个矩阵, 一方面相当于我们对默认网格做了拉伸,变成一个自定义的网格.另一方面相当于是把新网格下的坐标值转成默认坐标系下的坐标值.我们可以得出一个公式(下标表示视角):
+$$
+\begin{bmatrix} M \end{bmatrix}_d \vec{V}_M = \vec{V}_d
+$$
+即M坐标系下的向量$\vec{V}$,左乘默认视角下的M坐标系矩阵, 结果就是默认视角下的向量$\vec{V}_d$.
+同理我们可以通过逆矩阵来得到相反的结果:
+$$
+\vec{V}_M = \begin{bmatrix} M \end{bmatrix}_d^{-1} \vec{V}_d
+$$
+即在知道默认坐标系下的向量以及M坐标系基向量组成的矩阵, 我们就可以求出M的逆矩阵, 进而求出M坐标系下的向量, 也就是把默认坐标系视角的向量转成M坐标系视角的向量.
+
+下面有坐标系视角转换引出的问题, 假如我们有一个A视角下的向量$\vec{V}_A$, 现在要对向量做一次默认视角下的线性变换$\begin{bmatrix} M \end{bmatrix}_d$, 那么转换后A视角下的向量值会是多少呢? 答案是:
+$$
+\begin{bmatrix} A \end{bmatrix}_d^{-1} \begin{bmatrix} M \end{bmatrix}_d \begin{bmatrix} A \end{bmatrix}_d \vec{V}_A
+$$
+计算顺序从右往左,也就是先转成默认视角的向量, 再执行线性变换, 再转回A视角.这个过程很合乎逻辑合乎我们的思路.
+所以我们可以得出把线性变换前后用A的逆矩阵和矩阵包裹之后,就是A视角下的线性变换公式.
+$$
+\begin{bmatrix} A \end{bmatrix}_d^{-1} \begin{bmatrix} M \end{bmatrix}_d \begin{bmatrix} A \end{bmatrix}_d
+$$
+
+### 特征值和特征向量
+什么是特征向量, 当某次线性变换中,某个直线上的向量变换后还是在这条直线上, 那么直线上的向量就是特征向量.
+
+![feature_vector_def](/linkimage/matrix/feature_vector_def.png)
+
+(来自[特征向量和特征值](https://www.bilibili.com/video/BV1ys411472E?p=14),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+
+比如上图线性变换为$\begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix}$, 其中的黄色的斜线上的那些向量就是特征向量. 而转换后把向量拉长或者压缩的比例就是特征值, 大于1表示拉长,小于1表示压缩, 大于0表示方向不变, 小于0表示方向相反. 在空间中我们可以把特征向量所在直线看成是变换的旋转轴.
+
+![feature_vector_axis](/linkimage/matrix/feature_vector_axis.png)
+
+特征值和特征向量的推导过程大致如下, 首先根据定义:
+$$
+A\vec{V} = \lambda\vec{V}
+$$
+随后
+$$
+A\vec{V} = \lambda\vec{V} = (\lambda I)\vec{V}
+$$
+$$
+A\vec{V} - (\lambda I)\vec{V} = \vec{0}
+$$
+$$
+(A - \lambda I)\vec{V} = \vec{0}
+$$
+其中`I`表示元向量,比如$\begin{bmatrix} 1 & 0 \\ 0 & 1  \end{bmatrix}$, 因此更加直观的来展开看的话(以2维空间为例):
+$$
+(A - \lambda I)\vec{V} = \begin{bmatrix} a-\lambda & b \\ c & d-\lambda \end{bmatrix}\vec{V} = \vec{0}
+$$
+这个公式的意思是同一直线上的向量经过$\begin{bmatrix} a-\lambda & b \\ c & d-\lambda \end{bmatrix}$转换后都是0向量,也就是这个方向上的向量都被压缩成了0向量, 那么唯一可能的就是$\begin{bmatrix} a-\lambda & b \\ c & d-\lambda \end{bmatrix}$的行列式值$det(\begin{bmatrix} a-\lambda & b \\ c & d-\lambda \end{bmatrix})$为0.即$(a-\lambda)(d-\lambda) - bc = 0$ 这里可以求出$\lambda$的值,无解的话表示不存在特征向量.求出值后,$\lambda$就是一个已知值, 这时候代入公式,再把$\vec{V}$展开成x和y:
+$$
+\begin{bmatrix} a-\lambda & b \\ c & d-\lambda \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = \vec{0}
+$$
+由于`a/b/c/d/λ`都是已知值, 因此就可以得到x/y之间的线性关系.
+显然如果此时$a-\lambda$,b,c,$d-\lambda$都是0, 这里的x/y就可以有任意多的解, 也就存在任意多的特征向量.
+
+下图这个例子展示了A等于$\begin{bmatrix} 2 & 2 \\ 1 & 3 \end{bmatrix}$的情况下求出特征值$\lambda$值为1. 以及求得的特征向量所在直线为`x+2y = 0`(图中没画出).
+![feature_vector_to_line](/linkimage/matrix/feature_vector_to_line.png)
+
+如果我们能找到一组线性无关的特征向量,他们构成的向量空间与原空间一致, 那么这组特征向量就同时是这个空间的基向量, 我们叫他特征基.
+假如特征基构成的矩阵叫[M],特征基对应的线性变换是A, 那么根据前面基变换的经验$A^{-1}[M]A$就是[M]在A坐标系统视角下的对应变换$[M]_A$.我们可以确定的是$[M]_A$一定是一个对角矩阵,只有对角矩阵的每个基都是特征向量,比如:
+![diagonal_matrix](/linkimage/matrix/diagonal_matrix.png)
+这个性质可以给我们带来一些计算上的帮助, 假如你要执行$[M]^{100}$, 那么我们可以先$A^{-1}[M]A$计算出$[M]_A$, 然后执行($[M]_A)^{100}$, 再执行左乘$A$转换回默认视角. 这样绕一大圈的好处是因为对角矩阵乘法的计算比较简单.
+$$
+\begin{bmatrix} a & 0 & 0 \\ 0 & b & 0 \\ 0 & 0 & c \end{bmatrix} ^ {100} \begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} a^{100}x \\ b^{100}y \\ c^{100}z \end{bmatrix}
+$$
+补充一个简单说明,对角矩阵的每个基都是特征向量. 高维的不好证明, 二维的可以简单证明:
+对角矩阵如下:
+$$
+\begin{bmatrix} a & 0 \\ 0 & b \end{bmatrix}
+$$
+求解$\lambda$的公式如下:
+$$
+\begin{bmatrix} (a-\lambda) & 0 \\ 0 & (b-\lambda) \end{bmatrix} \begin{bmatrix} x \\ y \end{bmatrix} = 0
+$$
+所以我们可以用$(a - \lambda) (b-\lambda)-0=0$ 来计算$\lambda$. 随后根据求出的$\lambda$代回公式, 可得方程:
+$$
+(a-\lambda) x = 0
+$$
+$$
+(b-\lambda) y = 0
+$$
+很容易可知`x=0`和`y=0`是两个解, 就在基向量上, 得到证明.
