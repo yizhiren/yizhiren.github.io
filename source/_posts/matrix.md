@@ -22,14 +22,14 @@ $$
 $$
 sin(θ) = \frac{a}{c}
 $$
-那么我们很容易通过绘制一个直角三角形并测量出sin()的值, 同时我们也很容易产生记忆, 30度角的sin值为0.5.这一切是建立在我们对计算公式产生几何关联的基础上,这种关联拓展了我们的解体思路,也加速我们的计算过程.
+那么我们很容易通过绘制一个直角三角形并测量出sin()的近似值, 同时我们也很容易产生记忆, 30度角的sin值为0.5.这一切是建立在我们对计算公式产生几何关联的基础上,这种关联拓展了我们的解体思路,也加速我们的计算过程.
 这种知识特性适用于各个方面, 他的层级结构如下:
 
 ![knowledge_level](/linkimage/matrix/knowledge_level.png)
 
-(来自[线性代数的本质-序言](https://www.bilibili.com/video/BV1ys411472E),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[线性代数的本质-序言](https://www.bilibili.com/video/BV1ys411472E)有的浏览器跳转后看不了请右键复制链接并粘帖到地址栏打开,下同!)
 
-如果我们能掌握矩阵运算跟几何结构的关联, 那么就会对运算形成几,何直观, 更好的掌握和使用他.
+如果我们能掌握矩阵运算跟几何结构的关联, 那么就会对运算形成几何直观, 更好的掌握和使用他.
 
 <!-- more -->
 
@@ -43,7 +43,7 @@ $$
 
 ![vector-on-coordinate](/linkimage/matrix/vector-on-coordinate.png)
 
-(来自[线性代数的本质-向量究竟是什么](https://www.bilibili.com/video/BV1ys411472E?p=2),可右键复制链接并粘帖到地址栏,本节其他截图也来源于此)
+(来自[线性代数的本质-向量究竟是什么](https://www.bilibili.com/video/BV1ys411472E?p=2))
 
 因此我们可以把向量视作一种工具, 用于把一堆数字列表可视化, 也便于把空间问题和图形问题转成计算机能处理的运算.
 
@@ -95,7 +95,7 @@ $$
 
 ![base_transform](/linkimage/matrix/base_transform.png)
 
-(来自[矩阵与线性变换 ](https://www.bilibili.com/video/BV1ys411472E?p=4)可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[矩阵与线性变换 ](https://www.bilibili.com/video/BV1ys411472E?p=4))
 
 上图变换显示了基向量从$\begin{bmatrix} 1 \\ 0 \end{bmatrix}$和$\begin{bmatrix} 0 \\ 1 \end{bmatrix}$,变换到$\begin{bmatrix} 3 \\ 1 \end{bmatrix}$和$\begin{bmatrix} 1 \\ 2 \end{bmatrix}$的过程.
 假设原来的基向量是$\begin{bmatrix} 1 \\ 0 \end{bmatrix}$和$\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ 原来的向量是$\begin{bmatrix} x \\ y \end{bmatrix}$(本质是x $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$+y $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$), 而线性变换后新的基向量是$\begin{bmatrix} 3 \\ 1 \end{bmatrix}$,$\begin{bmatrix} 1 \\ 2 \end{bmatrix}$ 那么新的向量就是x $\begin{bmatrix} 3 \\ 1 \end{bmatrix}$+y $\begin{bmatrix} 1 \\ 2 \end{bmatrix}$ => $\begin{bmatrix} 3x+y \\ 1x+2y \end{bmatrix}$.
@@ -173,7 +173,7 @@ $$
 
 ![det_formula](/linkimage/matrix/det_formula.png)
 
-(来自[行列式](https://www.bilibili.com/video/BV1ys411472E?p=7),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[行列式](https://www.bilibili.com/video/BV1ys411472E?p=7))
 
 这是二维情况的计算公式, 3维和多维的行列式计算公式不太直观.
 
@@ -273,13 +273,13 @@ $\begin{bmatrix} a0 & b0 & c0 \end{bmatrix} \begin{bmatrix} d \\ e \\ f \end{bma
 
 ![cross_multi_right_hand_rule](/linkimage/matrix/cross_multi_right_hand_rule.png)
 
-(来自[叉积的标准介绍](https://www.bilibili.com/video/BV1ys411472E?p=11),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[叉积的标准介绍](https://www.bilibili.com/video/BV1ys411472E?p=11))
 
 另外$\vec{v}$和$\vec{w}$组成的矩形面积,正是前面提过的行列式的值.
 
 ![cross_multi_right_hand_rule](/linkimage/matrix/det_xy.png)
 
-(来自[叉积的标准介绍](https://www.bilibili.com/video/BV1ys411472E?p=11),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[叉积的标准介绍](https://www.bilibili.com/video/BV1ys411472E?p=11))
 
 叉积的计算公式可以如此来推导:
 
@@ -298,7 +298,7 @@ $$
 $$
 同时$\begin{bmatrix} p1 \\ p2 \\ p3 \end{bmatrix} . \begin{bmatrix} x \\ y \\ x \end{bmatrix}$又有一个几何意义就是一个向量在另一个向量上的投影乘以后者这个向量的长度.所以这就意味着, 这个函数的右侧是3个向量构成的立方体的体积, 左侧是一个向量在另一个上的投影乘以后者的长度. 我们来画个示意图:
 ![volume_on_calc_cross](/linkimage/matrix/volume_on_calc_cross.png)
-(来自[以线性变换的眼光看叉积](https://www.bilibili.com/video/BV1ys411472E?p=12),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[以线性变换的眼光看叉积](https://www.bilibili.com/video/BV1ys411472E?p=12))
 上图中灰色箭头就是矩形的高, 那么我们可以容易想到,$\begin{bmatrix} p1 \\ p2 \\ p3 \end{bmatrix}$向量就是一个方向与灰色箭头一致,长度是底下矩形面积的这样一个向量. 这个向量正好就是我们要求的叉积!
 
 我们回头看刚才的等式, 
@@ -324,7 +324,7 @@ p3 = v1w2-v2w1
 
 ![transform_meaning](/linkimage/matrix/transform_meaning.png)
 
-(来自[基变换](https://www.bilibili.com/video/BV1ys411472E?p=13),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[基变换](https://www.bilibili.com/video/BV1ys411472E?p=13))
 
 总结来说,左乘一个矩阵, 一方面相当于我们对默认网格做了拉伸,变成一个自定义的网格.另一方面相当于是把新网格下的坐标值转成默认坐标系下的坐标值.我们可以得出一个公式(下标表示视角):
 $$
@@ -352,7 +352,7 @@ $$
 
 ![feature_vector_def](/linkimage/matrix/feature_vector_def.png)
 
-(来自[特征向量和特征值](https://www.bilibili.com/video/BV1ys411472E?p=14),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[特征向量和特征值](https://www.bilibili.com/video/BV1ys411472E?p=14))
 
 比如上图线性变换为$\begin{bmatrix} 3 & 1 \\ 0 & 2 \end{bmatrix}$, 其中的黄色的斜线上的那些向量就是特征向量. 而转换后把向量拉长或者压缩的比例就是特征值, 大于1表示拉长,小于1表示压缩, 大于0表示方向不变, 小于0表示方向相反. 在空间中我们可以把特征向量所在直线看成是变换的旋转轴.
 
@@ -420,10 +420,10 @@ $$
 
 ![every_vector](/linkimage/matrix/every_vector.png)
 
-(来自[抽象向量空间](https://www.bilibili.com/video/BV1ys411472E?p=15),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[抽象向量空间](https://www.bilibili.com/video/BV1ys411472E?p=15))
 
 只要满足这几条规律就行:
 
 ![rule_of_vector](/linkimage/matrix/rule_of_vector.png)
 
-(来自[抽象向量空间](https://www.bilibili.com/video/BV1ys411472E?p=15),可右键复制链接并粘帖到地址栏,直接点击无法打开)
+(来自[抽象向量空间](https://www.bilibili.com/video/BV1ys411472E?p=15))
