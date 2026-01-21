@@ -330,7 +330,6 @@ BaseAllocator 接口, 定义allocate和deallocate接口：</p>
 <p><code>iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</code>本质上就是对<code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>进行了封装， 并重新暴露了类似的接口， 把内存分配器从bb层提升到了cal层。<br />
 bb层和cal层的内存分配接口有个很大的差别， bb层申请和释放的是内存绝对地址（还是虚拟地址不是指物理地址）， cal层申请和释放的是内存相对地址， 即相对一个base地址的offset。offset的设计是有用的，因为当同一个共享内存文件被多个进程打开时，他们的虚拟地址是不同的， 他们需要通过base地址加offset才能定位到同一个内存位置。</p>
 <p>同时从<code>new_uninit</code>和<code>init</code>两个函数来说，<code>iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</code>需要从外面输入内存基址<code>base_address</code>以及内存分配器<code>allocator</code>，这个<code>base_address</code>也就是待分配的连续内存块，<code>allocator</code>则是用于创建辅助数据结构的内存分配器。辅助数据结构的内存分配器也从外面传入，就可以实现<code>base_address</code>和辅助数据结构都在同一个共享内存对象/文件中。这样不同进程之间共享内存对象和内存分配器，就是完整的。</p>
-<p>TODO(next)</p>
 <h4 id="分配器原理"><a class="markdownIt-Anchor" href="#分配器原理"></a> 分配器原理</h4>
 <p>内存分配器是怎么实现内存分配的呢？如果你不感兴趣，可以跳过。但是这是个有意思的环节， 能了解底层实现细节。</p>
 <p><img src="/linkimage/iceoryx2/pool-allocator-inter.png" alt="pool-allocator-inter" /></p>
@@ -347,6 +346,8 @@ bb层和cal层的内存分配接口有个很大的差别， bb层申请和释放
 <h4 id="关系图"><a class="markdownIt-Anchor" href="#关系图"></a> 关系图</h4>
 <p>总结一下这一堆Allocator之间的对应关系，如下:</p>
 <p><img src="/linkimage/iceoryx2/allocator-relationship.png" alt="allocator-relationship" /></p>
+<p>即<code>iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</code>依赖<code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>, <code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>又依赖一个<code>UniqueIndexSet</code>结构。</p>
+<p><code>UniqueIndexSet</code>结构实现index分配（也就是上面介绍的分配器原理），<code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>因此能实现payload的内存地址的分配，<code>iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</code>又因此能实现payload的offset值的分配。</p>
 <h3 id="share_memory内存对象"><a class="markdownIt-Anchor" href="#share_memory内存对象"></a> share_memory内存对象</h3>
 <h4 id="bb层sharedmemory对象"><a class="markdownIt-Anchor" href="#bb层sharedmemory对象"></a> bb层SharedMemory对象</h4>
 <h4 id="cal层memory对象"><a class="markdownIt-Anchor" href="#cal层memory对象"></a> cal层Memory对象</h4>
