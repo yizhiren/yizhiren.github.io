@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"yizhi.ren","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="零拷贝通信框架iceoryx2原理解析  简介 在之前的文章SOA框架iceoryx原理解析中， 我们讲解了iceoryx的架构、原理、交互，并进行源码的分析，在那篇文章最后我提到要关注iceoryx2这款通信框架， 现在我们来把iceoryx2的分析给补上。 iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2、iox2、iceoryx2的时候，他们都指代的是iceoryx">
+<meta property="og:type" content="article">
+<meta property="og:title" content="零拷贝通信框架iceoryx2原理解析">
+<meta property="og:url" content="https://yizhi.ren/2026/01/21/iceoryx2/index.html">
+<meta property="og:site_name" content="一支人">
+<meta property="og:description" content="零拷贝通信框架iceoryx2原理解析  简介 在之前的文章SOA框架iceoryx原理解析中， 我们讲解了iceoryx的架构、原理、交互，并进行源码的分析，在那篇文章最后我提到要关注iceoryx2这款通信框架， 现在我们来把iceoryx2的分析给补上。 iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2、iox2、iceoryx2的时候，他们都指代的是iceoryx">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/iox2-architecture.svg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/iox-dirs.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/layered-architecture.svg">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/pool-allocator-inter.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/pool-allocator-allocated.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/pool-allocator-backall.png">
+<meta property="og:image" content="https://yizhi.ren/linkimage/iceoryx2/allocator-relationship.png">
+<meta property="article:published_time" content="2026-01-21T09:10:46.000Z">
+<meta property="article:modified_time" content="2026-01-21T16:00:46.000Z">
+<meta property="article:author" content="yizhiren">
+<meta property="article:tag" content="通信">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yizhi.ren/linkimage/iceoryx2/iox2-architecture.svg">
+
+
+<link rel="canonical" href="https://yizhi.ren/2026/01/21/iceoryx2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://yizhi.ren/2026/01/21/iceoryx2/","path":"2026/01/21/iceoryx2/","title":"零拷贝通信框架iceoryx2原理解析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>零拷贝通信框架iceoryx2原理解析 | 一支人</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-69495409-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-69495409-1","only_pageview":false,"measure_protocol_api_secret":null}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+  <script src="/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?3aa0f62e48c3501c66bc10dbe7a49356"></script>
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">一支人</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">碎碎念</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404.html" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E6%8B%B7%E8%B4%9D%E9%80%9A%E4%BF%A1%E6%A1%86%E6%9E%B6iceoryx2%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text"> 零拷贝通信框架iceoryx2原理解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text"> 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text"> 整体代码结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pool_allocator%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text"> pool_allocator内存分配器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80"><span class="nav-number">1.3.1.</span> <span class="nav-text"> 内存布局</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%99%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text"> 内存分配器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E9%85%8D%E5%99%A8%E5%8E%9F%E7%90%86"><span class="nav-number">1.3.3.</span> <span class="nav-text"> 分配器原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE"><span class="nav-number">1.3.4.</span> <span class="nav-text"> 关系图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#share_memory%E5%86%85%E5%AD%98%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.</span> <span class="nav-text"> share_memory内存对象</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#bb%E5%B1%82sharedmemory%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.1.</span> <span class="nav-text"> bb层SharedMemory对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cal%E5%B1%82memory%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.2.</span> <span class="nav-text"> cal层Memory对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE-2"><span class="nav-number">1.4.3.</span> <span class="nav-text"> 关系图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#service%E6%9C%8D%E5%8A%A1%E7%BB%84%E4%BB%B6"><span class="nav-number">1.5.</span> <span class="nav-text"> service服务组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE-3"><span class="nav-number">1.5.1.</span> <span class="nav-text"> 关系图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#service%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.5.2.</span> <span class="nav-text"> Service对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#servicestate%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.5.3.</span> <span class="nav-text"> ServiceState对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#builder%E6%9E%84%E5%BB%BA%E5%99%A8"><span class="nav-number">1.5.4.</span> <span class="nav-text"> Builder构建器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#publisher%E5%8F%91%E5%B8%83%E8%80%85%E7%BB%84%E4%BB%B6"><span class="nav-number">1.6.</span> <span class="nav-text"> publisher发布者组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#publisher%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.6.1.</span> <span class="nav-text"> publisher数据结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#publisher%E7%9A%84%E5%86%85%E5%AD%98%E6%96%87%E4%BB%B6"><span class="nav-number">1.6.2.</span> <span class="nav-text"> publisher的内存文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#subscriber%E8%AE%A2%E9%98%85%E8%80%85%E7%BB%84%E4%BB%B6"><span class="nav-number">1.7.</span> <span class="nav-text"> subscriber订阅者组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#subscriber%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.7.1.</span> <span class="nav-text"> subscriber数据结构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#zero_copy_connection%E9%9B%B6%E6%8B%B7%E8%B4%9D%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.8.</span> <span class="nav-text"> zero_copy_connection零拷贝连接</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#subscriberconnections%E8%AE%A2%E9%98%85%E8%80%85%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text"> SubscriberConnections订阅者连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#publisherconnections%E5%8F%91%E5%B8%83%E8%80%85%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text"> PublisherConnections发布者连接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E7%B3%BB%E5%9B%BE-4"><span class="nav-number">1.8.3.</span> <span class="nav-text"> 关系图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E7%BB%B4%E6%8A%A4%E8%BF%9E%E6%8E%A5"><span class="nav-number">1.8.4.</span> <span class="nav-text"> 动态维护连接</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B"><span class="nav-number">1.9.</span> <span class="nav-text"> 通信过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%94%B6%E5%8F%91%E8%BF%87%E7%A8%8B"><span class="nav-number">1.9.1.</span> <span class="nav-text"> 数据收发过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.9.2.</span> <span class="nav-text"> 流程图</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="yizhiren"
+      src="https://avatars0.githubusercontent.com/u/15405596">
+  <p class="site-author-name" itemprop="name">yizhiren</p>
+  <div class="site-description" itemprop="description">[&](){}</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yizhi.ren/2026/01/21/iceoryx2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/15405596">
+      <meta itemprop="name" content="yizhiren">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="一支人">
+      <meta itemprop="description" content="[&](){}">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="零拷贝通信框架iceoryx2原理解析 | 一支人">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          零拷贝通信框架iceoryx2原理解析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-01-21 17:10:46" itemprop="dateCreated datePublished" datetime="2026-01-21T17:10:46+08:00">2026-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-01-22 00:00:46" itemprop="dateModified" datetime="2026-01-22T00:00:46+08:00">2026-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9E%B6%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">架构</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="零拷贝通信框架iceoryx2原理解析"><a class="markdownIt-Anchor" href="#零拷贝通信框架iceoryx2原理解析"></a> 零拷贝通信框架iceoryx2原理解析</h2>
+<h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
+<p>在之前的文章<a href="https://yizhi.ren/2024/06/22/iceoryx/">SOA框架iceoryx原理解析</a>中， 我们讲解了iceoryx的架构、原理、交互，并进行源码的分析，在那篇文章最后我提到要关注iceoryx2这款通信框架， 现在我们来把iceoryx2的分析给补上。<br />
+iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2、iox2、iceoryx2的时候，他们都指代的是iceoryx2.<br />
+冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如果已经支持c/c++和python。下面是iceoryx2的整体架构图：</p>
+<p><img src="/linkimage/iceoryx2/iox2-architecture.svg" alt="iox2-architecture" /><br />
+图片来自<a target="_blank" rel="noopener" href="https://ekxide.github.io/iceoryx2-book/main/introduction.html">Introduction</a></p>
+<p>从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。</p>
+<p>这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。</p>
+<span id="more"></span>
+<h3 id="整体代码结构"><a class="markdownIt-Anchor" href="#整体代码结构"></a> 整体代码结构</h3>
+<p>我们使用iceoryx2-0.1.0的版本来进行分析， 这是他在github仓库中打的第一个tag，此时代码结构相对简单，没有复杂的特性， 仅保留核心逻辑， 非常适合做原理分析。</p>
+<p>iceoryx2-0.1.0的目录结构如下：</p>
+<p><img src="/linkimage/iceoryx2/iox-dirs.png" alt="iox-dirs" /></p>
+<p>其中最重要的是4个目录，分别是iceoryx2/iceoryx2-bb/iceoryx2-cal/iceoryx2-pal, internal目录里面是一些脚本非核心。这4各目录分别是什么作用呢？</p>
+<p><img src="/linkimage/iceoryx2/layered-architecture.svg" alt="layered-architecture" /></p>
+<p>图片来自<a target="_blank" rel="noopener" href="https://ekxide.github.io/iceoryx2-book/main/fundamentals/layered-architecture.html">Layered Architecture</a></p>
+<p>其中pal代表的是Platform Abstraction Layer的意思，表示平台抽象层，是对不同操作系统的一层抽象，由于当前支持的linux/macos/qnx/win都支持posix， 所以当前pal下就是对posix做了一层封装。</p>
+<p>bb代表的的Building Blocks的意思，这一层实现的是一些工具或者组件，包括vector容器，queue队列，log日志，内存分配器pool_allocator，等等。对照Building Blocks这个名字，我们可以把这些理解成造房子的砖头。</p>
+<p>cal代表的是Concept Abstraction Layer的意思， 表示概念抽象层，这一层开始有了通信相关的概念，比如share_memory共享内存， shm_allocator共享内存分配器，zero_copy_connection零拷贝连接, event事件，serialize序列化，等等。这一层相当于是通信用的模块，bb类比砖头，cal就可以类比成一面墙，一扇窗，一口衣柜。</p>
+<p>iceoryx2这一层是通信的实现层加接口层，这一层借助cal层来完成最后通信组件的组装和实现，实现了publisher，subscriber，service等核心组件（0.1.0版本还没有node组件）。同时这些组件也是被用户直接操作的接口， 因此这一层同时也是接口层。</p>
+<p>接下来，我会选择其中最重要的几个点进行讲解，分别是pool_allocator内存分配器，share_memory内存对象，service服务组件，publisher发布者组件，subscriber订阅者组件，以及zero_copy_connection零拷贝连接， 通过了解这些对象， 我们能够知晓通信框架是如何被建立的，以及通信是如何实现的。</p>
+<h3 id="pool_allocator内存分配器"><a class="markdownIt-Anchor" href="#pool_allocator内存分配器"></a> pool_allocator内存分配器</h3>
+<h4 id="内存布局"><a class="markdownIt-Anchor" href="#内存布局"></a> 内存布局</h4>
+<p>rust语言中有个 use std::alloc::Layout;这个是做什么的。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::alloc::Layout;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建一个布局：大小为 16 字节，对齐要求为 8 字节</span></span><br><span class="line"><span class="keyword">let</span> layout = Layout::from_size_align(<span class="number">16</span>, <span class="number">8</span>).unwrap();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 为特定类型创建布局（常用）</span></span><br><span class="line"><span class="keyword">let</span> int_layout = Layout::new::&lt;<span class="built_in">i32</span>&gt;();      <span class="comment">// 4 字节，对齐 4</span></span><br><span class="line"><span class="keyword">let</span> vec_layout = Layout::new::&lt;<span class="built_in">Vec</span>&lt;<span class="built_in">u8</span>&gt;&gt;();   <span class="comment">// 24 字节（64位系统）</span></span><br></pre></td></tr></table></figure>
+<p>layout代表的是内存块的信息， 包括内存块的大小，和这块内存的字节对齐要求。<br />
+上面<code>Vec&lt;T&gt;</code> 本质上是一个三元组（胖指针结构）：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">struct</span> <span class="title">Vec</span></span>&lt;T&gt; &#123;</span><br><span class="line">    ptr: *<span class="keyword">mut</span> T,      <span class="comment">// 指向堆上数据的指针</span></span><br><span class="line">    len: <span class="built_in">usize</span>,       <span class="comment">// 当前元素数量</span></span><br><span class="line">    cap: <span class="built_in">usize</span>,       <span class="comment">// 分配的总容量&#125;</span></span><br></pre></td></tr></table></figure>
+<p>在 64 位系统上：</p>
+<ul>
+<li><code>*mut T</code> (指针)：8 字节</li>
+<li><code>len</code> (usize)：8 字节</li>
+<li><code>cap</code> (usize)：8 字节<br />
+总计：8 + 8 + 8 = 24 字节.</li>
+</ul>
+<p>layout在alloc和dealloc的时候都要传递进去，alloc的时候传递比较好理解，allocator需要知道内存对齐以及需要知道要分配多大的内存。那为什么dealloc的时候也需要传递layout呢？<br />
+我们知道c语言中malloc出来的内存，可以直接free， 不需要传递layout这种类似的结构。这是因为c语言的分配器把分配出来的内存大小隐藏在在分配出来的内存的头部：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 带头部信息的分配器</span><br><span class="line">// +------------+-----------+</span><br><span class="line">// | Header     | User data |</span><br><span class="line">// +------------+-----------+</span><br><span class="line">// ^            ^</span><br><span class="line">// |            |</span><br><span class="line">// 原始ptr      返回给用户的ptr</span><br></pre></td></tr></table></figure>
+<p>因此dealloc的时候通过把用户指针左移Header大小后就可以知道实际分配的内存大小了。<br />
+但是rust没有做这种内存布局的假设， 他允许allocator不需要Header前缀， 因此就需要额外来传递layout， 来获取这个实际分配的内存大小。比如我们可以实现一个基于内存块大小的内存池， 申请的时候， 申请32-size就返回32大小的内存块， 而不必返回一个实际是32+x的内存块。比如实现内存池，按需返回block块， 申请1k就返回1k的，而不是因为要加x额外空间就返回2k的block：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 按大小分类的分配器</span><br><span class="line">// 小对象池：16字节块、32字节块、64字节块...</span><br><span class="line">// 需要知道大小来决定放回哪个池</span><br><span class="line"></span><br><span class="line">// 这么使用</span><br><span class="line">use std::alloc::&#123;GlobalAlloc, Layout, System&#125;;</span><br><span class="line"></span><br><span class="line">unsafe &#123;</span><br><span class="line">    let layout = Layout::new::&lt;[u8; 1024]&gt;();</span><br><span class="line">    let ptr = System.alloc(layout);</span><br><span class="line">    // 使用内存...</span><br><span class="line">    System.dealloc(ptr, layout);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内存分配器的接口都会伴随着layout的传递。</p>
+<h4 id="内存分配器"><a class="markdownIt-Anchor" href="#内存分配器"></a> 内存分配器</h4>
+<p><code>接口定义</code><br />
+BaseAllocator 接口, 定义allocate和deallocate接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pub trait BaseAllocator &#123;</span><br><span class="line">    fn allocate(&amp;self, layout: Layout) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationError&gt;;</span><br><span class="line">    fn allocate_zeroed(&amp;self, layout: Layout) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationError&gt;;</span><br><span class="line">    unsafe fn deallocate(&amp;self, ptr: NonNull&lt;u8&gt;, layout: Layout) -&gt; Result&lt;(), DeallocationError&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Allocator接口，定义grow和shrink接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/// Allocator with grow and shrink features.</span><br><span class="line">pub trait Allocator: BaseAllocator &#123;</span><br><span class="line">    unsafe fn grow(</span><br><span class="line">        &amp;self,</span><br><span class="line">        ptr: NonNull&lt;u8&gt;,</span><br><span class="line">        old_layout: Layout,</span><br><span class="line">        new_layout: Layout,</span><br><span class="line">    ) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationGrowError&gt;;</span><br><span class="line"></span><br><span class="line">    unsafe fn grow_zeroed(</span><br><span class="line">        &amp;self,</span><br><span class="line">        ptr: NonNull&lt;u8&gt;,</span><br><span class="line">        old_layout: Layout,</span><br><span class="line">        new_layout: Layout,</span><br><span class="line">    ) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationGrowError&gt;;</span><br><span class="line"></span><br><span class="line">    unsafe fn shrink(</span><br><span class="line">        &amp;self,</span><br><span class="line">        ptr: NonNull&lt;u8&gt;,</span><br><span class="line">        old_layout: Layout,</span><br><span class="line">        new_layout: Layout,</span><br><span class="line">    ) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationShrinkError&gt;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><code>接口实现</code><br />
+基于内存池并实现内存分配器接口的内存分配器实现 <code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">pub struct PoolAllocator &#123;</span><br><span class="line">    buckets: UniqueIndexSet,</span><br><span class="line">    bucket_size: usize,</span><br><span class="line">    bucket_alignment: usize,</span><br><span class="line">    start: usize,</span><br><span class="line">    size: usize,</span><br><span class="line">    is_memory_initialized: AtomicBool,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">impl BaseAllocator for PoolAllocator &#123;</span><br><span class="line">    fn allocate(&amp;self, layout: Layout) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationError&gt; &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    unsafe fn deallocate(</span><br><span class="line">        &amp;self,</span><br><span class="line">        ptr: NonNull&lt;u8&gt;,</span><br><span class="line">        _layout: Layout,</span><br><span class="line">    ) -&gt; Result&lt;(), DeallocationError&gt; &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">impl Allocator for PoolAllocator &#123;</span><br><span class="line">    /// always returns the input ptr on success but with an increased size</span><br><span class="line">    unsafe fn grow(</span><br><span class="line">        &amp;self,</span><br><span class="line">        ptr: NonNull&lt;u8&gt;,</span><br><span class="line">        old_layout: Layout,</span><br><span class="line">        new_layout: Layout,</span><br><span class="line">    ) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationGrowError&gt; &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    unsafe fn shrink(</span><br><span class="line">        &amp;self,</span><br><span class="line">        ptr: NonNull&lt;u8&gt;,</span><br><span class="line">        old_layout: Layout,</span><br><span class="line">        new_layout: Layout,</span><br><span class="line">    ) -&gt; Result&lt;NonNull&lt;[u8]&gt;, AllocationShrinkError&gt; &#123;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所以可以看出<code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>实现了内存分配/释放和内存增长/缩减的功能，是一个满足功能要求的对象。</p>
+<p>但是这还不止，我们从前面分层架构中可知， bb层的对象还不能被iceoryx2层直接使用， 而是需要经过cal层的封装， 因此cal层进行了如下封装：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接口 iceoryx2_cal::shm_allocator::ShmAllocator</span></span><br><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">trait</span> <span class="title">ShmAllocator</span></span>: <span class="built_in">Send</span> + <span class="built_in">Sync</span> + <span class="symbol">&#x27;static</span> &#123;</span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">new_uninit</span></span>(</span><br><span class="line">        max_supported_alignment_by_memory: <span class="built_in">usize</span>,</span><br><span class="line">        base_address: NonNull&lt;[<span class="built_in">u8</span>]&gt;,</span><br><span class="line">        config: &amp;Self::Configuration,</span><br><span class="line">    ) -&gt; <span class="keyword">Self</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">init</span></span>&lt;Allocator: BaseAllocator&gt;(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        allocator: &amp;Allocator,</span><br><span class="line">    ) -&gt; <span class="built_in">Result</span>&lt;(), ShmAllocatorInitError&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">allocate</span></span>(&amp;<span class="keyword">self</span>, layout: Layout) -&gt; <span class="built_in">Result</span>&lt;PointerOffset, ShmAllocationError&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">deallocate</span></span>(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        distance: PointerOffset,</span><br><span class="line">        layout: Layout,</span><br><span class="line">    ) -&gt; <span class="built_in">Result</span>&lt;(), DeallocationError&gt;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现：iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</span></span><br><span class="line"><span class="keyword">impl</span> ShmAllocator <span class="keyword">for</span> PoolAllocator &#123;</span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">new_uninit</span></span>(</span><br><span class="line">        max_supported_alignment_by_memory: <span class="built_in">usize</span>,</span><br><span class="line">        base_address: NonNull&lt;[<span class="built_in">u8</span>]&gt;,</span><br><span class="line">        config: &amp;Self::Configuration,</span><br><span class="line">    ) -&gt; <span class="keyword">Self</span> &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">init</span></span>&lt;Allocator: BaseAllocator&gt;(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        allocator: &amp;Allocator,</span><br><span class="line">    ) -&gt; <span class="built_in">Result</span>&lt;(), ShmAllocatorInitError&gt; &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">allocate</span></span>(&amp;<span class="keyword">self</span>, layout: Layout) -&gt; <span class="built_in">Result</span>&lt;PointerOffset, ShmAllocationError&gt; &#123; ... &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">unsafe</span> <span class="function"><span class="keyword">fn</span> <span class="title">deallocate</span></span>(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        offset: PointerOffset,</span><br><span class="line">        layout: Layout,</span><br><span class="line">    ) -&gt; <span class="built_in">Result</span>&lt;(), DeallocationError&gt; &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</code>本质上就是对<code>iceoryx2_bb_memory::pool_allocator::PoolAllocator</code>进行了封装， 并重新暴露了类似的接口， 把内存分配器从bb层提升到了cal层。<br />
+bb层和cal层的内存分配接口有个很大的差别， bb层申请和释放的是内存绝对地址（还是虚拟地址不是指物理地址）， cal层申请和释放的是内存相对地址， 即相对一个base地址的offset。offset的设计是有用的，因为当同一个共享内存文件被多个进程打开时，他们的虚拟地址是不同的， 他们需要通过base地址加offset才能定位到同一个内存位置。</p>
+<p>同时从<code>new_uninit</code>和<code>init</code>两个函数来说，<code>iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator</code>需要从外面输入内存基址<code>base_address</code>以及内存分配器<code>allocator</code>，这个<code>base_address</code>也就是待分配的连续内存块，<code>allocator</code>则是用于创建辅助数据结构的内存分配器。辅助数据结构的内存分配器也从外面传入，就可以实现<code>base_address</code>和辅助数据结构都在同一个共享内存对象/文件中。这样不同进程之间共享内存对象和内存分配器，就是完整的。</p>
+<p>TODO(next)</p>
+<h4 id="分配器原理"><a class="markdownIt-Anchor" href="#分配器原理"></a> 分配器原理</h4>
+<p>内存分配器是怎么实现内存分配的呢？如果你不感兴趣，可以跳过。但是这是个有意思的环节， 能了解底层实现细节。</p>
+<p><img src="/linkimage/iceoryx2/pool-allocator-inter.png" alt="pool-allocator-inter" /></p>
+<p>PoolAllocator内部有两个关键部分，第一个是bucket列表， bucket的每一个格子是字节对齐后的内存块列表， 内存块是连续分布的， 总共有Capacity块。</p>
+<p>第二个部分是一个index列表+header指针，他们组成一个index分配器， 分配到哪个index， 就代表PoolAllocator分配的内存块是bucket列表中的第index个。</p>
+<p>index分配器要展开来讲讲， 他初始的长度是Capacity+1, 每个格子是U32类型，正常只要Capacity个格子就够表达需要的index， 多出来的一个是为了操作的安全和便捷。这个U32的数组被模拟成一个链表， 比如初始状态，header的值是0， 表示链表指向数据的第0个格子， 然后第0个格子中的值是1， 表示这个链表的next节点是下标1， 下标1的格子中内容是2，表示1的next是2，以此类推。 这样初始状态下， 这就是一个从0到Capacity的顺序的链表。你会发现初始状态下， 没有一个格子的next指向第0个格子， 为什么呢？因为已经有header指向了0了， 所以不会有第二个指针指向0了。</p>
+<p>每次分配一个index的时候，其实就是把header的值分配出去，然后 header就指向了这个模拟链表的下一个节点。分配出去一个index的时候， 这个bucket[index]指向的内存块就相当于分配出去了。比如，初始状态下， 首次分配显然会分配0，header会指向1。</p>
+<p>再比如极端情况，我分配Capacity次，header就指向了index列表的第Capacity格（base 0），也就是我们前面多分配的一个格子，最后一个格子， 示意图如下，已分配的格子被赋值成Capacity+1，指向链表尾，表示分配出去了：</p>
+<p><img src="/linkimage/iceoryx2/pool-allocator-allocated.png" alt="pool-allocator-allocated" /></p>
+<p>当内存释放给PoolAllocator的时候，会传递要释放的内存块的index，这个index会被插入模拟链表的表头， 具体操作的话是把当前header的值填入这个第index个格子， 然后把index赋值给header，新header就指向了第index格子。</p>
+<p>假设刚才我们从0到Capacity分配出去了index值， 现在又从0到Capacity释放index，这时候新的header会依次经历指向0，指向1，指向2 … 最终指向Capacity-1（base 0）格子。最终示意图如下：</p>
+<p><img src="/linkimage/iceoryx2/pool-allocator-backall.png" alt="pool-allocator-backall" /></p>
+<p>你会发现格子里面有0出现了， 但是没有了7，同样原因，这是因为这个时候header就是7.</p>
+<h4 id="关系图"><a class="markdownIt-Anchor" href="#关系图"></a> 关系图</h4>
+<p>总结一下这一堆Allocator之间的对应关系，如下:</p>
+<p><img src="/linkimage/iceoryx2/allocator-relationship.png" alt="allocator-relationship" /></p>
+<h3 id="share_memory内存对象"><a class="markdownIt-Anchor" href="#share_memory内存对象"></a> share_memory内存对象</h3>
+<h4 id="bb层sharedmemory对象"><a class="markdownIt-Anchor" href="#bb层sharedmemory对象"></a> bb层SharedMemory对象</h4>
+<h4 id="cal层memory对象"><a class="markdownIt-Anchor" href="#cal层memory对象"></a> cal层Memory对象</h4>
+<h4 id="关系图-2"><a class="markdownIt-Anchor" href="#关系图-2"></a> 关系图</h4>
+<h3 id="service服务组件"><a class="markdownIt-Anchor" href="#service服务组件"></a> service服务组件</h3>
+<h4 id="关系图-3"><a class="markdownIt-Anchor" href="#关系图-3"></a> 关系图</h4>
+<h4 id="service对象"><a class="markdownIt-Anchor" href="#service对象"></a> Service对象</h4>
+<h4 id="servicestate对象"><a class="markdownIt-Anchor" href="#servicestate对象"></a> ServiceState对象</h4>
+<h4 id="builder构建器"><a class="markdownIt-Anchor" href="#builder构建器"></a> Builder构建器</h4>
+<h3 id="publisher发布者组件"><a class="markdownIt-Anchor" href="#publisher发布者组件"></a> publisher发布者组件</h3>
+<h4 id="publisher数据结构"><a class="markdownIt-Anchor" href="#publisher数据结构"></a> publisher数据结构</h4>
+<h4 id="publisher的内存文件"><a class="markdownIt-Anchor" href="#publisher的内存文件"></a> publisher的内存文件</h4>
+<h3 id="subscriber订阅者组件"><a class="markdownIt-Anchor" href="#subscriber订阅者组件"></a> subscriber订阅者组件</h3>
+<h4 id="subscriber数据结构"><a class="markdownIt-Anchor" href="#subscriber数据结构"></a> subscriber数据结构</h4>
+<h3 id="zero_copy_connection零拷贝连接"><a class="markdownIt-Anchor" href="#zero_copy_connection零拷贝连接"></a> zero_copy_connection零拷贝连接</h3>
+<h4 id="subscriberconnections订阅者连接"><a class="markdownIt-Anchor" href="#subscriberconnections订阅者连接"></a> SubscriberConnections订阅者连接</h4>
+<h4 id="publisherconnections发布者连接"><a class="markdownIt-Anchor" href="#publisherconnections发布者连接"></a> PublisherConnections发布者连接</h4>
+<h4 id="关系图-4"><a class="markdownIt-Anchor" href="#关系图-4"></a> 关系图</h4>
+<h4 id="动态维护连接"><a class="markdownIt-Anchor" href="#动态维护连接"></a> 动态维护连接</h4>
+<h3 id="通信过程"><a class="markdownIt-Anchor" href="#通信过程"></a> 通信过程</h3>
+<h4 id="数据收发过程"><a class="markdownIt-Anchor" href="#数据收发过程"></a> 数据收发过程</h4>
+<h4 id="流程图"><a class="markdownIt-Anchor" href="#流程图"></a> 流程图</h4>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>请我一杯咖啡吧！</div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/payimage/wechat.png" alt="yizhiren 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/payimage/zhifubao.png" alt="yizhiren 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E9%80%9A%E4%BF%A1/" rel="tag"># 通信</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/29/matrix/" rel="prev" title="线性代数的本质">
+                  <i class="fa fa-angle-left"></i> 线性代数的本质
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments gitalk-container"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备14030596号-5 </a>
+      <img src="https://beian.mps.gov.cn/web/assets/logo01.6189a29f.png" alt=""><a href="https://beian.mps.gov.cn/#/query/webSearch?code=33011002016624" rel="noopener" target="_blank">浙公网安备 33011002016624号 </a>
+  </div>
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">yizhiren</span>
+  </div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" integrity="sha256-UF1fgpAiu3tPJN/uCqEUHNe7pnr+QR0SQDNfgglgtcM=" crossorigin="anonymous">
+  <script class="next-config" data-name="katex" type="application/json">{"copy_tex_js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/copy-tex.min.js","integrity":"sha256-Us54+rSGDSTvIhKKUs4kygE2ipA0RXpWWh0/zLqw3bs="}}</script>
+  <script src="/js/third-party/math/katex.js"></script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.css" integrity="sha256-AJnUHL7dBv6PGaeyPQJcgQPDjt/Hn/PvYZde1iqfp8U=" crossorigin="anonymous">
+
+<script class="next-config" data-name="gitalk" type="application/json">{"enable":true,"github_id":"yizhiren","repo":"yizhiren.github.io","client_id":"f06437e321af81a44e6e","client_secret":"fc63095ff123d820c599d51aaf2030b542bf8854","admin_user":"yizhiren","distraction_free_mode":true,"proxy":"https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token","language":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.8.0/gitalk.min.js","integrity":"sha256-MVK9MGD/XJaGyIghSVrONSnoXoGh3IFxLw0zfvzpxR4="},"path_md5":"9a8e2226675b942b259a5c63387558ae"}</script>
+<script src="/js/third-party/comments/gitalk.js"></script>
+
+</body>
+</html>
