@@ -246,8 +246,6 @@ bb层和cal层的内存分配接口有个很大的差别， bb层申请和释放
 
 同时从`new_uninit`和`init`两个函数来说，`iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator`需要从外面输入内存基址`base_address`以及内存分配器`allocator`，这个`base_address`也就是待分配的连续内存块，`allocator`则是用于创建辅助数据结构的内存分配器。辅助数据结构的内存分配器也从外面传入，就可以实现`base_address`和辅助数据结构都在同一个共享内存对象/文件中。这样不同进程之间共享内存对象和内存分配器，就是完整的。
 
-TODO(next)
-
 #### 分配器原理
 内存分配器是怎么实现内存分配的呢？如果你不感兴趣，可以跳过。但是这是个有意思的环节， 能了解底层实现细节。
 
@@ -279,7 +277,9 @@ index分配器要展开来讲讲， 他初始的长度是Capacity+1, 每个格�
 
 ![allocator-relationship](/linkimage/iceoryx2/allocator-relationship.png)
 
+即`iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator`依赖`iceoryx2_bb_memory::pool_allocator::PoolAllocator`, `iceoryx2_bb_memory::pool_allocator::PoolAllocator`又依赖一个`UniqueIndexSet`结构。
 
+`UniqueIndexSet`结构实现index分配（也就是上面介绍的分配器原理），`iceoryx2_bb_memory::pool_allocator::PoolAllocator`因此能实现payload的内存地址的分配，`iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator`又因此能实现payload的offset值的分配。
 
 
 ### share_memory内存对象
