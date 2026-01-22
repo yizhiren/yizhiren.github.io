@@ -284,8 +284,111 @@ index分配器要展开来讲讲， 他初始的长度是Capacity+1, 每个格�
 
 ### share_memory内存对象
 #### bb层SharedMemory对象
+现在先暂时忘记前面内存分配器，来从底往上梳理share_memory对象。
+先是定义个`iceoryx2_bb_posix::shared_memory::SharedMemory`对象:
+```rust
+pub struct SharedMemory {
+    name: FileName,
+    size: usize,
+    base_address: *mut u8,
+    has_ownership: bool,
+    file_descriptor: FileDescriptor,
+    memory_lock: Option<MemoryLock>,
+}
+```
+大概可以想到， 这个SharedMemory对应的就是一个共享内存文件。他具有如下接口：
+```rust
+impl Drop for SharedMemory {
+    fn drop(&mut self) {...}
+}
+
+impl SharedMemory {
+    pub fn does_exist(name: &FileName) -> bool {...}
+
+    pub fn remove(name: &FileName) -> Result<bool, SharedMemoryRemoveError> {...}
+
+    pub fn name(&self) -> &FileName {...}
+
+    pub fn base_address(&self) -> NonNull<u8> {...}
+
+    pub fn size(&self) -> usize {...}
+
+    fn shm_create(
+        name: &FileName,
+        config: &SharedMemoryBuilder,
+    ) -> Result<FileDescriptor, SharedMemoryCreationError> {...}
+
+    fn shm_open(
+        name: &FileName,
+        config: &SharedMemoryBuilder,
+    ) -> Result<FileDescriptor, SharedMemoryCreationError> {...}
+
+    fn mmap(
+        file_descriptor: &FileDescriptor,
+        config: &SharedMemoryBuilder,
+    ) -> Result<*mut posix::void, SharedMemoryCreationError> {...}
+
+    fn shm_unlink(name: &FileName) -> Result<bool, SharedMemoryRemoveError> {...}
+}
+```
+也就是对一个共享内存文件的实现。
+
 #### cal层Memory对象
+接着定义了一个`iceoryx2-cal::shared_memory::posix::Memory`对象, 这个对象很重要， 他把bb层的SharedMemory对象和cal层的ShmAllocator对象囊括在了一起。
+```rust
+#[derive(Debug)]
+pub struct Memory<Allocator: ShmAllocator> {
+    shared_memory: iceoryx2_bb_posix::shared_memory::SharedMemory,
+    name: FileName,
+    allocator: NonNull<AllocatorDetails<Allocator>>,
+}
+
+#[repr(C)]
+struct AllocatorDetails<Allocator: ShmAllocator> {
+    state: AtomicU64,
+    allocator_id: u8,
+    allocator: Allocator,
+    mgmt_size: usize,
+}
+```
+shared_memory字段就是bb层的一个SharedMemory对象，allocator就是cal层的一个ShmAllocator接口，我们从前面已经知道cal层的PoolAllocator就是实现了ShmAllocator接口的。
+可见，cal层的Memory对象是一个自包含了内存和分配器的一个完备的内存对象。这个整合了内存分配器和内存对象的结构，对外表现的就是一块可以分配数据的内存， 因此他实现了以下SharedMemory接口：
+```rust
+/// Abstract concept of a memory shared between multiple processes. Can be created with the
+/// [`SharedMemoryBuilder`].
+pub trait SharedMemory<Allocator: ShmAllocator>:
+    Sized + Debug + NamedConcept + NamedConceptMgmt
+{
+    fn allocate(&self, layout: std::alloc::Layout) -> Result<ShmPointer, ShmAllocationError>;
+
+    unsafe fn deallocate(
+        &self,
+        offset: PointerOffset,
+        layout: std::alloc::Layout,
+    ) -> Result<(), DeallocationError>;
+}
+```
+可以想象的是， 为了实现内存分配， 需要实现一个关键的步骤， 就是把SharedMemory对象的地址传递给ShmAllocator。另外再来看我们前面提到的一段话：
+```
+同时从new_uninit和init两个函数来说，iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator需要从外面输入内存基址base_address以及内存分配器allocator，这个base_address也就是待分配的连续内存块，allocator则是用于创建辅助数据结构的内存分配器。辅助数据结构的内存分配器也从外面传入，就可以实现base_address和辅助数据结构都在同一个共享内存对象/文件中。这样不同进程之间共享内存对象和内存分配器，就是完整的。
+```
+可以知道除了传递payload的地址，还要传递辅助数据结构的内存分配器， 这个辅助数据结构也是我们前面分析过的，一段index数组，有多少块payload就有（多少+1）格的index。那么这个辅助数据结构和payload数据，是如何在这块共享内存上布局的呢？是这样的：
+
+![memory-layout](/linkimage/iceoryx2/memory-layout.png)
+
+Memory对象内部会把内存分成3段， 第一段是AllocatorDetails结构，填充该共享内存本身的一些信息，包括allocator id， allocator指针，和payload起始地址的偏移量。第二段是辅助数据结构index列表，他以一个分配器的形式传给allocator。第三段是待分配的内存块，他把起始的地址传递给allocator。这样allocator如愿得到了index数组的内存分配器和内存块的地址。
+
+补充一下，“第二段是index列表，他以一个分配器的形式传给allocator”， 这一段index列表也就是辅助数据结构是通过一个分配器的形式传给allocator的， 这个分配器实现的也是BaseAllocator接口（包含allocate和deallocate接口），其内部分配策略是一个相当简单的策略， 就是线性向上分配内存， 分配完为止，内存无法重复分配，释放内存则只释放一次，用来重置整段内存。对于index列表的场景来说， index列表是一次性分配整个数组，且不做释放， 所以这个简单的分配器就够用。 
+
 #### 关系图
+
+把内存的定义跟分配器的定义画到一起，大概是这样：
+
+![memory-allocator-relationship](/linkimage/iceoryx2/memory-allocator-relationship.png)
+
+(右键-在新标签页中打开图片，可以看得更清晰)
+
+cal层的Memory对象整合了bb层的ShareMemory对象和cal层的PoolAllocator，组合成了一个自包含内存和分配器的完整的内存对象。
 
 
 ### service服务组件
