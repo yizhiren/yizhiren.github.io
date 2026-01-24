@@ -257,11 +257,11 @@
 <h3 id="简介"><a class="markdownIt-Anchor" href="#简介"></a> 简介</h3>
 <p>在之前的文章<a href="https://yizhi.ren/2024/06/22/iceoryx/">SOA框架iceoryx原理解析</a>中， 我们讲解了iceoryx的架构、原理、交互，并进行源码的分析，在那篇文章最后我提到要关注iceoryx2这款通信框架， 现在我们来把iceoryx2的分析给补上。<br />
 iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2、iox2、iceoryx2的时候，他们都指代的是iceoryx2.<br />
-冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如果已经支持c/c++和python。下面是iceoryx2的整体架构图：</p>
+冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如果已经支持<code>c</code>/<code>c++</code>/<code>rust</code>/<code>python</code>/<code>c#</code>。下面是iceoryx2的整体架构图：</p>
 <p><img src="/linkimage/iceoryx2/iox2-architecture.svg" alt="iox2-architecture" /><br />
 图片来自<a target="_blank" rel="noopener" href="https://ekxide.github.io/iceoryx2-book/main/introduction.html">Introduction</a></p>
 <p>从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。</p>
-<p>这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python/c#,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。</p>
+<p>这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有<code>c</code>/<code>c++</code>/<code>rust</code>/<code>python</code>/<code>c#</code>,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2026/01/21/iceoryx2/#more" rel="contents">
