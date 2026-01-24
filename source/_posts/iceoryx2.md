@@ -13,14 +13,14 @@ updated: 2026-01-22 00:00:46
 
 在之前的文章[SOA框架iceoryx原理解析](https://yizhi.ren/2024/06/22/iceoryx/)中， 我们讲解了iceoryx的架构、原理、交互，并进行源码的分析，在那篇文章最后我提到要关注iceoryx2这款通信框架， 现在我们来把iceoryx2的分析给补上。
 iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2、iox2、iceoryx2的时候，他们都指代的是iceoryx2.
-冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如果已经支持c/c++和python。下面是iceoryx2的整体架构图：
+冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如果已经支持`c`/`c++`/`rust`/`python`/`c#`。下面是iceoryx2的整体架构图：
 
 ![iox2-architecture](/linkimage/iceoryx2/iox2-architecture.svg)
 图片来自[Introduction](https://ekxide.github.io/iceoryx2-book/main/introduction.html)
 
 从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。
 
-这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python/c#,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
+这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有`c`/`c++`/`rust`/`python`/`c#`,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
 
 <!-- more -->
 
@@ -407,7 +407,7 @@ service在通信框架中关联了一个通信实体的集合，他有一个serv
 第一点是一个静态对象，Service只是提供了一个命名空间的作用，第二点的作用更重要。Service对象最核心的作用其实是持有Service相关的配置信息。
 
 #### ServiceState
-ServiceState：拥有service相关的全部配置信息， 分别有StaticConfig， GlobalConfig，DynamicStorage， StatisStorage。
+ServiceState拥有service相关的全部配置信息， 分别有StaticConfig， GlobalConfig，DynamicStorage， StatisStorage。
 static_config存的是服务名， 由服务名计算出的uuid，以及代表通信参数的messaging_pattern。
 ```rust
 // service::static_config::StaticConfig
@@ -461,7 +461,7 @@ max_listeners                               = 2
 max_notifiers                               = 16
 
 ```
-dynamic_storage保存了引用计数以及这个service对应的publisher们和subscriber们。他之所以是动态的， 就是因为他的内容是会被后续修改的， 当有新的publisher或者subscriber上线的时候他就会往里面追加新上线的id值。从代码看，DynamicConfig实现了新增publisher或者subscriber的id的接口，没有实现移除id的接口， 所以这个初版应该是没有实现下线时候移除id的功能的,。
+dynamic_storage保存了引用计数以及这个service对应的publisher们和subscriber们。他之所以是动态的， 就是因为他的内容是会被后续修改的， 当有新的publisher或者subscriber上线的时候他就会往里面追加新上线的id值。从代码看，DynamicConfig实现了新增publisher或者subscriber的id的接口，没有实现移除id的接口， 所以这个初版应该是没有实现下线时候移除id的功能的, 在新版本上是有实现移除功能的。
 ```rust
 // service::dynamic_config::DynamicConfig
 pub struct DynamicConfig {
@@ -490,7 +490,7 @@ static_storage存的内容就是static_config相同的内容， 差别是这里�
 
 
 #### Builder
-Builder：拥有StaticConfig和GlobalConfig， 这两个也就是ServiceState当中的StaticConfig和GlobalConfig，ServiceState中DynamicStorage和StatisStorage也是从StaticConfig和GlobalConfig派生出来的。
+Builder拥有StaticConfig和GlobalConfig， 这两个也就是ServiceState当中的StaticConfig和GlobalConfig，ServiceState中DynamicStorage和StatisStorage也是从StaticConfig和GlobalConfig派生出来的。
 Builder构建Service的构建过程，先get到global_config和service名，随后根据这两信息， 创建出static_config， 然后再根据static_config创建出dynamic_storage和static_storage， 最后把global_config|static_config|dynamic_storage|static_storage打包成ServiceState对象， 并根据ServiceState再创建出Service， 再根据Service创建出PortFactory。
 
 这是一个我整理的Service-ServiceState-Builder三者之间的类关系图，黄色部分是Builder，紫色部分是ServiceState，绿色部分是Service：
@@ -502,13 +502,13 @@ Builder构建Service的构建过程，先get到global_config和service名，随�
 
 
 #### PortFactory
-PortFactory：持有Service对象，但他不负责直接创建publisher和subscriber，而是负责创建PortFactoryPublisher和PortFactorySubscriber，PortFactoryPublisher和PortFactorySubscriber才是负责创建publisher和subscriber。
+PortFactory持有Service对象，但他不负责直接创建publisher和subscriber，而是负责创建PortFactoryPublisher和PortFactorySubscriber，PortFactoryPublisher和PortFactorySubscriber再负责创建publisher和subscriber。
 
 #### PortFactoryPublisher
-PortFactoryPublisher：反向持有PortFactory， 间接持有了Service对象，他负责创建Publisher。
+PortFactoryPublisher反向持有PortFactory， 间接持有了Service对象，他负责创建Publisher。
 
 #### PortFactorySubscriber
-PortFactorySubscriber：反向持有PortFactory， 间接持有了Service对象，他负责创建Subscriber。
+PortFactorySubscriber反向持有PortFactory， 间接持有了Service对象，他负责创建Subscriber。
 
 ### Publisher组件
 ```rust
@@ -530,10 +530,10 @@ pub struct Publisher<'a, 'config: 'a, Service: service::Details<'config>, Messag
     _phantom_message_type: PhantomData<MessageType>,
 }
 ```
-port_id是publisher的唯一编号， 来自uuid算法；
+port_id表示publisher对象的唯一id值，service表示此subscriber所属的Service。
 
 #### data_segment内存对象
-data_segment表示存储payload的共享内存数据，包括loan还未send的和已经send的到异步队列中的，包括任一消费端正在消费的和待消费的, 从data_segment的数据片段个数的代码能看出来。
+Publisher的data_segment字段表示存储payload的共享内存数据，包括loan还未send的和已经send的到异步队列中的，包括任一消费端正在消费的和待消费的, 从data_segment的数据片段个数的代码能看出来。
 ```rust
     // 计算publisher需要预留多少个payload片段
     pub(crate) fn required_amount_of_samples_per_data_segment(
