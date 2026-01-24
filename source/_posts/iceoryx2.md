@@ -20,7 +20,7 @@ iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2�
 
 从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。
 
-这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
+这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python/c#,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
 
 <!-- more -->
 
@@ -390,28 +390,270 @@ Memory对象内部会把内存分成3段， 第一段是AllocatorDetails结构�
 
 cal层的Memory对象整合了bb层的ShareMemory对象和cal层的PoolAllocator，组合成了一个自包含内存和分配器的完整的内存对象。
 
-
 ### service服务组件
+
+service在通信框架中关联了一个通信实体的集合，他有一个service name与他关联，也有若干个publisher和subscriber与他关联。实际应用的时候我们通常把一个service与一个topic关联， 把topic name等于service name。这个topic的publisher和subscriber就是这个service的publisher和subscriber。
+
+那么service跟前面的内存对象有什么关系吗，关系在于，与service关联的publisher和subscriber都会使用内存对象来进行数据传递。
+
 #### 关系图
-#### Service对象
-#### ServiceState对象
-#### Builder构建器
+与service相关的对象有点多，便于理解，先把关系图画出来如下：
+
+![service-relationship](/linkimage/iceoryx2/service-relationship.png)
+
+#### Service
+1.Service拥有静态函数来创建Builder对象，Builder负载创建出PortFactory，PortFactory再最终负责创建出publisher和subscriber。 
+2.持有ServiceState对象包含service相关的全部配置信息。
+第一点是一个静态对象，Service只是提供了一个命名空间的作用，第二点的作用更重要。Service对象最核心的作用其实是持有Service相关的配置信息。
+
+#### ServiceState
+ServiceState：拥有service相关的全部配置信息， 分别有StaticConfig， GlobalConfig，DynamicStorage， StatisStorage。
+static_config存的是服务名， 由服务名计算出的uuid，以及代表通信参数的messaging_pattern。
+```rust
+// service::static_config::StaticConfig
+pub struct StaticConfig {
+    uuid: String,
+    service_name: ServiceName,
+    pub(crate) messaging_pattern: MessagingPattern,
+}
+pub enum MessagingPattern {
+    PublishSubscribe(publish_subscribe::StaticConfig),
+    Event(event::StaticConfig),
+}
+// service::static_config::publish_subscribe::StaticConfig
+pub struct StaticConfig {
+    pub(crate) max_subscribers: usize,
+    pub(crate) max_publishers: usize,
+    pub(crate) history_size: usize,
+    pub(crate) subscriber_max_buffer_size: usize,
+    pub(crate) subscriber_max_borrowed_samples: usize,
+    pub(crate) enable_safe_overflow: bool,
+    pub(crate) type_name: String,
+}
+```
+global_config包含了iceoryx2的整体的一些配置：
+```toml
+[global]
+root_path                                   = '/tmp/iceoryx2/'
+prefix                                      = 'iox2_'
+
+[global.service]
+directory                                   = 'services'
+publisher_data_segment_suffix               = '.publisher_data'
+static_config_storage_suffix                = '.service'
+dynamic_config_storage_suffix               = '.dynamic'
+connection_suffix                           = '.connection'
+creation_timeout.secs                       = 0
+creation_timeout.nanos                      = 500000000
+
+[defaults.publish_subscribe]
+max_subscribers                             = 8
+max_publishers                              = 2
+publisher_history_size                      = 1
+subscriber_max_buffer_size                  = 2
+subscriber_max_borrowed_samples             = 2
+publisher_max_loaned_samples                = 2
+enable_safe_overflow                        = true
+unable_to_deliver_strategy                  = 'block' # or 'discard_sample'
+
+[defaults.event]
+max_listeners                               = 2
+max_notifiers                               = 16
+
+```
+dynamic_storage保存了引用计数以及这个service对应的publisher们和subscriber们。他之所以是动态的， 就是因为他的内容是会被后续修改的， 当有新的publisher或者subscriber上线的时候他就会往里面追加新上线的id值。从代码看，DynamicConfig实现了新增publisher或者subscriber的id的接口，没有实现移除id的接口， 所以这个初版应该是没有实现下线时候移除id的功能的,。
+```rust
+// service::dynamic_config::DynamicConfig
+pub struct DynamicConfig {
+    messaging_pattern: MessagingPattern,
+    reference_counter: AtomicU64,
+}
+pub(crate) enum MessagingPattern {
+    PublishSubscribe(publish_subscribe::DynamicConfig),
+    Event(event::DynamicConfig),
+}
+// service::dynamic_config::publish_subscribe::DynamicConfig
+pub struct DynamicConfig {
+    pub(crate) subscribers: Container<UniqueSubscriberId>,
+    pub(crate) publishers: Container<UniquePublisherId>,
+}
+
+impl DynamicConfig {
+    // ...
+    pub(crate) fn add_subscriber_id(&self, id: UniqueSubscriberId) -> Option<UniqueIndex> {...}
+
+    pub(crate) fn add_publisher_id(&self, id: UniquePublisherId) -> Option<UniqueIndex> {...}
+}
+
+```
+static_storage存的内容就是static_config相同的内容， 差别是这里把他存到了文件中去，文件默认为`/tmp/iceoryx2/services/iox2_{uuid}.static_storage`。
 
 
-### publisher发布者组件
-#### publisher数据结构
-#### publisher的内存文件
+#### Builder
+Builder：拥有StaticConfig和GlobalConfig， 这两个也就是ServiceState当中的StaticConfig和GlobalConfig，ServiceState中DynamicStorage和StatisStorage也是从StaticConfig和GlobalConfig派生出来的。
+Builder构建Service的构建过程，先get到global_config和service名，随后根据这两信息， 创建出static_config， 然后再根据static_config创建出dynamic_storage和static_storage， 最后把global_config|static_config|dynamic_storage|static_storage打包成ServiceState对象， 并根据ServiceState再创建出Service， 再根据Service创建出PortFactory。
+
+这是一个我整理的Service-ServiceState-Builder三者之间的类关系图，黄色部分是Builder，紫色部分是ServiceState，绿色部分是Service：
+
+![service-builder-state-relationship](/linkimage/iceoryx2/service-builder-state-relationship.png)
+
+(右键-在新标签页中打开图片，可以看得更清晰)
 
 
-### subscriber订阅者组件
-#### subscriber数据结构
+
+#### PortFactory
+PortFactory：持有Service对象，但他不负责直接创建publisher和subscriber，而是负责创建PortFactoryPublisher和PortFactorySubscriber，PortFactoryPublisher和PortFactorySubscriber才是负责创建publisher和subscriber。
+
+#### PortFactoryPublisher
+PortFactoryPublisher：反向持有PortFactory， 间接持有了Service对象，他负责创建Publisher。
+
+#### PortFactorySubscriber
+PortFactorySubscriber：反向持有PortFactory， 间接持有了Service对象，他负责创建Subscriber。
+
+### Publisher组件
+```rust
+/// Sending endpoint of a publish-subscriber based communication.
+#[derive(Debug)]
+pub struct Publisher<'a, 'config: 'a, Service: service::Details<'config>, MessageType: Debug> {
+    port_id: UniquePublisherId,
+    pub(crate) sample_reference_counter: Vec<AtomicU64>,
+    pub(crate) data_segment: Service::SharedMemory,
+    config: LocalPublisherConfig,
+
+    subscriber_connections: SubscriberConnections<'config, Service>,
+    subscriber_list_state: UnsafeCell<ContainerState<'a, UniqueSubscriberId>>,
+    history: Option<UnsafeCell<Queue<usize>>>,
+    service: &'a Service,
+    degration_callback: Option<DegrationCallback<'a>>,
+    pub(crate) loan_counter: AtomicUsize,
+    _dynamic_config_guard: UniqueIndex<'a>,
+    _phantom_message_type: PhantomData<MessageType>,
+}
+```
+port_id是publisher的唯一编号， 来自uuid算法；
+
+#### data_segment内存对象
+data_segment表示存储payload的共享内存数据，包括loan还未send的和已经send的到异步队列中的，包括任一消费端正在消费的和待消费的, 从data_segment的数据片段个数的代码能看出来。
+```rust
+    // 计算publisher需要预留多少个payload片段
+    pub(crate) fn required_amount_of_samples_per_data_segment(
+        &self,
+        publisher_max_loaned_samples: usize,
+    ) -> usize {
+        match self {
+            MessagingPattern::PublishSubscribe(v) => {
+                v.max_subscribers
+                    * (v.subscriber_max_buffer_size + v.subscriber_max_borrowed_samples)
+                    + v.history_size
+                    + publisher_max_loaned_samples
+                    + 1   // 这里加1我不知道原因
+            }
+            _ => 0,
+        }
+    }
+```
+data_segment的类型Service::SharedMemory是通过类型重定义的，实际上就是上面章节中的`iceoryx2-cal::shared_memory::posix::Memory`内存对象类型。
+
+#### subscriber_connections连接对象
+subscriber_connections表示持有的与同一个Service下的Subscriber的连接，连接是一个抽象的说法，底层是一种共同持有一个共享内存文件的机制来关联在一起。关于connection的细节后面再单独小节展开。
+subscriber_list_state表示SubsciberId的列表， 数据来自Service下面的dynamic storage。这个列表也是subscriber_connections构建的依据。
+
+#### subscriber_connections的动态更新
+publisher在每次send数据之前，会去更新连接列表，之后才去遍历连接，尝试向每一条连接写入数据。
+```rust
+    fn send_impl(&self, address_to_chunk: usize) -> Result<usize, ZeroCopyCreationError> {
+        fail!(from self, when self.update_connections(),
+            "Unable to send sample since the connections could not be updated.");
+
+        self.add_to_history(address_to_chunk);
+        Ok(self.deliver_sample(address_to_chunk))
+    }
+    
+    /// Explicitly updates all connections to the [`crate::port::subscriber::Subscriber`]s. This is
+    /// required to be called whenever a new [`crate::port::subscriber::Subscriber`] connected to
+    /// the service. It is done implicitly whenever [`Publisher::send()`] or [`Publisher::send_copy()`]
+    /// is called.
+    pub fn update_connections(&self) -> Result<(), ZeroCopyCreationError> {
+        if unsafe { (*self.subscriber_list_state.get()).update() } {
+            fail!(from self, when self.populate_subscriber_channels(),
+                "Connections were updated only partially since at least one connection to a Subscriber port failed.");
+        }
+
+        Ok(())
+    }
+```
+正如上面的代码注释所说， subscriber_connections连接对象正常应该是一个subscriber加入这个Service网络的时候被更新，不过现在是在每次send数据之前被更新。
+更新的过程呢，就是根据service对象的dynamic_config信息，更新subscriber_list_state字段，之后根据subscriber_list_state字段更新subscriber_connections。
+
+
+### Subscriber组件
+```rust
+/// The receiving endpoint of a publish-subscribe communication.
+#[derive(Debug)]
+pub struct Subscriber<'a, 'config: 'a, Service: service::Details<'config>, MessageType: Debug> {
+    dynamic_config_guard: Option<UniqueIndex<'a>>,
+    publisher_connections: PublisherConnections<'config, Service>,
+    service: &'a Service,
+    degration_callback: Option<DegrationCallback<'a>>,
+
+    publisher_list_state: UnsafeCell<ContainerState<'a, UniquePublisherId>>,
+    _phantom_message_type: PhantomData<MessageType>,
+}
+```
+service表示此subscriber所属的Service。
+
+#### publisher_connections连接对象
+publisher_connections表示持有的与同一个Service下的Subscriber的连接，连接是一个抽象的说法，底层是一种共同持有一个共享内存文件的机制来关联在一起。关于connection的细节后面再单独小节展开。
+publisher_list_state表示PublisherId的列表， 数据来自Service下面的dynamic storage。这个列表也是publisher_connections构建的依据。
+
+#### publisher_connections的动态更新
+subscriber在每次receive数据之前，会去更新连接列表，之后才去遍历连接，尝试从每一条连接处读取数据。
+```rust
+    pub fn receive<'subscriber>(
+        &'subscriber self,
+    ) -> Result<Option<Sample<'a, 'subscriber, 'config, Service, Header, MessageType>>, ReceiveError>
+    {
+        if let Err(e) = self.update_connections() {
+            fail!(from self,
+                with ReceiveError::ConnectionFailure(e),
+                "Some samples are not being received since not all connections to publishers could be established.");
+        }
+
+        for id in 0..self.publisher_connections.len() {
+            match &mut self.publisher_connections.get_mut(id) {
+                Some(ref mut connection) => {
+                    if let Some(sample) = self.receive_from_connection(id, connection)? {
+                        return Ok(Some(sample));
+                    }
+                }
+                None => (),
+            }
+        }
+
+        Ok(None)
+    }
+    
+    /// Explicitly updates all connections to the [`crate::port::publisher::Publisher`]s. This is
+    /// required to be called whenever a new [`crate::port::publisher::Publisher`] connected to
+    /// the service. It is done implicitly whenever [`Subscriber::receive()`]
+    /// is called.
+    pub fn update_connections(&self) -> Result<(), ConnectionFailure> {
+        if unsafe { (*self.publisher_list_state.get()).update() } {
+            fail!(from self, when self.populate_publisher_channels(),
+                "Connections were updated only partially since at least one connection to a publisher failed.");
+        }
+
+        Ok(())
+    }
+```
+正如上面的代码注释所说， publisher_connections连接对象正常应该是一个publisher加入这个Service网络的时候被更新，不过现在是在每次receive数据之前被更新。
+更新的过程呢，就是根据service对象的dynamic_config信息，更新publisher_list_state字段，之后根据publisher_list_state字段更新publisher_connections。
 
 
 ### zero_copy_connection零拷贝连接
 #### SubscriberConnections订阅者连接
 #### PublisherConnections发布者连接
 #### 关系图
-#### 动态维护连接
 
 ### 通信过程
 #### 数据收发过程
