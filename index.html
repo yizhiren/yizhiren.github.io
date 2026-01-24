@@ -261,7 +261,7 @@ iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2�
 <p><img src="/linkimage/iceoryx2/iox2-architecture.svg" alt="iox2-architecture" /><br />
 图片来自<a target="_blank" rel="noopener" href="https://ekxide.github.io/iceoryx2-book/main/introduction.html">Introduction</a></p>
 <p>从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。</p>
-<p>这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。</p>
+<p>这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有c/c++/rust/python/c#,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2026/01/21/iceoryx2/#more" rel="contents">
