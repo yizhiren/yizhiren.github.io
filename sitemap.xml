@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://yizhi.ren/testlive.html</loc>
+    <loc>https://yizhi.ren/tags/index.html</loc>
     
     <lastmod>2026-01-26</lastmod>
     
@@ -11,7 +11,7 @@
   </url>
   
   <url>
-    <loc>https://yizhi.ren/tags/index.html</loc>
+    <loc>https://yizhi.ren/testlive.html</loc>
     
     <lastmod>2026-01-26</lastmod>
     
@@ -245,7 +245,7 @@
   </url>
   
   <url>
-    <loc>https://yizhi.ren/2016/11/14/bitorder/</loc>
+    <loc>https://yizhi.ren/2016/11/14/autoptr/</loc>
     
     <lastmod>2016-11-14</lastmod>
     
@@ -254,7 +254,7 @@
   </url>
   
   <url>
-    <loc>https://yizhi.ren/2016/11/14/autoptr/</loc>
+    <loc>https://yizhi.ren/2016/11/14/bitorder/</loc>
     
     <lastmod>2016-11-14</lastmod>
     
@@ -308,14 +308,14 @@
 
   
   <url>
-    <loc>https://yizhi.ren/tags/%E7%BD%91%E7%BB%9C/</loc>
+    <loc>https://yizhi.ren/tags/%E8%A5%BF%E4%BD%B3%E4%BD%B3/</loc>
     <lastmod>2026-01-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://yizhi.ren/tags/%E8%A5%BF%E4%BD%B3%E4%BD%B3/</loc>
+    <loc>https://yizhi.ren/tags/%E7%BD%91%E7%BB%9C/</loc>
     <lastmod>2026-01-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
