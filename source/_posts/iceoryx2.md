@@ -20,7 +20,7 @@ iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2�
 
 从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。
 
-这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有`c`/`c++`/`rust`/`python`/`c#`,操作系统也只是刚支持上linux/macos/qnx/win。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的autosar和smoltcp并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
+这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有`c`/`c++`/`rust`/`python`/`c#`,操作系统也只是刚支持上`linux`/`macos`/`qnx`/`win`。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的`autosar`和`smoltcp`对iox2的使用我并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
 
 <!-- more -->
 
@@ -649,13 +649,163 @@ subscriber在每次receive数据之前，会去更新连接列表，之后才去
 正如上面的代码注释所说， publisher_connections连接对象正常应该是一个publisher加入这个Service网络的时候被更新，不过现在是在每次receive数据之前被更新。
 更新的过程呢，就是根据service对象的dynamic_config信息，更新publisher_list_state字段，之后根据publisher_list_state字段更新publisher_connections。
 
-
 ### zero_copy_connection零拷贝连接
+
+#### zero_copy_connection原理
+在iceoryx2中， publisher和subscriber之间的数据传输是通过zero_copy_connection来实现的，说到connection，我们可能想到tcp，udp这样的，但这是基于共享内存的通信， 这里的连接肯定也是基于共享内存的。
+zero_copy_connection的底层原理是一个publisher和一个subscriber共同持有一个共享内存文件， 文件名一般叫xxx.connection, publisher会持续往这个文件中写入新的数据片段的内存地址， subscriber会持续从这个文件中读取publisher新写入的数据的地址， 并进行后续的从地址获取数据的操作。这就相当于是在这个publisher和subscriber之间建立了一条数据传递的连接通道， 也就是为什么这被叫做connection的原因。
+
 #### SubscriberConnections订阅者连接
+对于publisher来说， 他要与多个subscriber通信， 因此iceoryx2中定义了一个SubscriberConnections结构被Publisher所持有 。
+```rust
+pub struct Publisher<'a, 'config: 'a, Service: service::Details<'config>, MessageType: Debug> {
+    ...
+    subscriber_connections: SubscriberConnections<'config, Service>,
+    ...
+}
+```
+SubscriberConnections的定义如下：
+```rust
+#[derive(Debug)]
+pub(crate) struct SubscriberConnections<'config, Service: service::Details<'config>> {
+    connections: Vec<UnsafeCell<Option<Connection<'config, Service>>>>,
+    port_id: UniquePublisherId,
+    config: &'config config::Config,
+    static_config: StaticConfig,
+}
+
+#[derive(Debug)]
+pub(crate) struct Connection<'config, Service: service::Details<'config>> {
+    pub(crate) sender:
+        <<Service as service::Details<'config>>::Connection as ZeroCopyConnection>::Sender,
+}
+
+#[derive(Debug)]
+pub struct Sender {
+    shared_memory: SharedMemory,
+    name: FileName,
+}
+
+```
+可以看到一个Connection包含一个Sender， 一个Sender包含一个SharedMemory对象，一个SharedMemory对应一个共享内存文件。publisher发送一条数据， 就是把数据地址写入到SharedMemory对象中。我们来看看SharedMemory对象内部的结构：
+![connection-sharememory](/linkimage/iceoryx2/connection-sharememory.png)
+其中`SharedManagementData`是整个内存的管理结构，里面有两个关键字段`receive_channel`和`retrieve_channel`。`receive_channel`存放publisher新pub的数据（地址）， channel容量是`subscriber_max_buffer_size`个。`retrieve_channel`存放subscriber消费完待释放的数据（地址), channel容量是`(subscriber_max_buffer_size+subscriber_max_borrowed_samples)`个。而`receive_channel`所需的地址空间就紧接着`SharedManagementData`， `retrieve_channel`所需的地址空间再紧接着`receive_channel`的地址空间。`receive_channel`字段与`receive_channel`的地址空间的关联，以及`retrieve_channel`字段与`retrieve_channe`l地址空间的关联，稍等讲。
+`Sender`是怎么操作这段内存的呢？`Sender`结构支持`try_send`/`blocking_send`/`reclaim`接口，`try_send`接口逻辑简单， 就是往`receive_channel`把内存地址push进去；`blocking_send`则先等待`receive_channel`有空，然后再把内存地址push到`receive_channel`；`reclaim`则从`retrieve_channel`中弹出一个地址，这个地址会在调用处被计算对应的引用计数， 计数减1，如果是0就释放给publisher持有的`data_segment`,让他重新分配。
+对于`receive_channe`l和`retrieve_channel`，他本身是一段内存区间， 我们要怎么理解他的`push`和`pop`操作呢？以`retrieve_channel`为例，一个channel首先是一个Queue对象：
+
+```rust
+    pub struct IndexQueue<PointerType: PointerTrait<UnsafeCell<usize>>> {
+        data_ptr: PointerType,
+        capacity: usize,
+        write_position: AtomicUsize,
+        read_position: AtomicUsize,
+        pub(super) has_producer: AtomicBool,
+        pub(super) has_consumer: AtomicBool,
+        is_memory_initialized: AtomicBool,
+    }
+```
+这个对象有一个`data_ptr`执行数组存放队列的数据， 有个`capacity`表示队列的最大容量，有个`write_position`指向写入的下标， 一个`read_position`指向读的下标，` write_position`向上增加， `read_position`也向上增加， 超过容量就从0开始，形成一个环形队列。所以这是一个一读一写的环形队列， 原理是简单的，`push`和`pop`就是维护读和写的指针。
+再看`receive_channel`，他跟`retrieve_channel`的对象拥有相同的结构体， 唯一跟`retrieve_channel`的差别是`receive_channel`在queue满的情况下允许滚动覆盖，而`retrieve_channel`在队列满的时候直接就返回false。现在我们来解答刚才暂时搁置的channel字段与channel的地址空间的关联，如果我们把`receive_channel`和`retrieve_channel`的指针也画在上面的图中，他大概是这样的：
+
+![channel-address-relationship](/linkimage/iceoryx2/channel-address-relationship.png)
+
+总结来说， publisher在某个时机会从每个connection中`reclaim`消费完的数据（这个时机是在publisher申请内存块`loan`的时候，这个不展开讲了），并在某个时机把数据地址塞到connection的`retrieve_channel`中去（这个时机是`send`的时候）。
+
+
 #### PublisherConnections发布者连接
+对于subscriber来说， 他要与多个publisher通信， 因此iceoryx2中定义了一个PublisherConnections结构被Subscriber所持有 。
+```rust
+pub struct Subscriber<'a, 'config: 'a, Service: service::Details<'config>, MessageType: Debug> {
+    ...
+    publisher_connections: PublisherConnections<'config, Service>,
+    ...
+}
+```
+PublisherConnections的定义如下：
+```rust
+#[derive(Debug)]
+pub(crate) struct PublisherConnections<'config, Service: service::Details<'config>> {
+    connections: Vec<UnsafeCell<Option<Connection<'config, Service>>>>,
+    subscriber_id: UniqueSubscriberId,
+    config: &'config config::Config,
+    static_config: StaticConfig,
+}
+
+#[derive(Debug)]
+pub(crate) struct Connection<'config, Service: service::Details<'config>> {
+    pub(crate) receiver:
+        <<Service as service::Details<'config>>::Connection as ZeroCopyConnection>::Receiver,
+    pub(crate) data_segment: Service::SharedMemory,
+}
+
+#[derive(Debug)]
+pub struct Receiver {
+    shared_memory: SharedMemory,
+    borrow_counter: UnsafeCell<usize>,
+    name: FileName,
+}
+
+```
+`PublisherConnections`下面的connection跟`SubscribeConnections`下面的connection并不相同，`PublisherConnection`下面一共包含两个共享内存文件， 一个是`data_segment`字段，他实际指向`Publisher`对象下面的`data_segment`， 也就是存放payload数据的共享内存文件; 另一个是`receiver.shared_memory`字段, 他实际指向publisher的`SubscriberConnection`下面的`sender.shared_memory`，也就是存放传递中的payload数据的内存地址信息的共享内存文件, 也就是前面讲到的包含`receive_channel`跟`retrieve_channel`的内存对象。
+一个subscriber他是如何读取数据的呢，他先从`PublisherConnection`中的`receiver.shared_memory`中获取待消费的数据的地址信息，随后根据这个地址信息， 从`PublisherConnection`的`data_segment`中获取这个地址对应的payload数据。核心代码如下：
+```rust
+    fn receive_from_connection<'subscriber>(
+        &'subscriber self,
+        channel_id: usize,
+        connection: &mut Connection<'config, Service>,
+    ) -> Result<Option<Sample<'a, 'subscriber, 'config, Service, Header, MessageType>>, ReceiveError>
+    {
+        let msg = "Unable to receive another sample";
+        match connection.receiver.receive() {
+            Ok(data) => match data {
+                None => Ok(None),
+                Some(relative_addr) => {
+                    let absolute_address = relative_addr.value()
+                        + connection.data_segment.allocator_data_start_address();
+                    Ok(Some(Sample {
+                        subscriber: self,
+                        channel_id,
+                        ptr: unsafe {
+                            RawSample::new_unchecked(
+                                absolute_address as *mut Message<Header, MessageType>,
+                            )
+                        },
+                    }))
+                }
+            },
+            Err(ZeroCopyReceiveError::ReceiveWouldExceedMaxBorrowValue) => {
+                fail!(from self, with ReceiveError::ExceedsMaxBorrowedSamples,
+                    "{} since it would exceed the maximum {} of borrowed samples.",
+                    msg, connection.receiver.max_borrowed_samples());
+            }
+        }
+    }
+```
+
+
 #### 关系图
 
-### 通信过程
-#### 数据收发过程
-#### 流程图
+![publisher-subscriber-connection](/linkimage/iceoryx2/publisher-subscriber-connection.png)
 
+可以看到：
+
+1.Publisher和Subscriber都会关联一个Service;
+
+2.一个Publisher和一个Subscriber之间通过两个共享内存文件关联， 一个是connection文件， 一个是data_segment文件，connection存放传递中的数据地址， data_segment存放数据payload本身；
+
+3.一个publisher只有一个data_segment文件，却有多个connection文件；
+
+4.一个subscriber有相同个数的data_segment文件和connection文件；
+
+#### 通信过程
+把上面connection相关的对象串起来后就是整个的通信过程：
+
+![communication-time-sequence](/linkimage/iceoryx2/communication-time-sequence.png)
+
+(右键-在新标签页中打开图片，可以看得更清晰)
+
+
+
+### 参考资料
+[Introduction](https://ekxide.github.io/iceoryx2-book/main/introduction.html)
+[Layered Architecture](https://ekxide.github.io/iceoryx2-book/main/fundamentals/layered-architecture.html)
