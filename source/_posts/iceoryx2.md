@@ -687,10 +687,13 @@ pub struct Sender {
 }
 
 ```
-可以看到一个Connection包含一个Sender， 一个Sender包含一个SharedMemory对象，一个SharedMemory对应一个共享内存文件。publisher发送一条数据， 就是把数据地址写入到SharedMemory对象中。我们来看看SharedMemory对象内部的结构：
+可以看到一个Connection包含一个Sender， 一个Sender包含一个SharedMemory对象，一个SharedMemory对应一个共享内存文件。publisher发送一条数据， 就是把数据地址写入到SharedMemory对象中。
+
+#### connection的SharedMemory对象
+我们来看看SharedMemory对象内部的结构：
 ![connection-sharememory](/linkimage/iceoryx2/connection-sharememory.png)
 其中`SharedManagementData`是整个内存的管理结构，里面有两个关键字段`receive_channel`和`retrieve_channel`。`receive_channel`存放publisher新pub的数据（地址）， channel容量是`subscriber_max_buffer_size`个。`retrieve_channel`存放subscriber消费完待释放的数据（地址), channel容量是`(subscriber_max_buffer_size+subscriber_max_borrowed_samples)`个。而`receive_channel`所需的地址空间就紧接着`SharedManagementData`， `retrieve_channel`所需的地址空间再紧接着`receive_channel`的地址空间。`receive_channel`字段与`receive_channel`的地址空间的关联，以及`retrieve_channel`字段与`retrieve_channe`l地址空间的关联，稍等讲。
-`Sender`是怎么操作这段内存的呢？`Sender`结构支持`try_send`/`blocking_send`/`reclaim`接口，`try_send`接口逻辑简单， 就是往`receive_channel`把内存地址push进去；`blocking_send`则先等待`receive_channel`有空，然后再把内存地址push到`receive_channel`；`reclaim`则从`retrieve_channel`中弹出一个地址，这个地址会在调用处被计算对应的引用计数， 计数减1，如果是0就释放给publisher持有的`data_segment`,让他重新分配。
+`Sender`是怎么操作这段内存的呢？`Sender`结构支持`try_send`/`blocking_send`/`reclaim`接口，`try_send`接口逻辑简单， 就是往`receive_channel`把内存地址push进去；`blocking_send`则先等待`receive_channel`有空，然后再把内存地址push到`receive_channel`；`reclaim`则从`retrieve_channel`中弹出一个地址，这个地址会在调用处被计算对应的引用计数， 计数减1，如果是0就释放给publisher持有的`data_segment`,让他用于重新分配。
 对于`receive_channe`l和`retrieve_channel`，他本身是一段内存区间， 我们要怎么理解他的`push`和`pop`操作呢？以`retrieve_channel`为例，一个channel首先是一个Queue对象：
 
 ```rust
