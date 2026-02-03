@@ -13,14 +13,14 @@ updated: 2026-01-22 00:00:46
 
 在之前的文章[SOA框架iceoryx原理解析](https://yizhi.ren/2024/06/22/iceoryx/)中， 我们讲解了iceoryx的架构、原理、交互，并进行源码的分析，在那篇文章最后我提到要关注iceoryx2这款通信框架， 现在我们来把iceoryx2的分析给补上。
 iceoryx2，缩写为iox2，中文名叫冰羚2， 所以当后面提到冰羚2、iox2、iceoryx2的时候，他们都指代的是iceoryx2.
-冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如果已经支持`c`/`c++`/`rust`/`python`/`c#`。下面是iceoryx2的整体架构图：
+冰羚2与冰羚一样，是一款基于共享内存的零拷贝的通信框架，他通过对共享内存文件读写的封装和操作，实现了同一主机内的进程之间的数据传输。他与冰羚最主要的差别是冰羚2采用了去中心化的架构设计，消除了单点故障分险。早期的冰羚2只支持rust语言， 只支持linux系统，随着版本迭代， 如今已经支持`c`/`c++`/`rust`/`python`/`c#`。下面是iceoryx2的整体架构图：
 
 ![iox2-architecture](/linkimage/iceoryx2/iox2-architecture.svg)
 图片来自[Introduction](https://ekxide.github.io/iceoryx2-book/main/introduction.html)
 
 从图中可以看出，iceoryx2支持各种操作系统， 支持各种编程语言， 同时既支持iox2的app之间的通信，也支持通过扩展来接入到DDS和ROS等通信网络。
 
-这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有`c`/`c++`/`rust`/`python`/`c#`,操作系统也只是刚支持上`linux`/`macos`/`qnx`/`win`。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的`autosar`和`smoltcp`对iox2的使用我并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他较早期的一个版本来深入了解一下。
+这是iceoryx2的整体架构，也可以说是架构愿景， 因为其中有些是还没有实现的， 就比如支持的语言目前2026年1月只有`c`/`c++`/`rust`/`python`/`c#`,操作系统也只是刚支持上`linux`/`macos`/`qnx`/`win`。在与外部网络的接入方面，据我所知，ros2和dds和zenoh在2025年都已经有方案来实现对iox2的接入支持，图中其他的`autosar`和`smoltcp`对iox2的使用我并不了解。 尽管如此，随着不断迭代，更多特性被加入，iceoryx2的代码已经很庞大了，要深入理解已经不太容易。我们下面就选择他早期的一个版本来深入了解一下。
 
 <!-- more -->
 
@@ -244,7 +244,7 @@ impl ShmAllocator for PoolAllocator {
 `iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator`本质上就是对`iceoryx2_bb_memory::pool_allocator::PoolAllocator`进行了封装， 并重新暴露了类似的接口， 把内存分配器从bb层提升到了cal层。
 bb层和cal层的内存分配接口有个很大的差别， bb层申请和释放的是内存绝对地址（还是虚拟地址不是指物理地址）， cal层申请和释放的是内存相对地址， 即相对一个base地址的offset。offset的设计是有用的，因为当同一个共享内存文件被多个进程打开时，他们的虚拟地址是不同的， 他们需要通过base地址加offset才能定位到同一个内存位置。
 
-同时从`new_uninit`和`init`两个函数来说，`iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator`需要从外面输入内存基址`base_address`以及内存分配器`allocator`，这个`base_address`也就是待分配的连续内存块，`allocator`则是用于创建辅助数据结构的内存分配器。辅助数据结构的内存分配器也从外面传入，就可以实现`base_address`和辅助数据结构都在同一个共享内存对象/文件中。这样不同进程之间共享内存对象和内存分配器，就是完整的。
+同时从`new_uninit`和`init`两个函数来说，`iceoryx2_cal::shm_allocator::pool_allocator::PoolAllocator`需要从外面输入内存基址`base_address`以及内存分配器`allocator`，这个`base_address`也就是待分配的连续内存块，`allocator`则是用于创建辅助数据结构的内存分配器。辅助数据结构的内存分配器也从外面传入，就可以实现`base_address`和辅助数据结构都在同一个共享内存对象/文件中。这样不同进程之间共享内存对象和内存分配器，只要共享一个内存文件，就可以是完整的。
 
 #### 分配器原理
 内存分配器是怎么实现内存分配的呢？如果你不感兴趣，可以跳过。但是这是个有意思的环节， 能了解底层实现细节。
@@ -265,7 +265,7 @@ index分配器要展开来讲讲， 他初始的长度是Capacity+1, 每个格�
 
 当内存释放给PoolAllocator的时候，会传递要释放的内存块的index，这个index会被插入模拟链表的表头， 具体操作的话是把当前header的值填入这个第index个格子， 然后把index赋值给header，新header就指向了第index格子。
 
-假设刚才我们从0到Capacity分配出去了index值， 现在又从0到Capacity释放index，这时候新的header会依次经历指向0，指向1，指向2 ... 最终指向Capacity-1（base 0）格子。最终示意图如下：
+假设刚才我们从0到Capacity-1（base 0）分配出去了index值， 现在又从0到Capacity-1（base 0）释放index，这时候新的header会依次经历指向0，指向1，指向2 ... 最终指向Capacity-1（base 0）格子。最终示意图如下：
 
 ![pool-allocator-backall](/linkimage/iceoryx2/pool-allocator-backall.png)
 
@@ -404,7 +404,7 @@ service在通信框架中关联了一个通信实体的集合，他有一个serv
 #### Service
 1.Service拥有静态函数来创建Builder对象，Builder负载创建出PortFactory，PortFactory再最终负责创建出publisher和subscriber。 
 2.持有ServiceState对象包含service相关的全部配置信息。
-第一点是一个静态对象，Service只是提供了一个命名空间的作用，第二点的作用更重要。Service对象最核心的作用其实是持有Service相关的配置信息。
+第一点是一个静态接口，Service只是提供了一个命名空间的作用，第二点的作用更重要。Service对象最核心的作用其实是持有Service相关的配置信息。
 
 #### ServiceState
 ServiceState拥有service相关的全部配置信息， 分别有StaticConfig， GlobalConfig，DynamicStorage， StatisStorage。
@@ -692,9 +692,9 @@ pub struct Sender {
 #### connection的SharedMemory对象
 我们来看看SharedMemory对象内部的结构：
 ![connection-sharememory](/linkimage/iceoryx2/connection-sharememory.png)
-其中`SharedManagementData`是整个内存的管理结构，里面有两个关键字段`receive_channel`和`retrieve_channel`。`receive_channel`存放publisher新pub的数据（地址）， channel容量是`subscriber_max_buffer_size`个。`retrieve_channel`存放subscriber消费完待释放的数据（地址), channel容量是`(subscriber_max_buffer_size+subscriber_max_borrowed_samples)`个。而`receive_channel`所需的地址空间就紧接着`SharedManagementData`， `retrieve_channel`所需的地址空间再紧接着`receive_channel`的地址空间。`receive_channel`字段与`receive_channel`的地址空间的关联，以及`retrieve_channel`字段与`retrieve_channe`l地址空间的关联，稍等讲。
+其中`SharedManagementData`是整个内存的管理结构，里面有两个关键字段`receive_channel`和`retrieve_channel`。`receive_channel`存放publisher新pub的数据（地址）， channel容量是`subscriber_max_buffer_size`个。`retrieve_channel`存放subscriber消费完待释放的数据（地址), channel容量是`(subscriber_max_buffer_size+subscriber_max_borrowed_samples)`个。而`receive_channel`所需的地址空间就紧接着`SharedManagementData`， `retrieve_channel`所需的地址空间再紧接着`receive_channel`的地址空间。`receive_channel`字段与`receive_channel`的地址空间的关联，以及`retrieve_channel`字段与`retrieve_channel`地址空间的关联，稍等讲。
 `Sender`是怎么操作这段内存的呢？`Sender`结构支持`try_send`/`blocking_send`/`reclaim`接口，`try_send`接口逻辑简单， 就是往`receive_channel`把内存地址push进去；`blocking_send`则先等待`receive_channel`有空，然后再把内存地址push到`receive_channel`；`reclaim`则从`retrieve_channel`中弹出一个地址，这个地址会在调用处被计算对应的引用计数， 计数减1，如果是0就释放给publisher持有的`data_segment`,让他用于重新分配。
-对于`receive_channe`l和`retrieve_channel`，他本身是一段内存区间， 我们要怎么理解他的`push`和`pop`操作呢？以`retrieve_channel`为例，一个channel首先是一个Queue对象：
+对于`receive_channel`和`retrieve_channel`，他本身是一段内存区间， 我们要怎么理解他的`push`和`pop`操作呢？以`retrieve_channel`为例，一个channel首先是一个Queue对象：
 
 ```rust
     pub struct IndexQueue<PointerType: PointerTrait<UnsafeCell<usize>>> {
@@ -708,11 +708,11 @@ pub struct Sender {
     }
 ```
 这个对象有一个`data_ptr`执行数组存放队列的数据， 有个`capacity`表示队列的最大容量，有个`write_position`指向写入的下标， 一个`read_position`指向读的下标，` write_position`向上增加， `read_position`也向上增加， 超过容量就从0开始，形成一个环形队列。所以这是一个一读一写的环形队列， 原理是简单的，`push`和`pop`就是维护读和写的指针。
-再看`receive_channel`，他跟`retrieve_channel`的对象拥有相同的结构体， 唯一跟`retrieve_channel`的差别是`receive_channel`在queue满的情况下允许滚动覆盖，而`retrieve_channel`在队列满的时候直接就返回false。现在我们来解答刚才暂时搁置的channel字段与channel的地址空间的关联，如果我们把`receive_channel`和`retrieve_channel`的指针也画在上面的图中，他大概是这样的：
+再看`receive_channel`，他跟`retrieve_channel`的对象拥有相同的结构体， 唯一跟`retrieve_channel`的差别是`receive_channel`在queue满的情况下允许滚动覆盖，而`retrieve_channel`在队列满的时候直接就返回false。现在我们来解答刚才暂时搁置的channel字段与channel的地址空间的关联，如果我们把`receive_channel`和`retrieve_channel`的内部指针也画在上面的图中，他大概是这样的：
 
 ![channel-address-relationship](/linkimage/iceoryx2/channel-address-relationship.png)
 
-总结来说， publisher在某个时机会从每个connection中`reclaim`消费完的数据（这个时机是在publisher申请内存块`loan`的时候，这个不展开讲了），并在某个时机把数据地址塞到connection的`retrieve_channel`中去（这个时机是`send`的时候）。
+总结来说， publisher在某个时机会从每个connection中`reclaim`消费完的数据（这个时机是在publisher申请内存块`loan`的时候，这个不展开讲了），并在某个时机把数据地址塞到connection的`receive_channel`中去（这个时机是`send`的时候）。
 
 
 #### PublisherConnections发布者连接
